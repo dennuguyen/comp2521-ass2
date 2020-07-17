@@ -41,6 +41,8 @@ Gameview.h
 - GvGetReachable();
 - GvGetReachableByType();
 
+Dracula and hunters do not directly interact with the gameview. They must use their ADT getters which calls the gameview getters.
+
 DraculaView.h
 - struct draculaView \*DraculaView;
 - DvNew();
