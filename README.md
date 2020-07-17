@@ -6,19 +6,19 @@
 ### Glossary
 GV = game view\
 DV = dracula view\
-HV = hunter view\
+HV = hunter view
 
 ## The View
 
 ### C Style Conventions
 
 To mimic the given style of the assignment:
-1. ADT in upper "CamelCase" reflect a hidden pointer in its declaration e.g. typedef struct gameView * GameView;
+1. ADT in upper "CamelCase" reflect a hidden pointer in its declaration e.g. typedef struct gameView * GameView.
 2. ADT in lower "camelCase" do not reflect a hidden pointer in its declaration.
 3. Functions in upper "CamelCase" are declared in header files.
 4. Functions in lower "camelCase" are statically declared.
-5. Variables in "UPPERCASE" are constants.
-If possible, turn on "format on save" if your editor has the feature.​
+5. Variables in "UPPERCASE" are constants.\
+If possible, turn on "format on save" if your editor has the feature.
 
 ### Code Structure
 
