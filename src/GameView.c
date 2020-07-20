@@ -18,13 +18,12 @@
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
-// add your own #includes here
 
 typedef struct playerView *PlayerView;
 
 typedef struct playerView
 {
-	Player id;
+	Player player;
 	int health;
 	PlaceId *moveHistory;
 	PlaceId *locationHistory; // locationHistory would include current location
@@ -33,28 +32,58 @@ typedef struct playerView
 typedef struct gameView
 {
 	int score;
+	Map map;
 	Round currentRound;
 	Player currentPlayer;
-	PlaceId *trapLocations; // array of trap locations
-	PlayerView Godalming;
-	PlayerView Seward;
-	PlayerView VanHelsing;
-	PlayerView Harker;
-	PlayerView Dracula;
+	PlaceId *trapLocations;			// array of trap locations
+	PlayerView player[NUM_PLAYERS]; // enum is actually int
 } gameView;
+
+////////////////////////////////////////////////////////////////////////
+// Static
+
+static char *messageParser(Message message)
+{
+}
+
+static char *pastPlaysParser(Message message)
+{
+}
+
+static void *pvNew()
+{
+	PlayerView new = malloc(sizeof(playerView));
+	if (new == NULL)
+	{
+		fprintf(stderr, "Couldn't allocate PlayerView!\n");
+		exit(EXIT_FAILURE);
+	}
+
+	new->player = PLAYER_LORD_GODALMING;
+	new->health = GAME_START_HUNTER_LIFE_POINTS;
+
+	return new;
+}
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
-GameView GvNew(char *pastPlays, Message messages[])
+void *GvNew(char *pastPlays, Message messages[])
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	GameView new = malloc(sizeof(*new));
+	GameView new = malloc(sizeof(gameView));
 	if (new == NULL)
 	{
 		fprintf(stderr, "Couldn't allocate GameView!\n");
 		exit(EXIT_FAILURE);
 	}
+
+	for (int i = 0; i < NUM_PLAYERS; i++)
+		new->player[i] = PvNew();
+
+	new->score = GAME_START_SCORE;
+
+	// PARSE pastPlayers and messages[]
 
 	return new;
 }
@@ -70,32 +99,27 @@ void GvFree(GameView gv)
 
 Round GvGetRound(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return gv->currentRound;
 }
 
 Player GvGetPlayer(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return PLAYER_LORD_GODALMING;
+	return gv->currentPlayer;
 }
 
 int GvGetScore(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return gv->score;
 }
 
 int GvGetHealth(GameView gv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return gv->player[player]->health;
 }
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	return gv->player[player]->locationHistory[gv->currentRound];
 }
 
 PlaceId GvGetVampireLocation(GameView gv)

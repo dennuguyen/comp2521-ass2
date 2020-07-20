@@ -24,22 +24,14 @@
 
 struct draculaView
 {
-	// TODO: ADD FIELDS HERE
-};
+} draculaView;
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
 DraculaView DvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	DraculaView new = malloc(sizeof(*new));
-	if (new == NULL)
-	{
-		fprintf(stderr, "Couldn't allocate DraculaView\n");
-		exit(EXIT_FAILURE);
-	}
-
+	DraculaView new = GvNew(pastPlays, messages);
 	return new;
 }
 
@@ -54,26 +46,22 @@ void DvFree(DraculaView dv)
 
 Round DvGetRound(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetRound((GameView)dv);
 }
 
 int DvGetScore(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetScore((GameView)dv);
 }
 
 int DvGetHealth(DraculaView dv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetHealth((GameView)dv, player);
 }
 
 PlaceId DvGetPlayerLocation(DraculaView dv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	return GvGetPlayerLocation((GameView)dv, player);
 }
 
 PlaceId DvGetVampireLocation(DraculaView dv)
