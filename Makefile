@@ -22,7 +22,6 @@ LDFLAGS = -Llib
 
 # Directories
 SRC_DIR_LIB = src
-SRC_DIR_LIB += test
 SRC_DIR_EXE = main
 OBJ_DIR_LIB = obj/lib
 OBJ_DIR_EXE = obj/exe
@@ -32,7 +31,6 @@ HEAD_DIR    = include
 # Files
 SRC_FILES_LIB = $(wildcard $(SRC_DIR_LIB)/*.c)
 SRC_FILES_EXE = $(wildcard $(SRC_DIR_EXE)/*.c)
-TEST_FILES    += 
 HEAD_FILES    = $(wildcard $(HEAD_DIR)/*.h)
 
 # Objects
@@ -44,15 +42,17 @@ EXEC_FILES = $(patsubst $(SRC_DIR_EXE)/%.c,$(BIN_DIR)/%,$(SRC_FILES_EXE))
 
 .PHONY: all show clean
 
-all: $(EXEC_FILES) $(OBJ_FILES_EXE) $(OBJ_FILES_LIB)
+all: exe lib bin
 
-# Compile
+exe: $(OBJ_FILES_EXE)
 $(OBJ_DIR_EXE)/%.o: $(SRC_DIR_EXE)/%.c $(HEAD_FILES)
 	$(CC) -o $@ -c $< $(CFLAGS)
+
+lib: $(OBJ_FILES_LIB)
 $(OBJ_DIR_LIB)/%.o: $(SRC_DIR_LIB)/%.c $(HEAD_FILES)
 	$(CC) -o $@ -c $< $(CFLAGS)
 
-# Link
+bin: $(EXEC_FILES)
 $(BIN_DIR)/%: $(OBJ_DIR_EXE)/%.o
 	$(CC) -o $@ -s $(subst $(BIN_DIR)/,$(OBJ_DIR_EXE)/,$@).o $(OBJ_FILES_LIB) $(LDFLAGS)
 
@@ -65,6 +65,6 @@ show:
 	@echo "EXEC_FILES    = $(EXEC_FILES)"
 
 clean:
-	rm -rf $(EXEC_FILES)
-	rm -rf $(OBJ_FILES_EXE)
-	rm -rf $(OBJ_FILES_LIB)
+	rm -rf $(BIN_DIR)/*
+	rm -rf $(OBJ_DIR_EXE)/*.o
+	rm -rf $(OBJ_DIR_LIB)/*.o
