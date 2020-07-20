@@ -45,7 +45,13 @@ EXEC_FILES = $(patsubst $(SRC_DIR_EXE)/%.c, $(BIN_DIR)/%, $(SRC_FILES_EXE))
 
 .PHONY: all show clean
 
-all: exe lib bin
+all: directories exe lib bin
+
+# Create directories
+directories:
+	@mkdir -p obj/exe
+	@mkdir -p obj/lib
+	@mkdir -p bin
 
 # Compile exe
 exe: $(OBJ_FILES_EXE)
