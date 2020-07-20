@@ -21,48 +21,64 @@ CFLAGS  = -Wall -Werror -g -Iinclude
 LDFLAGS = -Llib
 
 # Directories
-SRC_DIR_LIB = src
 SRC_DIR_EXE = main
-OBJ_DIR_LIB = obj/lib
+SRC_DIR_LIB = src
 OBJ_DIR_EXE = obj/exe
+OBJ_DIR_LIB = obj/lib
 BIN_DIR     = bin
 HEAD_DIR    = include
+TEST_DIR 	= test
 
 # Files
-SRC_FILES_LIB = $(wildcard $(SRC_DIR_LIB)/*.c)
 SRC_FILES_EXE = $(wildcard $(SRC_DIR_EXE)/*.c)
+SRC_FILES_LIB = $(wildcard $(SRC_DIR_LIB)/*.c)
+TEST_FILES    = $(wildcard $(TEST_DIR)/*.c $(TEST_DIR)/*/*.c)
 HEAD_FILES    = $(wildcard $(HEAD_DIR)/*.h)
 
 # Objects
-OBJ_FILES_LIB = $(patsubst $(SRC_DIR_LIB)/%.c,$(OBJ_DIR_LIB)/%.o,$(SRC_FILES_LIB))
-OBJ_FILES_EXE = $(patsubst $(SRC_DIR_EXE)/%.c,$(OBJ_DIR_EXE)/%.o,$(SRC_FILES_EXE))
+OBJ_FILES_EXE  = $(patsubst $(SRC_DIR_EXE)/%.c, $(OBJ_DIR_EXE)/%.o, $(SRC_FILES_EXE))
+OBJ_FILES_LIB  = $(patsubst $(SRC_DIR_LIB)/%.c, $(OBJ_DIR_LIB)/%.o, $(SRC_FILES_LIB))
+OBJ_FILES_TEST = $(addprefix $(OBJ_DIR_LIB)/, $(notdir $(patsubst %.c, %.o, $(TEST_FILES))))
 
 # Executables
-EXEC_FILES = $(patsubst $(SRC_DIR_EXE)/%.c,$(BIN_DIR)/%,$(SRC_FILES_EXE))
+EXEC_FILES = $(patsubst $(SRC_DIR_EXE)/%.c, $(BIN_DIR)/%, $(SRC_FILES_EXE))
 
 .PHONY: all show clean
 
 all: exe lib bin
 
+# Compile exe
 exe: $(OBJ_FILES_EXE)
 $(OBJ_DIR_EXE)/%.o: $(SRC_DIR_EXE)/%.c $(HEAD_FILES)
 	$(CC) -o $@ -c $< $(CFLAGS)
 
-lib: $(OBJ_FILES_LIB)
+# Compile lib
+lib: $(OBJ_FILES_LIB) $(OBJ_FILES_TEST)
 $(OBJ_DIR_LIB)/%.o: $(SRC_DIR_LIB)/%.c $(HEAD_FILES)
 	$(CC) -o $@ -c $< $(CFLAGS)
+$(OBJ_DIR_LIB)/%.o: $(TEST_DIR)/%.c $(HEAD_FILES)
+	$(CC) -o $@ -c $< $(CFLAGS)
+$(OBJ_DIR_LIB)/%.o: $(TEST_DIR)/*/%.c $(HEAD_FILES)
+	$(CC) -o $@ -c $< $(CFLAGS)
 
+# Link
 bin: $(EXEC_FILES)
 $(BIN_DIR)/%: $(OBJ_DIR_EXE)/%.o
-	$(CC) -o $@ -s $(subst $(BIN_DIR)/,$(OBJ_DIR_EXE)/,$@).o $(OBJ_FILES_LIB) $(LDFLAGS)
+	$(CC) -o $@ -s $(subst $(BIN_DIR)/, $(OBJ_DIR_EXE)/,$@).o $(OBJ_FILES_LIB) $(OBJ_FILES_TEST) $(LDFLAGS)
 
 show:
-	@echo "SRC_FILES_EXE = $(SRC_FILES_EXE)"
-	@echo "SRC_FILES_LIB = $(SRC_FILES_LIB)"
-	@echo "OBJ_FILES_EXE = $(OBJ_FILES_EXE)"
-	@echo "OBJ_FILES_LIB = $(OBJ_FILES_LIB)"
-	@echo "HEAD_FILES    = $(HEAD_FILES)"
-	@echo "EXEC_FILES    = $(EXEC_FILES)"
+	@echo ""
+	@echo "HEAD_FILES     = $(HEAD_FILES)"
+	@echo "SRC_FILES_EXE  = $(SRC_FILES_EXE)"
+	@echo "SRC_FILES_LIB  = $(SRC_FILES_LIB)"
+	@echo "TEST_FILES     = $(TEST_FILES)"
+	@echo ""
+	@echo "OBJ_FILES_EXE  = $(OBJ_FILES_EXE)"
+	@echo "OBJ_FILES_LIB  = $(OBJ_FILES_LIB)"
+	@echo "OBJ_FILES_TEST = $(OBJ_FILES_TEST)"
+	@echo ""
+	@echo "EXEC_FILES     = $(EXEC_FILES)"
+	@echo ""
 
 clean:
 	rm -rf $(BIN_DIR)/*
