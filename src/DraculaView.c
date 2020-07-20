@@ -22,7 +22,8 @@
 
 // TODO: ADD YOUR OWN STRUCTS HERE
 
-struct draculaView {
+struct draculaView
+{
 	// TODO: ADD FIELDS HERE
 };
 
@@ -33,7 +34,8 @@ DraculaView DvNew(char *pastPlays, Message messages[])
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	DraculaView new = malloc(sizeof(*new));
-	if (new == NULL) {
+	if (new == NULL)
+	{
 		fprintf(stderr, "Couldn't allocate DraculaView\n");
 		exit(EXIT_FAILURE);
 	}
@@ -105,7 +107,7 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
-                             int *numReturnedLocs)
+							 int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
@@ -113,7 +115,7 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 }
 
 PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
-                          int *numReturnedLocs)
+						  int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
@@ -121,8 +123,8 @@ PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
 }
 
 PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
-                                bool road, bool rail, bool boat,
-                                int *numReturnedLocs)
+								bool road, bool rail, bool boat,
+								int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
