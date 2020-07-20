@@ -42,15 +42,15 @@ typedef struct gameView
 ////////////////////////////////////////////////////////////////////////
 // Static
 
-static char *messageParser(Message message)
-{
-}
+// static char *messageParser(Message message)
+// {
+// }
 
-static char *pastPlaysParser(Message message)
-{
-}
+// static char *pastPlaysParser(Message message)
+// {
+// }
 
-static void *pvNew()
+static void *PvNew()
 {
 	PlayerView new = malloc(sizeof(playerView));
 	if (new == NULL)
