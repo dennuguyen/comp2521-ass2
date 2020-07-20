@@ -9,7 +9,7 @@ GV = game view\
 DV = dracula view\
 HV = hunter view
 
-## Directory Tree
+### Directory Tree
 ```
 ./
 |__ Makefile            // make, make lib, make exe, make bin, make show, make clean
@@ -43,6 +43,18 @@ HV = hunter view
         |__ *.c
 ```
 
+### C Style Conventions
+
+To mimic the given style of the assignment:
+1. ADT in upper ```CamelCase``` reflect a hidden pointer in its declaration e.g. ```typedef struct gameView * GameView.```
+2. ADT in lower ```camelCase``` do not reflect a hidden pointer in its declaration.
+3. Functions in upper ```CamelCase``` are declared in header files.
+4. Functions in lower ```camelCase``` are statically declared.
+5. Variables in ```UPPERCASE``` are constants.
+6. Variables are in lower ```camelCase``` otherwise.
+
+Turn on "format on save" if your editor has the feature.
+
 ## The View
 
 At minimum must complete and submit: GameView.c, DraculaView.c, HunterView.c, testGameView.c, testDraculaView.c, testHunterView.c.
@@ -50,17 +62,6 @@ At minimum must complete and submit: GameView.c, DraculaView.c, HunterView.c, te
 We can modify the existing headerfiles and add new ADTs e.g. Queue.c and Queue.h which will be submitted if added/changed.
 
 Dracula and hunters do not directly interact with the gameview. They must use their ADT getters which calls the gameview getters.
-
-### C Style Conventions
-
-To mimic the given style of the assignment:
-1. ADT in upper "CamelCase" reflect a hidden pointer in its declaration e.g. typedef struct gameView * GameView.
-2. ADT in lower "camelCase" do not reflect a hidden pointer in its declaration.
-3. Functions in upper "CamelCase" are declared in header files.
-4. Functions in lower "camelCase" are statically declared.
-5. Variables in "UPPERCASE" are constants.
-
-Turn on "format on save" if your editor has the feature.
 
 ## The Hunt
 
