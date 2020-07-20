@@ -19,10 +19,11 @@
 #define FOD__MAP_H_
 
 typedef struct connNode *ConnList;
-struct connNode {
-	PlaceId p; // ALICANTE, etc.
+struct connNode
+{
+	PlaceId p;			// ALICANTE, etc.
 	TransportType type; // ROAD, RAIL, BOAT
-	ConnList next; // link to next node
+	ConnList next;		// link to next node
 };
 
 // Map representation is hidden

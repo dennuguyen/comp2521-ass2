@@ -16,14 +16,16 @@
 #define FOD__PLACES_H_
 
 // Types of places
-typedef enum placeType {
+typedef enum placeType
+{
 	UNKNOWN,
 	LAND,
 	SEA,
 } PlaceType;
 
 // Types of connections between places
-typedef enum transportType {
+typedef enum transportType
+{
 	NONE,
 	ROAD,
 	RAIL,
@@ -36,7 +38,8 @@ typedef enum transportType {
 
 // Places
 // Real places should come first
-typedef enum placeId {
+typedef enum placeId
+{
 	// real places
 	ADRIATIC_SEA,
 	ALICANTE,
@@ -124,23 +127,25 @@ typedef enum placeId {
 	NOWHERE = -2,
 } PlaceId;
 
-#define MIN_REAL_PLACE	(PlaceId) ADRIATIC_SEA // Should be 0
-#define HOSPITAL_PLACE	(PlaceId) ST_JOSEPH_AND_ST_MARY
-#define MAX_REAL_PLACE	(PlaceId) ZURICH
-#define NUM_REAL_PLACES	((int) ZURICH + 1)
+#define MIN_REAL_PLACE (PlaceId) ADRIATIC_SEA // Should be 0
+#define HOSPITAL_PLACE (PlaceId) ST_JOSEPH_AND_ST_MARY
+#define MAX_REAL_PLACE (PlaceId) ZURICH
+#define NUM_REAL_PLACES ((int)ZURICH + 1)
 
-typedef struct place {
-	PlaceId    id;
-	char      *name;
-	char      *abbrev;
-	PlaceType  type;
+typedef struct place
+{
+	PlaceId id;
+	char *name;
+	char *abbrev;
+	PlaceType type;
 } Place;
 
 extern Place PLACES[];
 
-typedef struct connection {
-	PlaceId       v;
-	PlaceId       w;
+typedef struct connection
+{
+	PlaceId v;
+	PlaceId w;
 	TransportType t;
 } Connection;
 

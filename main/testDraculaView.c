@@ -25,18 +25,17 @@
 
 int main(void)
 {
-	{///////////////////////////////////////////////////////////////////
-	
+	{ ///////////////////////////////////////////////////////////////////
+
 		printf("Test for basic functions, "
 			   "just before Dracula's first move\n");
 
 		char *trail =
 			"GST.... SAO.... HZU.... MBB....";
-		
+
 		Message messages[] = {
-			"Hello", "Goodbye", "Stuff", "..."
-		};
-		
+			"Hello", "Goodbye", "Stuff", "..."};
+
 		DraculaView dv = DvNew(trail, messages);
 
 		assert(DvGetRound(dv) == 0);
@@ -57,19 +56,18 @@ int main(void)
 		DvFree(dv);
 	}
 
-	{///////////////////////////////////////////////////////////////////
-	
+	{ ///////////////////////////////////////////////////////////////////
+
 		printf("Test for encountering Dracula\n");
 
 		char *trail =
 			"GST.... SAO.... HCD.... MAO.... DGE.V.. "
 			"GGEVD.. SAO.... HCD.... MAO....";
-		
+
 		Message messages[] = {
 			"Hello", "Goodbye", "Stuff", "...", "Mwahahah",
-			"Aha!", "", "", ""
-		};
-		
+			"Aha!", "", "", ""};
+
 		DraculaView dv = DvNew(trail, messages);
 
 		assert(DvGetRound(dv) == 1);
@@ -84,8 +82,8 @@ int main(void)
 		DvFree(dv);
 	}
 
-	{///////////////////////////////////////////////////////////////////
-	
+	{ ///////////////////////////////////////////////////////////////////
+
 		printf("Test for Dracula leaving minions 1\n");
 
 		char *trail =
@@ -94,7 +92,7 @@ int main(void)
 			"GST.... SST.... HST.... MST.... DLOT... "
 			"GST.... SST.... HST.... MST.... DHIT... "
 			"GST.... SST.... HST.... MST....";
-		
+
 		Message messages[24] = {};
 		DraculaView dv = DvNew(trail, messages);
 
@@ -108,22 +106,22 @@ int main(void)
 		assert(traps[1] == LONDON);
 		assert(traps[2] == MANCHESTER);
 		free(traps);
-		
+
 		printf("Test passed!\n");
 		DvFree(dv);
 	}
 
-	{///////////////////////////////////////////////////////////////////
-	
+	{ ///////////////////////////////////////////////////////////////////
+
 		printf("Test for Dracula's valid moves 1\n");
-		
+
 		char *trail =
 			"GGE.... SGE.... HGE.... MGE.... DCD.V.. "
 			"GGE.... SGE.... HGE.... MGE....";
-		
+
 		Message messages[9] = {};
 		DraculaView dv = DvNew(trail, messages);
-		
+
 		int numMoves = -1;
 		PlaceId *moves = DvGetValidMoves(dv, &numMoves);
 		assert(numMoves == 4);
@@ -133,25 +131,25 @@ int main(void)
 		assert(moves[2] == HIDE);
 		assert(moves[3] == DOUBLE_BACK_1);
 		free(moves);
-		
+
 		printf("Test passed!\n");
 		DvFree(dv);
 	}
-	
-	{///////////////////////////////////////////////////////////////////
-	
+
+	{ ///////////////////////////////////////////////////////////////////
+
 		printf("Test for DvWhereCanIGo 1\n");
-		
+
 		char *trail =
 			"GGE.... SGE.... HGE.... MGE.... DKL.V.. "
 			"GGE.... SGE.... HGE.... MGE.... DD1T... "
 			"GGE.... SGE.... HGE.... MGE.... DBCT... "
 			"GGE.... SGE.... HGE.... MGE.... DHIT... "
 			"GGE.... SGE.... HGE.... MGE....";
-		
+
 		Message messages[24] = {};
 		DraculaView dv = DvNew(trail, messages);
-		
+
 		int numLocs = -1;
 		PlaceId *locs = DvWhereCanIGo(dv, &numLocs);
 		assert(numLocs == 4);
@@ -161,7 +159,7 @@ int main(void)
 		assert(locs[2] == GALATZ);
 		assert(locs[3] == SOFIA);
 		free(locs);
-		
+
 		printf("Test passed!\n");
 		DvFree(dv);
 	}
