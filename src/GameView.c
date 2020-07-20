@@ -20,12 +20,28 @@
 #include "Places.h"
 // add your own #includes here
 
-// TODO: ADD YOUR OWN STRUCTS HERE
+typedef struct playerView *PlayerView;
 
-struct gameView
+typedef struct playerView
 {
-	// TODO: ADD FIELDS HERE
-};
+	Player id;
+	int health;
+	PlaceId *moveHistory;
+	PlaceId *locationHistory; // locationHistory would include current location
+} playerView;
+
+typedef struct gameView
+{
+	int score;
+	Round currentRound;
+	Player currentPlayer;
+	PlaceId *trapLocations; // array of trap locations
+	PlayerView Godalming;
+	PlayerView Seward;
+	PlayerView VanHelsing;
+	PlayerView Harker;
+	PlayerView Dracula;
+} gameView;
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
