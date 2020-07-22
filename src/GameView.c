@@ -20,6 +20,7 @@
 #include "Places.h"
 
 typedef struct playerView *PlayerView;
+typedef struct trapView *TrapView;
 
 typedef struct playerView
 {
@@ -29,13 +30,20 @@ typedef struct playerView
 	PlaceId *locationHistory; // locationHistory would include current location
 } playerView;
 
+typedef struct trapView
+{
+	PlaceId location;
+	bool isVampire;
+	TrapView next;
+} trapView;
+
 typedef struct gameView
 {
 	int score;
 	Map map;
 	Round currentRound;
 	Player currentPlayer;
-	PlaceId *trapLocations;			// array of trap locations
+	TrapView trapLocations;			// linked list of encounters
 	PlayerView player[NUM_PLAYERS]; // enum is actually int
 } gameView;
 
@@ -124,15 +132,25 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	TrapView curr = gv->trapLocations;
+	while (curr != NULL) {
+		if (curr->isVampire) return curr->location;
+	}
 	return NOWHERE;
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numTraps = 0;
-	return NULL;
+	PlaceId *traps = malloc(6*sizeof(int));
+	TrapView curr = gv->trapLocations;
+	i = 0;
+	while (curr != NULL) {
+		if (!curr->isVampire) traps[i] = curr->location;
+		i++;
+		*numTraps++;
+	}
+	return traps;
 }
 
 ////////////////////////////////////////////////////////////////////////
