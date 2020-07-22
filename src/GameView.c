@@ -68,7 +68,7 @@ static void *PvNew()
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
-void *GvNew(char *pastPlays, Message messages[])
+GameView GvNew(char *pastPlays, Message messages[])
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(gameView));

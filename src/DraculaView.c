@@ -31,7 +31,7 @@ struct draculaView
 
 DraculaView DvNew(char *pastPlays, Message messages[])
 {
-	DraculaView new = GvNew(pastPlays, messages);
+	DraculaView new = (void *)GvNew(pastPlays, messages);
 	return new;
 }
 
