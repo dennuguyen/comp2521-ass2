@@ -66,7 +66,7 @@ At minimum must complete and submit: GameView.c, DraculaView.c, HunterView.c, te
 
 We can modify the existing headerfiles and add new ADTs e.g. Queue.c and Queue.h which will be submitted if added/changed.
 
-Dracula and hunters do not directly interact with the gameview. They must use their ADT getters which calls the gameview getters.
+The draculaView, hunterView structs inherit the gameView struct. draculaView and hunterView do not directly interact with gameView. They must use their ADT getters which calls the gameView getters.
 
 ## The Hunt
 
