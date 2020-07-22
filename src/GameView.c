@@ -43,7 +43,7 @@ typedef struct gameView
 	Map map;
 	Round currentRound;
 	Player currentPlayer;
-	TrapView trapLocations;			// linked list of encounters
+	TrapView trapLocations;
 	PlayerView player[NUM_PLAYERS]; // enum is actually int
 } gameView;
 
@@ -80,6 +80,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(gameView));
+
 	if (new == NULL)
 	{
 		fprintf(stderr, "Couldn't allocate GameView!\n");
@@ -90,6 +91,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 		new->player[i] = PvNew();
 
 	new->score = GAME_START_SCORE;
+	// new->trapLocations = QueueNewTrapView();
 
 	// PARSE pastPlayers and messages[]
 
@@ -132,21 +134,22 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	TrapView curr = gv->trapLocations;
-	while (curr != NULL) {
-		if (curr->isVampire) return curr->location;
-	}
+	for (TrapView curr = gv->trapLocations; curr != NULL; curr = curr->next)
+		if (curr->isVampire && placeIsReal(curr->location))
+			return curr->location;
 	return NOWHERE;
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
 	*numTraps = 0;
-	PlaceId *traps = malloc(6*sizeof(int));
+	PlaceId *traps = malloc(6 * sizeof(int));
 	TrapView curr = gv->trapLocations;
 	i = 0;
-	while (curr != NULL) {
-		if (!curr->isVampire) traps[i] = curr->location;
+	while (curr != NULL)
+	{
+		if (!curr->isVampire)
+			traps[i] = curr->location;
 		i++;
 		*numTraps++;
 	}
