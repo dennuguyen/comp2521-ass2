@@ -4,10 +4,15 @@ Assignment Specification: https://webcms3.cse.unsw.edu.au/COMP2521/20T2/resource
 
 Important Notice: You must not modify any of the provided function signatures in the GameView, HunterView and DraculaView ADT interfaces (otherwise you'll fail auto-testing). However, you may augment these ADTs with as many other functions as you like.
 
+### Contributers
+**dan-jack-vi-jamie**
+dennuguyen, Dan Nguyen, z5206032, W13B
+
 ### Glossary
 GV = game view\
 DV = dracula view\
-HV = hunter view
+HV = hunter view\
+PV = player view
 
 ### Directory Tree
 ```
