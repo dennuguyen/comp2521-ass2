@@ -135,6 +135,7 @@ PlaceId GvGetVampireLocation(GameView gv)
 	TrapView curr = gv->trapLocations;
 	while (curr != NULL) {
 		if (curr->isVampire) return curr->location;
+		curr = curr->next;
 	}
 	return NOWHERE;
 }
