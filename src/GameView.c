@@ -79,7 +79,8 @@ void GvFree(GameView gv)
 {
 	MapFree(gv->map);
 	TvFree(gv->trapLocations);
-	free(gv->player);
+	for (int i = 0; i < NUM_PLAYERS; i++)
+		PvFree(gv->player[i]);
 	free(gv);
 }
 
@@ -103,12 +104,12 @@ int GvGetScore(GameView gv)
 
 int GvGetHealth(GameView gv, Player player)
 {
-	return gv->player[player]->health;
+	return PvGetHealth(gv->player[player]);
 }
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-	return gv->player[player]->locationHistory[gv->currentRound];
+	return PvGetLocationHistory(gv->player[player])[gv->currentRound];
 }
 
 PlaceId GvGetVampireLocation(GameView gv)
@@ -127,45 +128,25 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
 						  int *numReturnedMoves, bool *canFree)
 {
-	*canFree = false;
-	return gv->player[player]->moveHistory;
+	return PvGetMoves(gv->player[player], gv->currentRound, numReturnedMoves, canFree);
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 						int *numReturnedMoves, bool *canFree)
 {
-	PlaceId *lastMoves = malloc(numMoves * sizeof(PlaceId));
-	*numReturnedMoves = 0;
-	int j = 0;
-	for (int i = gv->currentRound; i > gv->currentRound - numMoves && i > 0; i--)
-	{
-		lastMoves[j] = gv->player[player]->moveHistory[i];
-		numReturnedMoves++;
-	}
-	*canFree = true;
-	return lastMoves;
+	return PvGetMoves(gv->player[player], numMoves, numReturnedMoves, canFree);
 }
 
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
 							  int *numReturnedLocs, bool *canFree)
 {
-	*canFree = false;
-	return gv->player[player]->locationHistory;
+	return PvGetLocations(gv->player[player], gv->currentRound, numReturnedLocs, canFree);
 }
 
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 							int *numReturnedLocs, bool *canFree)
 {
-	PlaceId *lastLocs = malloc(numLocs * sizeof(PlaceId));
-	*numReturnedLocs = 0;
-	int j = 0;
-	for (int i = gv->currentRound; i > gv->currentRound - numLocs; i--)
-	{
-		lastLocs[j] = gv->player[player]->locationHistory[i];
-		numReturnedLocs++;
-	}
-	*canFree = true;
-	return lastLocs;
+	return PvGetLocations(gv->player[player], numLocs, numReturnedLocs, canFree);
 }
 
 ////////////////////////////////////////////////////////////////////////
