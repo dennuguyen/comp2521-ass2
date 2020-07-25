@@ -109,7 +109,9 @@ int GvGetHealth(GameView gv, Player player)
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-	return PvGetLocationHistory(gv->player[player])[gv->currentRound];
+	int *numReturnedLocs = 0;
+	bool *canFree = false;
+	return PvGetLocations(gv->player[player], 1, numReturnedLocs, canFree)[0];
 }
 
 PlaceId GvGetVampireLocation(GameView gv)
