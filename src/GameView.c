@@ -20,7 +20,7 @@
 #include "Map.h"
 #include "Places.h"
 #include "PlayerView.h"
-#include "TrapView.h"
+#include "TrailView.h"
 
 typedef struct gameView
 {
@@ -28,7 +28,7 @@ typedef struct gameView
 	Map map;
 	Round currentRound;
 	Player currentPlayer;
-	TrapView trapLocations;			// TrapView queue
+	TrailView trapLocations;		// TrailView queue
 	PlayerView player[NUM_PLAYERS]; // PlayerView array
 } gameView;
 
