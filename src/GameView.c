@@ -18,17 +18,8 @@
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
+#include "PlayerView.h"
 #include "TrapView.h"
-
-typedef struct playerView *PlayerView;
-
-typedef struct playerView
-{
-	Player player;
-	int health;
-	PlaceId *moveHistory;
-	PlaceId *locationHistory; // locationHistory would include current location
-} playerView;
 
 typedef struct gameView
 {
@@ -36,55 +27,35 @@ typedef struct gameView
 	Map map;
 	Round currentRound;
 	Player currentPlayer;
-	TrapView *trapLocations;
-	PlayerView player[NUM_PLAYERS]; // enum is actually int
+	TrapView trapLocations;			// TrapView queue
+	PlayerView player[NUM_PLAYERS]; // PlayerView array
 } gameView;
 
 ////////////////////////////////////////////////////////////////////////
 // Static
 
-// static char *messageParser(Message message)
-// {
-// }
-
-// static char *pastPlaysParser(Message message)
-// {
-// }
-
-static void *PvNew()
-{
-	PlayerView new = malloc(sizeof(playerView));
-	if (new == NULL)
-	{
-		fprintf(stderr, "Couldn't allocate PlayerView!\n");
-		exit(EXIT_FAILURE);
-	}
-
-	new->player = PLAYER_LORD_GODALMING;
-	new->health = GAME_START_HUNTER_LIFE_POINTS;
-
-	return new;
-}
+// static char *messageParser(Message message);
+// static char *pastPlaysParser(Message message);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
 GameView GvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(gameView));
-
 	if (new == NULL)
 	{
-		fprintf(stderr, "Couldn't allocate GameView!\n");
+		fprintf(stderr, "ERROR: Could not allocate memory for GameView\n");
 		exit(EXIT_FAILURE);
 	}
 
-	for (int i = 0; i < NUM_PLAYERS; i++)
-		new->player[i] = PvNew();
-
 	new->score = GAME_START_SCORE;
-	// new->trapLocations = QueueNewTrapView();
+	new->map = MapNew();
+	new->currentRound = 0;
+	new->currentPlayer = PLAYER_LORD_GODALMING;
+	new->trapLocations = TvNew();
+	for (int i = 0; i < NUM_PLAYERS; i++)
+		new->player[i] = PvNew(i);
 
 	// PARSE pastPlayers and messages[]
 
@@ -93,7 +64,9 @@ GameView GvNew(char *pastPlays, Message messages[])
 
 void GvFree(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	MapFree(gv->map);
+	TvFree(gv->trapLocations);
+	free(gv->player);
 	free(gv);
 }
 
@@ -127,12 +100,12 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	return TvGetVampireLocation(&(gv->trapLocations));
+	return TvGetVampireLocation(gv->trapLocations);
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
-	return TvGetTrapLocations(&(gv->trapLocations), numTraps);
+	return TvGetTrapLocations(gv->trapLocations, numTraps);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -204,5 +177,3 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
-
-// TODO
