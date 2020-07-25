@@ -53,16 +53,16 @@ static Array PvNewArray(size_t size)
 /**
  * Insert a place into an Array.
  */
-static void PvInsertArray(Array arr, PlaceId place)
-{
-    if (arr->used == arr->size)
-    {
-        arr->size += ARRAY_SIZE;
-        arr->history = realloc(arr->history, arr->size * sizeof(PlaceId));
-    }
+// static void PvInsertArray(Array arr, PlaceId place)
+// {
+//     if (arr->used == arr->size)
+//     {
+//         arr->size += ARRAY_SIZE;
+//         arr->history = realloc(arr->history, arr->size * sizeof(PlaceId));
+//     }
 
-    arr->history[arr->used++] = place;
-}
+//     arr->history[arr->used++] = place;
+// }
 
 /**
  * Create new PlayerView.

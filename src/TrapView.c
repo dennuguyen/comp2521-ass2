@@ -174,7 +174,7 @@ void TvShow(TrapView q)
  */
 PlaceId *TvGetTrapLocations(TrapView q, int *numTraps)
 {
-    *numTraps = 1;
+    *numTraps = 0;
     PlaceId *trapArray = malloc(TRAIL_SIZE * sizeof(int));
 
     if (q == NULL || q->head == NULL)
