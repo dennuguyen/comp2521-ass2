@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Game.h"
 #include "GameView.h"
@@ -34,8 +35,17 @@ typedef struct gameView
 ////////////////////////////////////////////////////////////////////////
 // Static
 
+/**
+ * Parse through each char of play string. Play is assumed to be at most 7 char
+ * long.
+ */
+static void interpretPlay(GameView gv, char *play)
+{
+	for (char c = *play; play; *play++)
+	{
+	}
+}
 // static char *messageParser(Message message);
-// static char *pastPlaysParser(Message message);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -57,7 +67,10 @@ GameView GvNew(char *pastPlays, Message messages[])
 	for (int i = 0; i < NUM_PLAYERS; i++)
 		new->player[i] = PvNew(i);
 
-	// PARSE pastPlayers and messages[]
+	// pastPlays strings are 7 char long and each move is separated by a space
+	const char *delimiter = " ";
+	for (char *play = strtok(pastPlays, delimiter); play != NULL; play = strtok(NULL, delimiter))
+		interpretPlay(new, play);
 
 	return new;
 }
