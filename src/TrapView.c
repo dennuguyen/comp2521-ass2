@@ -73,7 +73,7 @@ void TvFree(TrapView *q)
 {
     if (*q == NULL)
         return;
-    QueueFree(&((*q)->next));
+    TvFree(&((*q)->next));
     free(*q);
     *q = NULL;
 }
