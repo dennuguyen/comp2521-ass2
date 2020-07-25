@@ -18,6 +18,8 @@ static void testGv15();
 
 void testGv()
 {
+    printf("Testing GameView...\n");
+
     testGv1();
     testGv2();
     testGv3();
@@ -33,6 +35,8 @@ void testGv()
     testGv13();
     testGv14();
     testGv15();
+
+    printf("GameView tests passed!\n\n");
 }
 
 static void testGv1()
