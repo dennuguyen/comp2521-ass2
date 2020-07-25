@@ -14,7 +14,8 @@ jamie-rahme, Jamie Rahme, z5209611, T15A
 GV = game view\
 DV = dracula view\
 HV = hunter view\
-PV = player view
+PV = player view\
+TV = trap view
 
 ### Directory Tree
 ```
