@@ -7,8 +7,6 @@
 #include "Game.h"
 #include "TrapView.h"
 
-typedef struct trapNode *TrapNode;
-
 typedef struct trapNode
 {
     PlaceId location;

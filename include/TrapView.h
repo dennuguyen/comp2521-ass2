@@ -9,6 +9,7 @@
 
 #include "Places.h"
 
+typedef struct trapNode *TrapNode;
 typedef struct trapView *TrapView;
 
 /* Getters */
