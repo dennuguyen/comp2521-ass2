@@ -36,13 +36,13 @@ typedef struct gameView
 // Static
 
 /**
- * Parse through each char of play string. Play is assumed to be at most 7 char
- * long.
+ * Parse through each char of play string which is 7 char long
  */
 static void interpretPlay(GameView gv, char *play)
 {
-	for (char c = *play; play; *play++)
+	for (int i = 0; i < 7; i++)
 	{
+		// char c = play[i]; // depending on what c is, change the gv struct
 	}
 }
 // static char *messageParser(Message message);
@@ -67,7 +67,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	for (int i = 0; i < NUM_PLAYERS; i++)
 		new->player[i] = PvNew(i);
 
-	// pastPlays strings are 7 char long and each move is separated by a space
+	// Each move in pastPlayers is separated by a space
 	const char *delimiter = " ";
 	for (char *play = strtok(pastPlays, delimiter); play != NULL; play = strtok(NULL, delimiter))
 		interpretPlay(new, play);
@@ -140,7 +140,7 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 	for (int i = gv->currentRound; i > gv->currentRound - numMoves && i > 0; i--)
 	{
 		lastMoves[j] = gv->player[player]->moveHistory[i];
-		*numReturnedMoves++;
+		numReturnedMoves++;
 	}
 	*canFree = true;
 	return lastMoves;
@@ -162,7 +162,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 	for (int i = gv->currentRound; i > gv->currentRound - numLocs; i--)
 	{
 		lastLocs[j] = gv->player[player]->locationHistory[i];
-		*numReturnedLocs++;
+		numReturnedLocs++;
 	}
 	*canFree = true;
 	return lastLocs;
