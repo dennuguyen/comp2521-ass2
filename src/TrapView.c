@@ -20,6 +20,9 @@ typedef struct trapView
     TrapNode tail;
 } trapView;
 
+/**
+ * Create TrapNode.
+ */
 static TrapNode TvNewNode(PlaceId location, bool isVampire)
 {
     TrapNode new = malloc(sizeof(trapNode));
@@ -37,7 +40,7 @@ static TrapNode TvNewNode(PlaceId location, bool isVampire)
 }
 
 /**
- * Create queue.
+ * Create new TrapView.
  */
 TrapView TvNew()
 {
@@ -54,7 +57,7 @@ TrapView TvNew()
 }
 
 /**
- * Free queue.
+ * Free TrapView and TrapNodes.
  */
 void TvFree(TrapView q)
 {
