@@ -18,9 +18,9 @@
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
+#include "TrapView.h"
 
 typedef struct playerView *PlayerView;
-typedef struct trapView *TrapView;
 
 typedef struct playerView
 {
@@ -30,20 +30,13 @@ typedef struct playerView
 	PlaceId *locationHistory; // locationHistory would include current location
 } playerView;
 
-typedef struct trapView
-{
-	PlaceId location;
-	bool isVampire;
-	TrapView next;
-} trapView;
-
 typedef struct gameView
 {
 	int score;
 	Map map;
 	Round currentRound;
 	Player currentPlayer;
-	TrapView trapLocations;			// linked list of encounters
+	TrapView *trapLocations;
 	PlayerView player[NUM_PLAYERS]; // enum is actually int
 } gameView;
 
@@ -80,6 +73,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(gameView));
+
 	if (new == NULL)
 	{
 		fprintf(stderr, "Couldn't allocate GameView!\n");
@@ -90,6 +84,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 		new->player[i] = PvNew();
 
 	new->score = GAME_START_SCORE;
+	// new->trapLocations = QueueNewTrapView();
 
 	// PARSE pastPlayers and messages[]
 
@@ -132,26 +127,12 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	TrapView curr = gv->trapLocations;
-	while (curr != NULL) {
-		if (curr->isVampire) return curr->location;
-		curr = curr->next;
-	}
-	return NOWHERE;
+	return TvGetVampireLocation(&(gv->trapLocations));
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
-	*numTraps = 0;
-	PlaceId *traps = malloc(6*sizeof(int));
-	TrapView curr = gv->trapLocations;
-	int i = 0;
-	while (curr != NULL) {
-		if (!curr->isVampire) traps[i] = curr->location;
-		i++;
-		*numTraps++;
-	}
-	return traps;
+	return TvGetTrapLocations(&(gv->trapLocations), numTraps);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -170,7 +151,8 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 	PlaceId *lastMoves = malloc(numMoves * sizeof(PlaceId));
 	*numReturnedMoves = 0;
 	int j = 0;
-	for (int i = gv->currentRound; i > gv->currentRound - numMoves && i > 0; i--) {
+	for (int i = gv->currentRound; i > gv->currentRound - numMoves && i > 0; i--)
+	{
 		lastMoves[j] = gv->player[player]->moveHistory[i];
 		*numReturnedMoves++;
 	}
@@ -191,7 +173,8 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 	PlaceId *lastLocs = malloc(numLocs * sizeof(PlaceId));
 	*numReturnedLocs = 0;
 	int j = 0;
-	for (int i = gv->currentRound; i > gv->currentRound - numLocs; i--) {
+	for (int i = gv->currentRound; i > gv->currentRound - numLocs; i--)
+	{
 		lastLocs[j] = gv->player[player]->locationHistory[i];
 		*numReturnedLocs++;
 	}

@@ -23,24 +23,18 @@
 
 // TODO: ADD YOUR OWN STRUCTS HERE
 
-struct hunterView
+typedef struct hunterView
 {
-	// TODO: ADD FIELDS HERE
-};
+	GameView super;
+	PlaceId *knownTraps;
+} hunterView;
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
 HunterView HvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	HunterView new = malloc(sizeof(*new));
-	if (new == NULL)
-	{
-		fprintf(stderr, "Couldn't allocate HunterView!\n");
-		exit(EXIT_FAILURE);
-	}
-
+	HunterView new = (void *)GvNew(pastPlays, messages);
 	return new;
 }
 
@@ -85,8 +79,15 @@ PlaceId HvGetPlayerLocation(HunterView hv, Player player)
 
 PlaceId HvGetVampireLocation(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	int location = GvGetVampireLocation((GameView)hv);
+
+	if (location == NOWHERE)
+		return NOWHERE;
+
+	// if (location in hv->knownTraps)
+	// 	return location;
+	// else
+	return CITY_UNKNOWN;
 }
 
 ////////////////////////////////////////////////////////////////////////
