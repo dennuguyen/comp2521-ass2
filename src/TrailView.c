@@ -11,6 +11,8 @@ typedef struct trailNode
 {
     PlaceId location;
     bool isVampire;
+    bool isEncountered;
+    bool isResearched;
     TrailNode next;
 } trailNode;
 
@@ -76,7 +78,7 @@ void TvFree(TrailView q)
 }
 
 /**
- * Enqueue a trap to the queue given location and isVampire arguments.
+ * Enqueue a trail to the queue given location and isVampire arguments.
  */
 void TvEnqueue(TrailView q, PlaceId location, bool isVampire)
 {
@@ -93,7 +95,7 @@ void TvEnqueue(TrailView q, PlaceId location, bool isVampire)
 }
 
 /**
- * Dequere a trap from the queue.
+ * Dequere a trail from the queue.
  */
 TrailNode TvDequeue(TrailView q)
 {
@@ -113,8 +115,8 @@ TrailNode TvDequeue(TrailView q)
 }
 
 /**
- * Removes a trap from the queue. If there exists multiple traps with the same
- * location, the oldest trap is removed.
+ * Removes a trail from the queue. If there exists multiple traps with the same
+ * location, the oldest trail is removed.
  */
 TrailNode TvRemove(TrailView q, PlaceId location)
 {
@@ -170,9 +172,9 @@ void TvShow(TrailView q)
 }
 
 /**
- * Get the trap locations from queue. This excludes the vampire location.
+ * Get the trail locations from queue. This excludes the vampire location.
  */
-PlaceId *TvGetTrapLocations(TrailView q, int *numTraps)
+PlaceId *TvGetTrailLocations(TrailView q, int *numTraps)
 {
     *numTraps = 0;
     PlaceId *trapArray = malloc(TRAIL_SIZE * sizeof(int));

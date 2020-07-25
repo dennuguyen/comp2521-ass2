@@ -18,7 +18,7 @@ void TvFree(TrailView q);
 void TvEnqueue(TrailView q, PlaceId location, bool isVampire);
 TrailNode TvDequeue(TrailView q);
 TrailNode TvRemove(TrailView q, PlaceId location);
-PlaceId *TvGetTrapLocations(TrailView q, int *numTraps);
+PlaceId *TvGetTrailLocations(TrailView q, int *numTraps);
 PlaceId TvGetVampireLocation(TrailView q);
 
 #endif // FOD__TRAP_VIEW_H_
