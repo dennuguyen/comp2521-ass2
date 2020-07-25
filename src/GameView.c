@@ -13,29 +13,14 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Game.h"
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
-
-typedef struct playerView *PlayerView;
-typedef struct trapView *TrapView;
-
-typedef struct playerView
-{
-	Player player;
-	int health;
-	PlaceId *moveHistory;
-	PlaceId *locationHistory; // locationHistory would include current location
-} playerView;
-
-typedef struct trapView
-{
-	PlaceId location;
-	bool isVampire;
-	TrapView next;
-} trapView;
+#include "PlayerView.h"
+#include "TrapView.h"
 
 typedef struct gameView
 {
@@ -43,62 +28,59 @@ typedef struct gameView
 	Map map;
 	Round currentRound;
 	Player currentPlayer;
-	TrapView trapLocations;			// linked list of encounters
-	PlayerView player[NUM_PLAYERS]; // enum is actually int
+	TrapView trapLocations;			// TrapView queue
+	PlayerView player[NUM_PLAYERS]; // PlayerView array
 } gameView;
 
 ////////////////////////////////////////////////////////////////////////
 // Static
 
-// static char *messageParser(Message message)
-// {
-// }
-
-// static char *pastPlaysParser(Message message)
-// {
-// }
-
-static void *PvNew()
+/**
+ * Parse through each char of play string which is 7 char long
+ */
+static void interpretPlay(GameView gv, char *play)
 {
-	PlayerView new = malloc(sizeof(playerView));
-	if (new == NULL)
+	for (int i = 0; i < 7; i++)
 	{
-		fprintf(stderr, "Couldn't allocate PlayerView!\n");
-		exit(EXIT_FAILURE);
+		// char c = play[i]; // depending on what c is, change the gv struct
 	}
-
-	new->player = PLAYER_LORD_GODALMING;
-	new->health = GAME_START_HUNTER_LIFE_POINTS;
-
-	return new;
 }
+// static char *messageParser(Message message);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
 GameView GvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(gameView));
 	if (new == NULL)
 	{
-		fprintf(stderr, "Couldn't allocate GameView!\n");
+		fprintf(stderr, "ERROR: Could not allocate memory for GameView\n");
 		exit(EXIT_FAILURE);
 	}
 
-	for (int i = 0; i < NUM_PLAYERS; i++)
-		new->player[i] = PvNew();
-
 	new->score = GAME_START_SCORE;
+	new->map = MapNew();
+	new->currentRound = 0;
+	new->currentPlayer = PLAYER_LORD_GODALMING;
+	new->trapLocations = TvNew();
+	for (int i = 0; i < NUM_PLAYERS; i++)
+		new->player[i] = PvNew(i);
 
-	// PARSE pastPlayers and messages[]
+	// Each move in pastPlayers is separated by a space
+	const char *delimiter = " ";
+	for (char *play = strtok(pastPlays, delimiter); play != NULL; play = strtok(NULL, delimiter))
+		interpretPlay(new, play);
 
 	return new;
 }
 
 void GvFree(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	MapFree(gv->map);
+	TvFree(gv->trapLocations);
+	for (int i = 0; i < NUM_PLAYERS; i++)
+		PvFree(gv->player[i]);
 	free(gv);
 }
 
@@ -122,36 +104,22 @@ int GvGetScore(GameView gv)
 
 int GvGetHealth(GameView gv, Player player)
 {
-	return gv->player[player]->health;
+	return PvGetHealth(gv->player[player]);
 }
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-	return gv->player[player]->locationHistory[gv->currentRound];
+	return PvGetLocationHistory(gv->player[player])[gv->currentRound];
 }
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	TrapView curr = gv->trapLocations;
-	while (curr != NULL) {
-		if (curr->isVampire) return curr->location;
-		curr = curr->next;
-	}
-	return NOWHERE;
+	return TvGetVampireLocation(gv->trapLocations);
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
-	*numTraps = 0;
-	PlaceId *traps = malloc(6*sizeof(int));
-	TrapView curr = gv->trapLocations;
-	int i = 0;
-	while (curr != NULL) {
-		if (!curr->isVampire) traps[i] = curr->location;
-		i++;
-		*numTraps++;
-	}
-	return traps;
+	return TvGetTrapLocations(gv->trapLocations, numTraps);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -164,6 +132,7 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	*numReturnedMoves = gv->currentRound;
 	*canFree = false;
 	return gv->player[player]->moveHistory;
+	//return PvGetMoves(gv->player[player], gv->currentRound, numReturnedMoves, canFree);
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
@@ -173,13 +142,13 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 	int j = 0;
 	*canFree = true;
 	return lastMoves;
+	//return PvGetMoves(gv->player[player], numMoves, numReturnedMoves, canFree);
 }
 
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
 							  int *numReturnedLocs, bool *canFree)
 {
-	*canFree = false;
-	return gv->player[player]->locationHistory;
+	return PvGetLocations(gv->player[player], gv->currentRound, numReturnedLocs, canFree);
 }
 
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
@@ -194,6 +163,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 	}
 	*canFree = true;
 	return lastLocs;
+	//return PvGetLocations(gv->player[player], numLocs, numReturnedLocs, canFree);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -218,5 +188,3 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
-
-// TODO
