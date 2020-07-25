@@ -160,6 +160,8 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
 						  int *numReturnedMoves, bool *canFree)
 {
+	
+	*numReturnedMoves = gv->currentRound;
 	*canFree = false;
 	return gv->player[player]->moveHistory;
 }
@@ -168,12 +170,7 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 						int *numReturnedMoves, bool *canFree)
 {
 	PlaceId *lastMoves = malloc(numMoves * sizeof(PlaceId));
-	*numReturnedMoves = 0;
 	int j = 0;
-	for (int i = gv->currentRound; i > gv->currentRound - numMoves && i > 0; i--) {
-		lastMoves[j] = gv->player[player]->moveHistory[i];
-		*numReturnedMoves++;
-	}
 	*canFree = true;
 	return lastMoves;
 }
@@ -191,7 +188,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 	PlaceId *lastLocs = malloc(numLocs * sizeof(PlaceId));
 	*numReturnedLocs = 0;
 	int j = 0;
-	for (int i = gv->currentRound; i > gv->currentRound - numLocs; i--) {
+	for (int i = gv->currentRound; i > gv->currentRound - numLocs && i > 0; i--) {
 		lastLocs[j] = gv->player[player]->locationHistory[i];
 		*numReturnedLocs++;
 	}
