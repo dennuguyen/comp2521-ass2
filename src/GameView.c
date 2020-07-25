@@ -19,8 +19,24 @@
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
-#include "PlayerView.h"
-#include "TrapView.h"
+
+typedef struct placeView *PlaceView;
+typedef struct playerView *PlayerView;
+
+typedef struct placeView
+{
+	PlaceId id;
+	bool isVampire;
+	bool isEncountered;
+	bool isResearched;
+} placeView;
+
+typedef struct playerView
+{
+	Player player;
+	int health;
+	PlaceView *moveHistory;
+} playerView;
 
 typedef struct gameView
 {
@@ -28,12 +44,36 @@ typedef struct gameView
 	Map map;
 	Round currentRound;
 	Player currentPlayer;
-	TrapView trapLocations;			// TrapView queue
-	PlayerView player[NUM_PLAYERS]; // PlayerView array
+	PlayerView player[NUM_PLAYERS];
 } gameView;
 
 ////////////////////////////////////////////////////////////////////////
 // Static
+
+PlayerView PvNew(Player player)
+{
+	PlayerView new = malloc(sizeof(playerView));
+	if (new == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory for PlayerView\n");
+		exit(EXIT_FAILURE);
+	}
+
+	new->player = player;
+	new->moveHistory = NULL;
+
+	if (player == PLAYER_DRACULA)
+		new->health = GAME_START_BLOOD_POINTS;
+	else
+		new->health = GAME_START_HUNTER_LIFE_POINTS;
+
+	return new;
+}
+
+static PlaceView *getPlaces(PlayerView pv, int numMoves)
+{
+	return last numMoves for pv;
+}
 
 /**
  * Parse through each char of play string which is 7 char long
@@ -63,7 +103,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 	new->map = MapNew();
 	new->currentRound = 0;
 	new->currentPlayer = PLAYER_LORD_GODALMING;
-	new->trapLocations = TvNew();
 	for (int i = 0; i < NUM_PLAYERS; i++)
 		new->player[i] = PvNew(i);
 
@@ -78,8 +117,11 @@ GameView GvNew(char *pastPlays, Message messages[])
 void GvFree(GameView gv)
 {
 	MapFree(gv->map);
-	TvFree(gv->trapLocations);
-	free(gv->player);
+	for (int i = 0; i < NUM_PLAYERS; i++)
+	{
+		free(gv->player[i]->moveHistory);
+		free(gv->player[i]);
+	}
 	free(gv);
 }
 
@@ -108,17 +150,21 @@ int GvGetHealth(GameView gv, Player player)
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-	return gv->player[player]->locationHistory[gv->currentRound];
+	return getPlaces(gv->player[player], 1)[0];
 }
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	return TvGetVampireLocation(gv->trapLocations);
+	PlaceView places = getPlaces(gv->player[PLAYER_DRACULA], 6);
+	for (int i = 0; i < 6; i++)
+		if (places->isVampire)
+			return places->id;
+	return CITY_UNKNOWN
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
-	return TvGetTrapLocations(gv->trapLocations, numTraps);
+	return getPlaces(gv->player[PLAYER_DRACULA], numTraps);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -127,45 +173,34 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
 						  int *numReturnedMoves, bool *canFree)
 {
-	*canFree = false;
-	return gv->player[player]->moveHistory;
+	return GvGetLastMoves(gv, player, gv->currentRound, numReturnedMoves, canFree);
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 						int *numReturnedMoves, bool *canFree)
 {
-	PlaceId *lastMoves = malloc(numMoves * sizeof(PlaceId));
-	*numReturnedMoves = 0;
-	int j = 0;
-	for (int i = gv->currentRound; i > gv->currentRound - numMoves && i > 0; i--)
-	{
-		lastMoves[j] = gv->player[player]->moveHistory[i];
-		numReturnedMoves++;
-	}
-	*canFree = true;
-	return lastMoves;
+	PlaceView *places = getPlaces(gv->player[player], numMoves);
+	PlaceId *locations;
 }
 
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
 							  int *numReturnedLocs, bool *canFree)
 {
-	*canFree = false;
-	return gv->player[player]->locationHistory;
+	return GvGetLastLocations(gv, player, gv->currentRound, numReturnedLocs, canFree);
 }
 
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 							int *numReturnedLocs, bool *canFree)
 {
-	PlaceId *lastLocs = malloc(numLocs * sizeof(PlaceId));
-	*numReturnedLocs = 0;
-	int j = 0;
-	for (int i = gv->currentRound; i > gv->currentRound - numLocs; i--)
-	{
-		lastLocs[j] = gv->player[player]->locationHistory[i];
-		numReturnedLocs++;
-	}
-	*canFree = true;
-	return lastLocs;
+	PlaceId *locations = getPlaces(gv->player[player], numLocs);
+
+	if (player == PLAYER_DRACULA)
+		return locations;
+
+	// for each location in locations
+	// 	if location != knownTrail
+	// 		location = UNKNOWN
+	// return locations;
 }
 
 ////////////////////////////////////////////////////////////////////////
