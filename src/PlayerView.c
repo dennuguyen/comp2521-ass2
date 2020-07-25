@@ -121,6 +121,7 @@ int PvGetHealth(PlayerView pv)
  */
 PlaceId *PvGetMoves(PlayerView pv, int numMoves, int *numReturnedMoves, bool *canFree)
 {
+    return 0;
 }
 
 /**
@@ -128,6 +129,7 @@ PlaceId *PvGetMoves(PlayerView pv, int numMoves, int *numReturnedMoves, bool *ca
  */
 PlaceId *PvGetLocations(PlayerView pv, int numLocs, int *numReturnedLocs, bool *canFree)
 {
+    return 0;
 }
 
 /**

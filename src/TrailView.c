@@ -1,11 +1,11 @@
 /**
- * TrapView ADT is implemented to utilise getters and have queue implementation.
+ * TrailView ADT is implemented to utilise getters and have queue implementation.
  */
 
 #include <stdio.h>
 
 #include "Game.h"
-#include "TrapView.h"
+#include "TrailView.h"
 
 typedef struct trapNode
 {
@@ -14,11 +14,11 @@ typedef struct trapNode
     TrapNode next;
 } trapNode;
 
-typedef struct trapView
+typedef struct trailView
 {
     TrapNode head;
     TrapNode tail;
-} trapView;
+} trailView;
 
 /**
  * Create TrapNode.
@@ -40,14 +40,14 @@ static TrapNode TvNewNode(PlaceId location, bool isVampire)
 }
 
 /**
- * Create new TrapView.
+ * Create new TrailView.
  */
-TrapView TvNew()
+TrailView TvNew()
 {
-    TrapView new = malloc(sizeof(trapView));
+    TrailView new = malloc(sizeof(trailView));
     if (new == NULL)
     {
-        fprintf(stderr, "ERROR: could not allocate memory for TrapView\n");
+        fprintf(stderr, "ERROR: could not allocate memory for TrailView\n");
         exit(1);
     }
 
@@ -57,9 +57,9 @@ TrapView TvNew()
 }
 
 /**
- * Free TrapView and TrapNodes.
+ * Free TrailView and TrapNodes.
  */
-void TvFree(TrapView q)
+void TvFree(TrailView q)
 {
     if (q == NULL || q->head == NULL)
         return;
@@ -78,7 +78,7 @@ void TvFree(TrapView q)
 /**
  * Enqueue a trap to the queue given location and isVampire arguments.
  */
-void TvEnqueue(TrapView q, PlaceId location, bool isVampire)
+void TvEnqueue(TrailView q, PlaceId location, bool isVampire)
 {
     if (q == NULL || q->head == NULL)
         return;
@@ -95,7 +95,7 @@ void TvEnqueue(TrapView q, PlaceId location, bool isVampire)
 /**
  * Dequere a trap from the queue.
  */
-TrapNode TvDequeue(TrapView q)
+TrapNode TvDequeue(TrailView q)
 {
     if (q == NULL || q->head == NULL)
         return NULL;
@@ -116,7 +116,7 @@ TrapNode TvDequeue(TrapView q)
  * Removes a trap from the queue. If there exists multiple traps with the same
  * location, the oldest trap is removed.
  */
-TrapNode TvRemove(TrapView q, PlaceId location)
+TrapNode TvRemove(TrailView q, PlaceId location)
 {
     if (q == NULL || q->head == NULL)
         return NULL;
@@ -139,9 +139,9 @@ TrapNode TvRemove(TrapView q, PlaceId location)
 }
 
 /**
- * Check if TrapView is empty.
+ * Check if TrailView is empty.
  */
-bool TvIsEmpty(TrapView q)
+bool TvIsEmpty(TrailView q)
 {
     return q->head == NULL;
 }
@@ -149,7 +149,7 @@ bool TvIsEmpty(TrapView q)
 /**
  * Show the queue.
  */
-void TvShow(TrapView q)
+void TvShow(TrailView q)
 {
     if (q == NULL || q->head == NULL)
         return;
@@ -172,7 +172,7 @@ void TvShow(TrapView q)
 /**
  * Get the trap locations from queue. This excludes the vampire location.
  */
-PlaceId *TvGetTrapLocations(TrapView q, int *numTraps)
+PlaceId *TvGetTrapLocations(TrailView q, int *numTraps)
 {
     *numTraps = 0;
     PlaceId *trapArray = malloc(TRAIL_SIZE * sizeof(int));
@@ -199,7 +199,7 @@ PlaceId *TvGetTrapLocations(TrapView q, int *numTraps)
 /**
  * Get the vampire location from queue.
  */
-PlaceId TvGetVampireLocation(TrapView q)
+PlaceId TvGetVampireLocation(TrailView q)
 {
     if (q == NULL || q->head == NULL)
         return NOWHERE;
