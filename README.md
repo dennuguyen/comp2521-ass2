@@ -8,7 +8,7 @@ Important Notice: You must not modify any of the provided function signatures in
 **dan-jack-vi-jamie**\
 dennuguyen, Dan Nguyen, z5206032, W13B\
 vii-le, Vi Le, z5205798, H13B\ 
-jamie-rahme, Jamie Rahme, z5209611, T15A
+jamie-rahme, Jamie Rahme, z5209611, T15A\
 
 ### Glossary
 GV = game view\
