@@ -37,6 +37,15 @@ typedef struct gameView
 
 /**
  * Parse through each char of play string which is 7 char long
+ * 		e.g. ABBCCCD
+ * 			A: 	'G', 'S', 'H', 'M', 'D', represents the player
+ * 			B: 	'LO', location to move to
+ * 				'C?', city unknown
+ * 			C: 	'T', Dracula places trap or hunter encounters trap;
+ * 				'V', Dracula places vampire or hunter encounters vampire
+ * 				'D', Hunter encounters Dracula
+ * 			D:
+ * 
  */
 static void interpretPlay(GameView gv, char *play)
 {
