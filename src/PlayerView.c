@@ -119,8 +119,9 @@ int PvGetHealth(PlayerView pv)
 /**
  * Return last numMoves moves.
  */
-PlaceId *PvGetMoves(PlayerView pv, int numMoves, int *numReturnedMoves, bool *canFree)
+PlaceId *PvGetMoves(PlayerView pv, int first)
 {
+    return pv->moveHistory[first];
 }
 
 /**

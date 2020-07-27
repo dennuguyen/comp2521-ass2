@@ -127,27 +127,26 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
 						  int *numReturnedMoves, bool *canFree)
-{
-	
-	*numReturnedMoves = gv->currentRound;
+{	
 	*canFree = false;
-	return gv->player[player]->moveHistory;
-	//return PvGetMoves(gv->player[player], gv->currentRound, numReturnedMoves, canFree);
+	*numReturnedMoves = gv->currentRound;
+	int first = 0;
+	return PVGetMoves(gv->player[player], first);
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 						int *numReturnedMoves, bool *canFree)
 {
-	PlaceId *lastMoves = malloc(numMoves * sizeof(PlaceId));
-	int j = 0;
-	*canFree = true;
-	return lastMoves;
-	//return PvGetMoves(gv->player[player], numMoves, numReturnedMoves, canFree);
+	*canFree = false;
+	*numReturnedMoves = (numMoves > currentRound) ? gv->currentRound : numMoves;
+	int first = gv->currentRound - numMoves;
+	return PVGetMoves(gv->player[player], first);
 }
 
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
 							  int *numReturnedLocs, bool *canFree)
 {
+	if (player != DRACULA) { return GvGetMoveHistory(gv, player, numReturnedMoves, canFree); }
 	return PvGetLocations(gv->player[player], gv->currentRound, numReturnedLocs, canFree);
 }
 
