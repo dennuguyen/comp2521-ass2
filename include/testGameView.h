@@ -18,6 +18,7 @@ void testGvFree();
 void testGvGetRound();
 void testGvGetPlayer();
 void testGvGetScore();
+void testGvGetHealth();
 
 // Integration Testing
 void testGv();
