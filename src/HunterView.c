@@ -57,7 +57,7 @@ int HvGetScore(HunterView hv)
 
 int HvGetHealth(HunterView hv, Player player)
 {
-	return GvGetHealth((GameView)hv);
+	return GvGetHealth((GameView)hv, player);
 }
 
 PlaceId HvGetPlayerLocation(HunterView hv, Player player)
@@ -67,15 +67,7 @@ PlaceId HvGetPlayerLocation(HunterView hv, Player player)
 
 PlaceId HvGetVampireLocation(HunterView hv)
 {
-	int location = GvGetVampireLocation((GameView)hv);
-
-	if (location == NOWHERE)
-		return NOWHERE;
-
-	// if (location in hv->knownTraps)
-	// 	return location;
-	// else
-	return CITY_UNKNOWN;
+	return GvGetVampireLocation((GameView)hv);
 }
 
 ////////////////////////////////////////////////////////////////////////
