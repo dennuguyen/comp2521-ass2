@@ -17,10 +17,6 @@
 #include "DraculaView.h"
 #include "Game.h"
 #include "GameView.h"
-#include "Map.h"
-// add your own #includes here
-
-// TODO: ADD YOUR OWN STRUCTS HERE
 
 struct draculaView
 {
@@ -38,8 +34,7 @@ DraculaView DvNew(char *pastPlays, Message messages[])
 
 void DvFree(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	free(dv);
+	GvFree((GameView)dv);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -67,15 +62,12 @@ PlaceId DvGetPlayerLocation(DraculaView dv, Player player)
 
 PlaceId DvGetVampireLocation(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	return GvGetVampireLocation((GameView)(dv));
 }
 
 PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numTraps = 0;
-	return NULL;
+	return GvGetTrapLocations((GameView)dv, numTraps);
 }
 
 ////////////////////////////////////////////////////////////////////////

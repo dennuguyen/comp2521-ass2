@@ -21,6 +21,7 @@ int main(void)
 	testGvGetPlayer();
 	testGvGetScore();
 	testGvGetHealth();
+	testGvGetPlayerLocation();
 	testGv();
 	return EXIT_SUCCESS;
 }

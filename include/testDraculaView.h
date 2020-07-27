@@ -19,6 +19,8 @@ void testDvGetRound();
 void testDvGetScore();
 void testDvGetHealth();
 void testDvGetPlayerLocation();
+void testDvGetVampireLocation();
+void testDvGetTrapLocations();
 
 // Integration Testing
 void testDv();
