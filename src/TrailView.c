@@ -6,6 +6,7 @@
 
 #include "Game.h"
 #include "TrailView.h"
+#include "Places.h"
 
 typedef struct trailNode
 {
@@ -217,20 +218,22 @@ PlaceId TvGetVampireLocation(TrailView q)
     return NOWHERE;
 }
 
-static int getSize(TrailNode head) {
+static int getSizeList(TrailNode head) {
     if (head == NULL) return 0; 
     return getSize(head->next) + 1; 
 } 
 
 PlaceId *TvGetDiscoveredLocations(Trailview q)
 {
-    PlaceId *discoveredLocations = malloc(getSize(q->head)*sizeof(PlaceId));
+    PlaceId *discoveredLocations = malloc(getSizeList(q->head)*sizeof(PlaceId));
     TrailNode curr = q->head;
     for (int i = 0; curr != NULL; i++) {
         if (curr->isResearched || curr->isEncountered) {
             discoveredLocations[i] = curr->location;
-        } else {
+        } else if (placeIdToType(curr->location) == CITY) {
             discoveredLocations[i] = CITY_UNKNOWN;
+        } else {
+            discoveredLocations[i] = SEA_UNKNOWN;
         }
         curr = curr->next;
     }
