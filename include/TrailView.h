@@ -20,5 +20,6 @@ TrailNode TvDequeue(TrailView q);
 TrailNode TvRemove(TrailView q, PlaceId location);
 PlaceId *TvGetTrailLocations(TrailView q, int *numTraps);
 PlaceId TvGetVampireLocation(TrailView q);
+PlaceId *TvGetDiscoveredLocations(Trailview q);
 
 #endif // FOD__TRAP_VIEW_H_

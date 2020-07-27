@@ -216,3 +216,23 @@ PlaceId TvGetVampireLocation(TrailView q)
 
     return NOWHERE;
 }
+
+static int getSize(TrailNode head) {
+    if (head == NULL) return 0; 
+    return getSize(head->next) + 1; 
+} 
+
+PlaceId *TvGetDiscoveredLocations(Trailview q)
+{
+    PlaceId *discoveredLocations = malloc(getSize(q->head)*sizeof(PlaceId));
+    TrailNode curr = q->head;
+    for (int i = 0; curr != NULL; i++) {
+        if (curr->isResearched || curr->isEncountered) {
+            discoveredLocations[i] = curr->location;
+        } else {
+            discoveredLocations[i] = CITY_UNKNOWN;
+        }
+        curr = curr->next;
+    }
+    return discoveredLocations;
+}
