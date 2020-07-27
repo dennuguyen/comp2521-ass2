@@ -17,6 +17,7 @@ void testGvNew();
 void testGvFree();
 void testGvGetRound();
 void testGvGetPlayer();
+void testGvGetScore();
 
 // Integration Testing
 void testGv();

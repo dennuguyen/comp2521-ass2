@@ -26,7 +26,7 @@ static void testGvNew1()
     assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == NOWHERE);
     // assert(GvGetVampireLocation(gv) == NOWHERE);
 
-    printf("Test passed!\n");
+    printf("\tTest passed!\n");
 }
 
 /**
