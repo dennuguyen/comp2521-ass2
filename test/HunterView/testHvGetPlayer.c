@@ -1,90 +1,90 @@
-#include "testGameView.h"
+#include "testHunterView.h"
 
-static void testGvGetRound1();
-static void testGvGetRound2();
-static void testGvGetRound3();
-static void testGvGetRound4();
-static void testGvGetRound5();
+static void testHvGetPlayer1();
+static void testHvGetPlayer2();
+static void testHvGetPlayer3();
+static void testHvGetPlayer4();
+static void testHvGetPlayer5();
 
-void testGvGetRound()
+void testHvGetPlayer()
 {
-    printf("Testing GvGetRound...\n");
+    printf("Testing HvGetPlayer...\n");
 
-    testGvGetRound1();
-    testGvGetRound2();
-    testGvGetRound3();
-    testGvGetRound4();
-    testGvGetRound5();
+    testHvGetPlayer1();
+    testHvGetPlayer2();
+    testHvGetPlayer3();
+    testHvGetPlayer4();
+    testHvGetPlayer5();
 
-    printf("GvGetRound tests passed!\n\n");
+    printf("HvGetPlayer tests passed!\n\n");
 }
 
 /**
  * Test initialisation on empty string
  */
-static void testGvGetRound1()
+static void testHvGetPlayer1()
 {
     char *trail = "";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    HunterView hv = HvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 0);
+    assert(HvGetPlayer(hv) == PLAYER_LORD_GODALMING);
 
-    GvFree(gv);
+    HvFree(hv);
     printf("\tTest 1 passed!\n");
 }
 
 /**
  * Test in middle of a round
  */
-static void testGvGetRound2()
+static void testHvGetPlayer2()
 {
     char *trail = "GSW.... SLS....";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    HunterView hv = HvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 0);
+    assert(HvGetPlayer(hv) == PLAYER_VAN_HELSING);
 
-    GvFree(gv);
+    HvFree(hv);
     printf("\tTest 2 passed!\n");
 }
 
 /**
  * Test at end of round
  */
-static void testGvGetRound3()
+static void testHvGetPlayer3()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V..";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    HunterView hv = HvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 0);
+    assert(HvGetPlayer(hv) == PLAYER_LORD_GODALMING);
 
-    GvFree(gv);
+    HvFree(hv);
     printf("\tTest 3 passed!\n");
 }
 
 /**
  * Test small number of rounds
  */
-static void testGvGetRound4()
+static void testHvGetPlayer4()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL...."
                   "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR...."
                   "DKLT... GLV....";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    HunterView hv = HvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 3);
+    assert(HvGetPlayer(hv) == PLAYER_DR_SEWARD);
 
-    GvFree(gv);
+    HvFree(hv);
     printf("\tTest 4 passed!\n");
 }
 
 /**
  * Test large number of rounds
  */
-static void testGvGetRound5()
+static void testHvGetPlayer5()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL...."
                   "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR...."
@@ -108,10 +108,10 @@ static void testGvGetRound5()
                   "MKLD... DBC.V.. GBD.... SBE.... HGA.... MBCVD.. DSOT..."
                   "GSZ.... SSOTD.. HBC.... MSOD...";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    HunterView hv = HvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 28);
+    assert(HvGetPlayer(hv) == PLAYER_DRACULA);
 
-    GvFree(gv);
+    HvFree(hv);
     printf("\tTest 5 passed!\n");
 }

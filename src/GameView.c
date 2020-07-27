@@ -77,6 +77,15 @@ static PlaceView *getPlaces(PlayerView pv, int numMoves)
 
 /**
  * Parse through each char of play string which is 7 char long
+ * 		e.g. ABBCCCD
+ * 			A: 	'G', 'S', 'H', 'M', 'D', represents the player
+ * 			B: 	'LO', location to move to
+ * 				'C?', city unknown
+ * 			C: 	'T', Dracula places trap or hunter encounters trap;
+ * 				'V', Dracula places vampire or hunter encounters vampire
+ * 				'D', Hunter encounters Dracula
+ * 			D:
+ * 
  */
 static void interpretPlay(GameView gv, char *play)
 {
@@ -145,12 +154,14 @@ int GvGetScore(GameView gv)
 
 int GvGetHealth(GameView gv, Player player)
 {
-	return gv->player[player]->health;
+	return PvGetHealth(gv->player[player]);
 }
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-	return getPlaces(gv->player[player], 1)[0];
+	int *numReturnedLocs = 0;
+	bool *canFree = false;
+	return PvGetLocations(gv->player[player], 1, numReturnedLocs, canFree)[0];
 }
 
 PlaceId GvGetVampireLocation(GameView gv)
@@ -159,7 +170,7 @@ PlaceId GvGetVampireLocation(GameView gv)
 	for (int i = 0; i < 6; i++)
 		if (places->isVampire)
 			return places->id;
-	return CITY_UNKNOWN
+	return CITY_UNKNOWN;
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)

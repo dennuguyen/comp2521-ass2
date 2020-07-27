@@ -1,90 +1,90 @@
-#include "testGameView.h"
+#include "testDraculaView.h"
 
-static void testGvGetRound1();
-static void testGvGetRound2();
-static void testGvGetRound3();
-static void testGvGetRound4();
-static void testGvGetRound5();
+static void testDvGetVampireLocation1();
+static void testDvGetVampireLocation2();
+static void testDvGetVampireLocation3();
+static void testDvGetVampireLocation4();
+static void testDvGetVampireLocation5();
 
-void testGvGetRound()
+void testDvGetVampireLocation()
 {
-    printf("Testing GvGetRound...\n");
+    printf("Testing DvGetVampireLocation...\n");
 
-    testGvGetRound1();
-    testGvGetRound2();
-    testGvGetRound3();
-    testGvGetRound4();
-    testGvGetRound5();
+    testDvGetVampireLocation1();
+    testDvGetVampireLocation2();
+    testDvGetVampireLocation3();
+    testDvGetVampireLocation4();
+    testDvGetVampireLocation5();
 
-    printf("GvGetRound tests passed!\n\n");
+    printf("DvGetVampireLocation tests passed!\n\n");
 }
 
 /**
  * Test initialisation on empty string
  */
-static void testGvGetRound1()
+static void testDvGetVampireLocation1()
 {
     char *trail = "";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    DraculaView dv = DvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 0);
+    assert(DvGetVampireLocation(dv) == NOWHERE);
 
-    GvFree(gv);
+    DvFree(dv);
     printf("\tTest 1 passed!\n");
 }
 
 /**
  * Test in middle of a round
  */
-static void testGvGetRound2()
+static void testDvGetVampireLocation2()
 {
     char *trail = "GSW.... SLS....";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    DraculaView dv = DvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 0);
+    assert(DvGetVampireLocation(dv) == NOWHERE);
 
-    GvFree(gv);
+    DvFree(dv);
     printf("\tTest 2 passed!\n");
 }
 
 /**
  * Test at end of round
  */
-static void testGvGetRound3()
+static void testDvGetVampireLocation3()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V..";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    DraculaView dv = DvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 0);
+    assert(DvGetVampireLocation(dv) == SARAJEVO);
 
-    GvFree(gv);
+    DvFree(dv);
     printf("\tTest 3 passed!\n");
 }
 
 /**
  * Test small number of rounds
  */
-static void testGvGetRound4()
+static void testDvGetVampireLocation4()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL...."
                   "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR...."
                   "DKLT... GLV....";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    DraculaView dv = DvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 3);
+    assert(DvGetVampireLocation(dv) == SARAJEVO);
 
-    GvFree(gv);
+    DvFree(dv);
     printf("\tTest 4 passed!\n");
 }
 
 /**
  * Test large number of rounds
  */
-static void testGvGetRound5()
+static void testDvGetVampireLocation5()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL...."
                   "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR...."
@@ -108,10 +108,10 @@ static void testGvGetRound5()
                   "MKLD... DBC.V.. GBD.... SBE.... HGA.... MBCVD.. DSOT..."
                   "GSZ.... SSOTD.. HBC.... MSOD...";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    DraculaView dv = DvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 28);
+    assert(DvGetVampireLocation(dv) == NOWHERE);
 
-    GvFree(gv);
+    DvFree(dv);
     printf("\tTest 5 passed!\n");
 }

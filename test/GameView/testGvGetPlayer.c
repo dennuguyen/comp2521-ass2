@@ -1,34 +1,34 @@
 #include "testGameView.h"
 
-static void testGvGetRound1();
-static void testGvGetRound2();
-static void testGvGetRound3();
-static void testGvGetRound4();
-static void testGvGetRound5();
+static void testGvGetPlayer1();
+static void testGvGetPlayer2();
+static void testGvGetPlayer3();
+static void testGvGetPlayer4();
+static void testGvGetPlayer5();
 
-void testGvGetRound()
+void testGvGetPlayer()
 {
-    printf("Testing GvGetRound...\n");
+    printf("Testing GvGetPlayer...\n");
 
-    testGvGetRound1();
-    testGvGetRound2();
-    testGvGetRound3();
-    testGvGetRound4();
-    testGvGetRound5();
+    testGvGetPlayer1();
+    testGvGetPlayer2();
+    testGvGetPlayer3();
+    testGvGetPlayer4();
+    testGvGetPlayer5();
 
-    printf("GvGetRound tests passed!\n\n");
+    printf("GvGetPlayer tests passed!\n\n");
 }
 
 /**
  * Test initialisation on empty string
  */
-static void testGvGetRound1()
+static void testGvGetPlayer1()
 {
     char *trail = "";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 0);
+    assert(GvGetPlayer(gv) == PLAYER_LORD_GODALMING);
 
     GvFree(gv);
     printf("\tTest 1 passed!\n");
@@ -37,13 +37,13 @@ static void testGvGetRound1()
 /**
  * Test in middle of a round
  */
-static void testGvGetRound2()
+static void testGvGetPlayer2()
 {
     char *trail = "GSW.... SLS....";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 0);
+    assert(GvGetPlayer(gv) == PLAYER_VAN_HELSING);
 
     GvFree(gv);
     printf("\tTest 2 passed!\n");
@@ -52,13 +52,13 @@ static void testGvGetRound2()
 /**
  * Test at end of round
  */
-static void testGvGetRound3()
+static void testGvGetPlayer3()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V..";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 0);
+    assert(GvGetPlayer(gv) == PLAYER_LORD_GODALMING);
 
     GvFree(gv);
     printf("\tTest 3 passed!\n");
@@ -67,7 +67,7 @@ static void testGvGetRound3()
 /**
  * Test small number of rounds
  */
-static void testGvGetRound4()
+static void testGvGetPlayer4()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL...."
                   "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR...."
@@ -75,7 +75,7 @@ static void testGvGetRound4()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 3);
+    assert(GvGetPlayer(gv) == PLAYER_DR_SEWARD);
 
     GvFree(gv);
     printf("\tTest 4 passed!\n");
@@ -84,7 +84,7 @@ static void testGvGetRound4()
 /**
  * Test large number of rounds
  */
-static void testGvGetRound5()
+static void testGvGetPlayer5()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL...."
                   "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR...."
@@ -110,7 +110,7 @@ static void testGvGetRound5()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 28);
+    assert(GvGetPlayer(gv) == PLAYER_DRACULA);
 
     GvFree(gv);
     printf("\tTest 5 passed!\n");

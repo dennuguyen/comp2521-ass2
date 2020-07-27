@@ -24,10 +24,9 @@ static void testGvNew1()
     assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == GAME_START_HUNTER_LIFE_POINTS);
     assert(GvGetHealth(gv, PLAYER_DRACULA) == GAME_START_BLOOD_POINTS);
     assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == NOWHERE);
-    assert(GvGetVampireLocation(gv) == NOWHERE);
+    // assert(GvGetVampireLocation(gv) == NOWHERE);
 
-    GvFree(gv);
-    printf("Test passed!\n");
+    printf("\tTest passed!\n");
 }
 
 /**
