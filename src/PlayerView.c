@@ -53,16 +53,16 @@ static Array PvNewArray(size_t size)
 /**
  * Insert a place into an Array.
  */
-static void PvInsertArray(Array arr, PlaceId place)
-{
-    if (arr->used == arr->size)
-    {
-        arr->size += ARRAY_SIZE;
-        arr->history = realloc(arr->history, arr->size * sizeof(PlaceId));
-    }
+// static void PvInsertArray(Array arr, PlaceId place)
+// {
+//     if (arr->used == arr->size)
+//     {
+//         arr->size += ARRAY_SIZE;
+//         arr->history = realloc(arr->history, arr->size * sizeof(PlaceId));
+//     }
 
-    arr->history[arr->used++] = place;
-}
+//     arr->history[arr->used++] = place;
+// }
 
 /**
  * Create new PlayerView.
@@ -119,9 +119,10 @@ int PvGetHealth(PlayerView pv)
 /**
  * Return last numMoves moves.
  */
-PlaceId *PvGetMoves(PlayerView pv, int first)
+PlaceId *PvGetMoves(PlayerView pv, int numMoves, int *numReturnedMoves, bool *canFree)
 {
-    return pv->moveHistory[first];
+    PlaceId *locations;
+    return locations;
 }
 
 /**
@@ -129,6 +130,11 @@ PlaceId *PvGetMoves(PlayerView pv, int first)
  */
 PlaceId *PvGetLocations(PlayerView pv, int numLocs, int *numReturnedLocs, bool *canFree)
 {
+    PlaceId *locations = PvGetMoves(pv, numLocs, numReturnedLocs, canFree);
+    if (pv->player = PLAYER_DRACULA)
+        mask the trail;
+
+    return locations;
 }
 
 /**

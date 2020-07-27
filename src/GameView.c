@@ -20,7 +20,7 @@
 #include "Map.h"
 #include "Places.h"
 #include "PlayerView.h"
-#include "TrapView.h"
+#include "TrailView.h"
 
 typedef struct gameView
 {
@@ -28,7 +28,7 @@ typedef struct gameView
 	Map map;
 	Round currentRound;
 	Player currentPlayer;
-	TrapView trapLocations;			// TrapView queue
+	TrailView trail;				// TrailView queue
 	PlayerView player[NUM_PLAYERS]; // PlayerView array
 } gameView;
 
@@ -63,7 +63,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	new->map = MapNew();
 	new->currentRound = 0;
 	new->currentPlayer = PLAYER_LORD_GODALMING;
-	new->trapLocations = TvNew();
+	new->trail = TvNew();
 	for (int i = 0; i < NUM_PLAYERS; i++)
 		new->player[i] = PvNew(i);
 
@@ -78,7 +78,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 void GvFree(GameView gv)
 {
 	MapFree(gv->map);
-	TvFree(gv->trapLocations);
+	TvFree(gv->trail);
 	for (int i = 0; i < NUM_PLAYERS; i++)
 		PvFree(gv->player[i]);
 	free(gv);
@@ -109,17 +109,19 @@ int GvGetHealth(GameView gv, Player player)
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-	return PvGetLocationHistory(gv->player[player])[gv->currentRound];
+	int *numReturnedLocs = 0;
+	bool *canFree = false;
+	return PvGetLocations(gv->player[player], 1, numReturnedLocs, canFree)[0];
 }
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	return TvGetVampireLocation(gv->trapLocations);
+	return TvGetVampireLocation(gv->trail);
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
-	return TvGetTrapLocations(gv->trapLocations, numTraps);
+	return TvGetTrailLocations(gv->trail, numTraps);
 }
 
 ////////////////////////////////////////////////////////////////////////
