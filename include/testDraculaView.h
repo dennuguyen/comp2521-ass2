@@ -16,7 +16,9 @@
 void testDvNew();
 void testDvFree();
 void testDvGetRound();
-void testDvGetPlayer();
+void testDvGetScore();
+void testDvGetHealth();
+void testDvGetPlayerLocation();
 
 // Integration Testing
 void testDv();
