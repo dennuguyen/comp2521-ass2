@@ -6,6 +6,7 @@
 
 #include "Game.h"
 #include "PlayerView.h"
+#include "TrailView.h"
 
 typedef struct array *Array;
 
@@ -121,7 +122,10 @@ int PvGetHealth(PlayerView pv)
  */
 PlaceId *PvGetMoves(PlayerView pv, int numMoves, int *numReturnedMoves, bool *canFree)
 {
+    *canFree = false;
+    *numReturnedMoves = (numMoves > pv->moveHistory->size) ? pv->moveHistory->size : numMoves;
     PlaceId *locations;
+    locations = pv->moveHistory[size - numMoves + 1];
     return locations;
 }
 
@@ -130,11 +134,12 @@ PlaceId *PvGetMoves(PlayerView pv, int numMoves, int *numReturnedMoves, bool *ca
  */
 PlaceId *PvGetLocations(PlayerView pv, int numLocs, int *numReturnedLocs, bool *canFree)
 {
-    PlaceId *locations = PvGetMoves(pv, numLocs, numReturnedLocs, canFree);
-    if (pv->player = PLAYER_DRACULA)
-        mask the trail;
-
-    return locations;
+    *canFree = false;
+    PlaceId *locations;
+    if (pv->player = PLAYER_DRACULA) {
+        return TvGetDiscoveredLocations(Trailview q);
+    }
+    return PvGetMoves(pv, numLocs, numReturnedLocs, canFree);
 }
 
 /**

@@ -130,19 +130,13 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
 						  int *numReturnedMoves, bool *canFree)
 {	
-	*canFree = false;
-	*numReturnedMoves = gv->currentRound;
-	int first = 0;
-	return PVGetMoves(gv->player[player], first);
+	return PVGetMoves(gv->player[player], gv->currentRound, numReturnedMoves, canFree);
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 						int *numReturnedMoves, bool *canFree)
 {
-	*canFree = false;
-	*numReturnedMoves = (numMoves > currentRound) ? gv->currentRound : numMoves;
-	int first = gv->currentRound - numMoves;
-	return PVGetMoves(gv->player[player], first);
+	return PVGetMoves(gv->player[player], numMoves, numReturnedMoves, canFree);
 }
 
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
