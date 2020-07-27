@@ -130,25 +130,29 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
 						  int *numReturnedMoves, bool *canFree)
 {	
-	return PVGetMoves(gv->player[player], gv->currentRound, numReturnedMoves, canFree);
+	return PvGetMoves(gv->player[player], gv->currentRound, numReturnedMoves, canFree);
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 						int *numReturnedMoves, bool *canFree)
 {
-	return PVGetMoves(gv->player[player], numMoves, numReturnedMoves, canFree);
+	return PvGetMoves(gv->player[player], numMoves, numReturnedMoves, canFree);
 }
 
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
 							  int *numReturnedLocs, bool *canFree)
 {
-	if (player != DRACULA) { return GvGetMoveHistory(gv, player, numReturnedMoves, canFree); }
-	return PvGetLocations(gv->player[player], gv->currentRound, numReturnedLocs, canFree);
+	if (player != DRACULA) return PvGetMoveHistory(gv, player, numReturnedMoves, canFree);
+	return TvGetDiscoveredLocations(gv->trail);
 }
 
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 							int *numReturnedLocs, bool *canFree)
 {
+	if (player != DRACULA) return PvGetLastMoves(gv, player, numReturnedMoves, canFree);
+	return TvGetDiscoveredLocations(gv->trail);
+
+
 	PlaceId *lastLocs = malloc(numLocs * sizeof(PlaceId));
 	*numReturnedLocs = 0;
 	int j = 0;

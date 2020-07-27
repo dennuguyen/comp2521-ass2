@@ -125,7 +125,8 @@ PlaceId *PvGetMoves(PlayerView pv, int numMoves, int *numReturnedMoves, bool *ca
     *canFree = false;
     *numReturnedMoves = (numMoves > pv->moveHistory->size) ? pv->moveHistory->size : numMoves;
     PlaceId *locations;
-    locations = pv->moveHistory[size - numMoves + 1];
+    int first = pv->moveHistory->size - numMoves + 1;
+    locations = pv->moveHistory[first];
     return locations;
 }
 
@@ -137,7 +138,8 @@ PlaceId *PvGetLocations(PlayerView pv, int numLocs, int *numReturnedLocs, bool *
     *canFree = false;
     PlaceId *locations;
     if (pv->player = PLAYER_DRACULA) {
-        return TvGetDiscoveredLocations(Trailview q);
+        int first = pv->moveHistory->size - numMoves + 1;
+        return TvGetDiscoveredLocations(Trailview q)[first];
     }
     return PvGetMoves(pv, numLocs, numReturnedLocs, canFree);
 }
