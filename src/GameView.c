@@ -20,31 +20,33 @@
 #include "Map.h"
 #include "Places.h"
 
-typedef struct placeView *PlaceView;
+typedef struct locationView *LocationView;
 typedef struct playerView *PlayerView;
 
-typedef struct placeView
+typedef struct locationView
 {
-	PlaceId id;
-	bool isVampire;
+	PlaceId location; // Location id
+	bool isVampire;	  // Is there a vampire here
 	bool isEncountered;
 	bool isResearched;
-} placeView;
+} locationView;
 
 typedef struct playerView
 {
-	Player player;
-	int health;
-	PlaceView *moveHistory;
+	Player player;					  // Player id
+	int health;						  // Player health
+	PlaceId lastKnownDraculaLocation; // Player's knowledge of Dracula's last location
+	PlaceId *knownTrail;			  // Player's knowledge of known trail locations
+	LocationView *moveHistory;		  // Dynamic array of PlaceView structs
 } playerView;
 
 typedef struct gameView
 {
-	int score;
-	Map map;
-	Round currentRound;
-	Player currentPlayer;
-	PlayerView player[NUM_PLAYERS];
+	int score;						// Number of current score
+	Map map;						// Map ADT
+	Round currentRound;				// Number of current round
+	Player currentPlayer;			// Who the current player is
+	PlayerView player[NUM_PLAYERS]; // Array of PlayerView structs
 } gameView;
 
 ////////////////////////////////////////////////////////////////////////
@@ -70,7 +72,7 @@ PlayerView PvNew(Player player)
 	return new;
 }
 
-static PlaceView *getPlaces(PlayerView pv, int numMoves)
+static LocationView *getPlaces(PlayerView pv, int numMoves)
 {
 	return last numMoves for pv;
 }
