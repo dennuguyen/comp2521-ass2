@@ -17,13 +17,13 @@
 int main(void)
 {
 	testDvNew();
-	testDvFree();
+	// testDvFree();
 	testDvGetRound();
 	testDvGetScore();
 	testDvGetHealth();
 	testDvGetPlayerLocation();
 	testDvGetVampireLocation();
-	testDvGetTrapLocations();
+	// testDvGetTrapLocations();
 	testDv();
 	return EXIT_SUCCESS;
 }

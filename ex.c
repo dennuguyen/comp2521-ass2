@@ -1,49 +1,34 @@
-// example on inheritance
+// example on comparator arguments
 
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef struct foo_s
+typedef struct BA
 {
     int a;
-} foo;
+} BA;
 
-typedef struct bar_s
+int funct(int a)
 {
-    foo *super;
-    int b;
-} bar;
-
-int getA(foo *x)
-{
-    return x->a;
+    printf("a = %d\n", a);
 }
 
-int getB(bar *x)
+int bar(BA *structure, void *lambda(const void *))
 {
-    return x->b;
-}
+    if (lambda == NULL)
+        printf("lambda is null\n");
+    else if (lambda(3))
+        printf("wow lambda said something\n");
 
-foo *newA()
-{
-    foo *new = malloc(sizeof(foo));
-    new->a = 10;
-    return new;
-}
-
-bar *newB()
-{
-    bar *new = (void *)newA();
-    printf("A: %d\n", getA((void *)new));
-    printf("B: %d\n", getB((void *)new));
-    new->b = 3;
-    return new;
+    return 0;
 }
 
 int main()
 {
-    bar *derived = newB();
-    printf("A: %d\n", getA((void *)derived));
-    printf("B: %d\n", getB((void *)derived));
+    BA *derived = &(BA){.a = 200};
+
+    printf("%d\n", bar(derived, NULL));
+    // printf("%d\n", bar(derived, funct));
+
     return 0;
 }

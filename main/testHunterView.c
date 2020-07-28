@@ -16,8 +16,8 @@
 
 int main(void)
 {
-	testHvNew();
-	testHvFree();
+	// testHvNew();
+	// testHvFree();
 	testHvGetRound();
 	testHvGetPlayer();
 	testHvGetScore();

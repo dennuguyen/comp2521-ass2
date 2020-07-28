@@ -19,7 +19,6 @@ static void testDvNew1()
     DraculaView dv = DvNew(trail, messages);
 
     assert(DvGetRound(dv) == 0);
-    assert(DvGetPlayer(dv) == PLAYER_LORD_GODALMING);
     assert(DvGetScore(dv) == GAME_START_SCORE);
     assert(DvGetHealth(dv, PLAYER_LORD_GODALMING) == GAME_START_HUNTER_LIFE_POINTS);
     assert(DvGetHealth(dv, PLAYER_DRACULA) == GAME_START_BLOOD_POINTS);
