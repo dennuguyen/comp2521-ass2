@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Game.h"
 #include "GameView.h"
@@ -126,6 +127,11 @@ void *GvNew(char *pastPlays, Message messages[])
 		playGame(gv, pastPlays, messages);
 
 	return gv;
+}
+
+void GvFree(GameView gv)
+{
+	free(gv);
 }
 
 /******************************************************************************
