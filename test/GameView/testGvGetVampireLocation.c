@@ -13,6 +13,8 @@ void testGvGetPlayerLocation()
     testGvGetVampireLocation1();
     testGvGetVampireLocation2();
     testGvGetVampireLocation3();
+    testGvGetVampireLocation4();
+    testGvGetVampireLocation5();
 
     printf("GvGetVampireLocation tests passed!\n\n");
 }
@@ -32,7 +34,7 @@ static void testGvGetVampireLocation1()
 }
 
 /**
- * Test in middle of round
+ * Test no vampire placed yet
  */
 static void testGvGetVampireLocation2()
 {
@@ -47,11 +49,13 @@ static void testGvGetVampireLocation2()
  */
 
 /**
- * Test at end of round
+ * Test vampire not encountered yet
  */
 static void testGvGetVampireLocation3()
 {
-    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V..";
+    char *trail = 
+        "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+        "GLO.... SSJ.... HCO.... MBR.... DBET...";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
@@ -61,51 +65,62 @@ static void testGvGetVampireLocation3()
 }
 
 /**
- * Test small number of rounds, undiscovered vampire
+ * Test vampire encountered
  */
 static void testGvGetVampireLocation4()
 {
     char *trail = 
-        "GSW.... SLS.... HMR.... MHA.... DSJ.V.."
-        "GLO.... SAL.... HCO.... MBR.... DBET..."
+        "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+        "GSJVD.. SSJ.... HCO.... MBR.... DBET...";
 
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
-    assert(GvGetVampireLocation1(gv) == SARAJEVO);
+    assert(GvGetVampireLocation1(gv) == NOWHERE);
     GvFree(gv);
     printf("\tTest 4 passed!\n");
 }
 
 /**
- * Test large number of rounds
+ * Test vampire discovered by research
  */
 static void testGvGetPlayerLocation5()
 {
-    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL.... "
-                  "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR.... "
-                  "DKLT... GLV.... SNA.... HNU.... MBD.... DCDT... GIR.... "
-                  "SPA.... HPR.... MKLT... DHIT... GAO.... SST.... HSZ.... "
-                  "MCDTTD. DGAT... GMS.... SFL.... HKL.... MSZ.... DCNT.V. "
-                  "GTS.... SRO.... HBC.... MCNTD.. DBS..M. GIO.... SBI.... "
-                  "HCN.... MCN.... DIO.... GIO.... SAS.... HBS.... MCN.... "
-                  "DTS.... GTS.... SAS.... HIO.... MBS.... DMS.... GMS.... "
-                  "SIO.... HTS.... MIO.... DAO..M. GAO.... STS.... HMS.... "
-                  "MTS.... DNS.... GBB.... SMS.... HAO.... MMS.... DED.V.. "
-                  "GNA.... SAO.... HEC.... MAO.... DMNT... GBO.... SIR.... "
-                  "HLE.... MEC.... DD2T... GSR.... SDU.... HBU.... MPL.... "
-                  "DHIT... GSN.... SIR.... HAM.... MLO.... DTPT... GAL.... "
-                  "SAO.... HCO.... MEC.... DCDT... GMS.... SMS.... HFR.... "
-                  "MLE.... DKLT.V. GTS.... STS.... HBR.... MCO.... DGAT.M. "
-                  "GIO.... SIO.... HBD.... MLI.... DD3T.M. GBS.... SBS.... "
-                  "HKLT... MBR.... DHI..M. GCN.... SCN.... HCDTTTD MVI.... "
-                  "DTPT... GGAT... SGA.... HSZ.... MBC.... DCDT... GCDTTD. "
-                  "SCDD... HKL.... MGA.... DKLT... GSZ.... SKLTD.. HKLD... "
-                  "MKLD... DBC.V.. GBD.... SBE.... HGA.... MBCVD.. DSOT... "
-                  "GSZ.... SSOTD.. HBC.... MSOD...";
+    char *trail = 
+        "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+        "GLO.... SAL.... HCO.... MBR.... DBET... "
+        "GED.... SBO.... HLI.... MPR.... DKLT... "
+        "GIR.... SPA.... HPR.... MDU.... DHIT... "
+        "GAO.... SST.... HSZ.... MCO.... DGAT... "
+        "GMS.... SFL.... HMA.... MSZ.... DCNT... "
+        "GMS.... SFL.... HMA.... MSZ....";
+
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
+    
+    assert(GvGetVampireLocation1(gv) == SARAJEVO);
+    GvFree(gv);
+    printf("\tTest 5 passed!\n");
+}
 
+/**
+ * Test no vampire after maturing
+ */
+static void testGvGetPlayerLocation6()
+{
+    char *trail = 
+        "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+        "GLO.... SAL.... HCO.... MBR.... DBET... "
+        "GED.... SBO.... HLI.... MPR.... DKLT... "
+        "GIR.... SPA.... HPR.... MDU.... DHIT... "
+        "GAO.... SST.... HSZ.... MCO.... DGAT... "
+        "GMS.... SFL.... HMA.... MSZ.... DCNT... "
+        "GIO.... SIO.... HBD.... MLI.... DECT... "
+        "GBD.... SMN.... HMU.... MBC.... DSOT...";
 
+    Message messages[] = {};
+    GameView gv = GvNew(trail, messages);
+    
+    assert(GvGetVampireLocation1(gv) == NOWHERE);
     GvFree(gv);
     printf("\tTest 5 passed!\n");
 }
