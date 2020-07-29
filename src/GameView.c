@@ -23,7 +23,7 @@
 #define ARRAY_BUFFER 32
 #define NUM_CHAR_IN_ROUND 40
 #define NUM_CHAR_IN_TURN 8
-#define MAX_ROUNDS 366
+#define MAX_ROUNDS (GAME_START_SCORE)
 #define MAX_ENCOUNTERS 6
 
 #define NUM_PARAM 2
@@ -41,12 +41,12 @@ typedef struct gameView
 	/* Encounter locations */
 	PlaceId trapLocations[NUM_PARAM][MAX_ENCOUNTERS]; // Usage: [PARAM][PLACE_ID]
 	PlaceId vampireLocation[NUM_PARAM];				  // Usage: [0] = IS_KNOWN_PARAM, [1] = PLACE_ID_PARAM,
-	PlaceId draculaSightings[NUM_PARAM];			  // Usage: [0] = IS_KNOWN_PARAM, [1] = PLACE_ID_PARAM
+	PlaceId draculaRumour[NUM_PARAM];				  // Usage: [0] = IS_KNOWN_PARAM, [1] = PLACE_ID_PARAM
 
 	/* Player information */
-	int healths[NUM_PLAYERS];						  // Array of players healths
-	PlaceId moveHistory[NUM_PLAYERS][MAX_ROUNDS];	  // Array of player move histories
-	PlaceId locationHistory[NUM_PLAYERS][MAX_ROUNDS]; // Array of player location histories
+	int healths[NUM_PLAYERS];						  // Usage: [PLAYER]
+	PlaceId moveHistory[NUM_PLAYERS][MAX_ROUNDS];	  // Usage: [PLAYER][ROUND]
+	PlaceId locationHistory[NUM_PLAYERS][MAX_ROUNDS]; // Usage: [PLAYER][ROUND]
 	int research;									  // Progress of research
 } gameView;
 
@@ -54,27 +54,35 @@ typedef struct gameView
  * 								Static Functions							  *
  ******************************************************************************/
 
-/**
- * Parse through each char of play string which is 7 char long
- * 		e.g. ABBCCCD
- * 			A: 	'G', 'S', 'H', 'M', 'D', represents the player
- * 			B: 	'LO', location to move to
- * 				'C?', city unknown
- * 			C: 	'T', Dracula places trap or hunter encounters trap;
- * 				'V', Dracula places vampire or hunter encounters vampire
- * 				'D', Hunter encounters Dracula
- * 				'M', Trap malfunction
- */
-
+/* Gameplay functions */
 static void playGame(GameView gv, char *pastPlays, Message messages[]);
+static void playDracula(GameView gv, char *play, Message messages[], PlaceId location);
+static void playHunter(GameView gv, char *play, Message messages[], PlaceId location);
+
+/* Update history functions */
+static void updateMoveHistory(GameView gv, PlaceId move);
+static void updateLocationHistory(GameView gv, PlaceId location);
+
+/* Setters */
+static void setTrap(GameView gv, PlaceId location);
+static void setVampire(GameView gv, PlaceId location);
+static void setDraculaRumour(GameView gv);
+
+/* Destroyers */
 static void removeTrap(GameView gv, PlaceId location);
 static void removeVampire(GameView gv);
-static void expireEncounter(GameView gv);
-// static bool isKnownTrapLocation(GameView gv, PlaceId location);
+static void expireTrap(GameView gv);
+static void expireVampire(GameView gv);
+
+/* Check if location is known to hunters */
+static bool isKnownTrapLocation(GameView gv, PlaceId location);
 static bool isKnownVampireLocation(GameView gv, PlaceId location);
 static bool isKnownDraculaLocation(GameView gv, PlaceId location);
+
+/* Revealing functions */
 static int revealTrap(GameView gv, PlaceId location);
 static int revealVampire(GameView gv, PlaceId location);
+static int revealDracula(GameView gv, PlaceId location);
 
 /******************************************************************************
  * 								GameView ADT							 	  *
@@ -90,7 +98,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 		.currentPlayer = PLAYER_LORD_GODALMING,
 		.trapLocations = {{0}},
 		.vampireLocation = {0},
-		.draculaSightings = {0},
+		.draculaRumour = {0},
 		.healths = {
 			[PLAYER_LORD_GODALMING] = GAME_START_HUNTER_LIFE_POINTS,
 			[PLAYER_DR_SEWARD] = GAME_START_HUNTER_LIFE_POINTS,
@@ -102,21 +110,29 @@ GameView GvNew(char *pastPlays, Message messages[])
 		.locationHistory = {{0}},
 	};
 
+	// GameView gv = malloc(sizeof(gameView));
+	// gv->score = GAME_START_SCORE;
+	// gv->map = MapNew();
+	// gv->round = 0;
+	// gv->currentPlayer = PLAYER_LORD_GODALMING;
+	// gv->tra
+
 	if (gv == NULL)
 	{
 		fprintf(stderr, "ERROR: Could not allocate memory for GameView\n");
 		exit(EXIT_FAILURE);
 	}
 
-	playGame(gv, pastPlays, messages);
+	if (*pastPlays != '\0')
+		playGame(gv, pastPlays, messages);
 
 	return gv;
 }
 
 void GvFree(GameView gv)
 {
-	MapFree(gv->map);
-	free(gv);
+	// MapFree(gv->map);
+	// free(gv);
 }
 
 /******************************************************************************
@@ -268,56 +284,219 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 }
 
 /******************************************************************************
+ * 								Play Functions							  	  *
+ ******************************************************************************/
+
+/**
+ * 
+ */
+static void playGame(GameView gv, char *pastPlays, Message messages[])
+{
+	/* Game */
+	char *end, *tmp;
+	tmp = end = strdup(pastPlays);
+	if (end == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory for strdup(pastPlays).\n");
+		exit(EXIT_FAILURE);
+	}
+
+	char *play;
+	while ((play = strsep(&end, " ")) != NULL)
+	{
+		if (strlen(play) != 7)
+		{
+			fprintf(stderr, "ERROR: Invalid length, %ld, of play string.\n", strlen(play));
+			// exit(EXIT_FAILURE);
+		}
+
+		// switch (play[0])
+		// {
+		// case 'G':
+		// 	gv->currentPlayer = PLAYER_LORD_GODALMING;
+		// 	break;
+		// case 'S':
+		// 	gv->currentPlayer = PLAYER_DR_SEWARD;
+		// 	break;
+		// case 'H':
+		// 	gv->currentPlayer = PLAYER_VAN_HELSING;
+		// 	break;
+		// case 'M':
+		// 	gv->currentPlayer = PLAYER_MINA_HARKER;
+		// 	break;
+		// case 'D':
+		// 	gv->currentPlayer = PLAYER_DRACULA;
+		// 	break;
+		// default:
+		// 	fprintf(stderr, "ERROR: Invalid char, %c, in play[%d].\n", play[0], 0);
+		// 	// exit(EXIT_FAILURE);
+		// }
+
+		/* Move Phase */
+		char loc[3] = {[0] = *(play + 1), [1] = *(play + 2), [2] = '\0'};
+		PlaceId location = placeAbbrevToId(loc);
+		updateMoveHistory(gv, location);
+		updateLocationHistory(gv, location);
+
+		/* Action Phase */
+		if (gv->currentPlayer == PLAYER_DRACULA)
+			playDracula(gv, play, messages, location);
+		else
+			playHunter(gv, play, messages, location);
+
+		gv->currentPlayer = (gv->currentPlayer + 1) % NUM_PLAYERS;
+
+		// Game over
+		if (gv->healths[PLAYER_DRACULA] <= 0 || gv->score <= 0)
+			return;
+	}
+
+	free(tmp);
+}
+
+/**
+ * Play strings are interpretted differently depending on the player type.
+ * Order of char matters in a Dracula string.
+ */
+static void playDracula(GameView gv, char *play, Message messages[], PlaceId location)
+{
+	// Interpret 4th char
+	switch (play[3])
+	{
+	case 'T':
+		setTrap(gv, location);
+		break;
+	case '.':
+		break;
+	default:
+		fprintf(stderr, "ERROR: Invalid char, %c, in play[%d].\n", play[3], 3);
+		// exit(EXIT_FAILURE);
+	}
+
+	// Interpret 5th char
+	switch (play[4])
+	{
+	case 'V':
+		setVampire(gv, location);
+		break;
+	case '.':
+		break;
+	default:
+		fprintf(stderr, "ERROR: Invalid char, %c, in play[%d].\n", play[4], 4);
+		// exit(EXIT_FAILURE);
+	}
+
+	// Interpret 6th char
+	switch (play[5])
+	{
+	case 'V':
+		expireVampire(gv);
+		break;
+	case 'M':
+		expireTrap(gv);
+		break;
+	case '.':
+		break;
+	default:
+		fprintf(stderr, "ERROR: Invalid char, %c, in play[%d].\n", play[5], 5);
+		// exit(EXIT_FAILURE);
+	}
+
+	// Interpret 7th char
+	switch (play[6])
+	{
+	case '.':
+		break;
+	default:
+		fprintf(stderr, "ERROR: Invalid char, %c, in play[%d].\n", play[6], 6);
+		// exit(EXIT_FAILURE);
+	}
+
+	gv->round++;
+}
+
+static void playHunter(GameView gv, char *play, Message messages[], PlaceId location)
+{
+	for (int i = 3; i < 7; i++)
+		switch (play[i])
+		{
+		case 'T':
+			revealTrap(gv, location);
+			break;
+		case 'V':
+			revealVampire(gv, location);
+			break;
+		case 'D':
+			revealDracula(gv, location);
+			break;
+		case '.':
+			break;
+		default:
+			fprintf(stderr, "ERROR: Invalid char, %c, in play[%d].\n", play[3], 3);
+			// exit(EXIT_FAILURE);
+		}
+}
+
+/******************************************************************************
  * 								Static Functions							  *
  ******************************************************************************/
 
-static void playGame(GameView gv, char *pastPlays, Message messages[])
+/**
+ * Appends the given move to the moveHistory.
+ */
+static void updateMoveHistory(GameView gv, PlaceId move)
 {
-	for (int i = 1; i < strlen(pastPlays);) // Game
+	gv->moveHistory[gv->currentPlayer][gv->round] = move;
+}
+
+/**
+ * Behaves the same as updateMoveHistory but masks Dracula's location.
+ */
+static void updateLocationHistory(GameView gv, PlaceId location)
+{
+	if (gv->currentPlayer == PLAYER_DRACULA)
 	{
-		// Pre-round
-		if (i % NUM_CHAR_IN_ROUND == 0)
-			gv->round++;
-
-		while (i < i + NUM_CHAR_IN_ROUND) // Round
-		{
-			// Pre-turn
-			if ((i - 6) % 8 == 0)
-				gv->currentPlayer = (gv->currentPlayer + 1) % NUM_PLAYERS;
-
-			for (; i < i + NUM_CHAR_IN_TURN; i++) // Turn
-			{
-				if (gv->currentPlayer == PLAYER_DRACULA)
-					playDracula(gv, pastPlays, messages);
-				else
-					playHunter(gv, pastPlays, messages);
-				// Dracula's actions
-				// if (pastPlays[i] == 'T')
-
-				// 	if (pastPlays[i] == 'V')
-			}
-
-			// Post-turn
-			if (gv->healths[PLAYER_DRACULA] <= 0 || gv->score <= 0)
-				break;
-		}
-
-		// Post-round
-		expireEncounter(gv);
+		if (location == CASTLE_DRACULA)
+			gv->locationHistory[gv->currentPlayer][gv->round] = CASTLE_DRACULA;
+		else if (placeIsLand(location))
+			gv->locationHistory[gv->currentPlayer][gv->round] = CITY_UNKNOWN;
+		else
+			gv->locationHistory[gv->currentPlayer][gv->round] = SEA_UNKNOWN;
 	}
+	else
+		gv->locationHistory[gv->currentPlayer][gv->round] = location;
 }
 
-static void playDracula(GameView gv, char *pastPlays, Message messages[])
+/**
+ * Set a trap in a given location.
+ */
+static void setTrap(GameView gv, PlaceId location)
 {
+	gv->trapLocations[PLACE_ID_PARAM][gv->round] = location;
+	gv->trapLocations[IS_KNOWN_PARAM][gv->round] = false;
 }
 
-static void playHunter(GameView gv, char *pastPlays, Message messages[])
+/**
+ * Set a vampire in a given location.
+ */
+static void setVampire(GameView gv, PlaceId location)
 {
-	int location = 10;
-	revealTrap(gv, location);
-	revealVampire(gv, location);
+	gv->vampireLocation[PLACE_ID_PARAM] = location;
+	gv->vampireLocation[IS_KNOWN_PARAM] = false;
 }
 
+/**
+ * Set a rumour of Dracula's location.
+ */
+static void setDraculaRumour(GameView gv)
+{
+	gv->vampireLocation[PLACE_ID_PARAM] = gv->locationHistory[PLAYER_DRACULA][gv->round];
+	gv->vampireLocation[IS_KNOWN_PARAM] = false;
+}
+
+/**
+ * Removes a trap in the given location by splicing the trap from the array.
+ */
 static void removeTrap(GameView gv, PlaceId location)
 {
 	int i = 0;
@@ -332,30 +511,51 @@ static void removeTrap(GameView gv, PlaceId location)
 	}
 }
 
+/**
+ * Remove the vampire by setting its location to NOWHERE and is known parameter
+ * to false.
+ */
 static void removeVampire(GameView gv)
 {
 	gv->vampireLocation[PLACE_ID_PARAM] = NOWHERE;
 	gv->vampireLocation[IS_KNOWN_PARAM] = false;
 }
 
-static void expireEncounter(GameView gv)
+/**
+ * Oldest trap malfunctions which removes it from the game.
+ */
+static void expireTrap(GameView gv)
 {
-	if (gv->round % 13 == 0)
-		removeVampire(gv);
-	else
-		removeTrap(gv, gv->trapLocations[PLACE_ID_PARAM][0]);
+	removeTrap(gv, gv->trapLocations[PLACE_ID_PARAM][0]);
 }
 
-// static bool isKnownTrapLocation(GameView gv, PlaceId location)
-// {
-// 	for (int i = 0; i < MAX_ENCOUNTERS; i++)
-// 		if (gv->trapLocations[PLACE_ID_PARAM][i] == location)
-// 			if (gv->trapLocations[IS_KNOWN_PARAM][i] == true)
-// 				return true;
+/**
+ * Vampire matures which removes it from the game and deducts the score.
+ */
+static void expireVampire(GameView gv)
+{
+	removeVampire(gv);
+	gv->score -= SCORE_LOSS_VAMPIRE_MATURES;
+}
 
-// 	return false;
-// }
+/**
+ * If the given location is the location of a trap and its location is known
+ * then return true, otherwise false.
+ */
+static bool isKnownTrapLocation(GameView gv, PlaceId location)
+{
+	for (int i = 0; i < MAX_ENCOUNTERS; i++)
+		if (gv->trapLocations[PLACE_ID_PARAM][i] == location)
+			if (gv->trapLocations[IS_KNOWN_PARAM][i] == true)
+				return true;
 
+	return false;
+}
+
+/**
+ * If the given location is the location of the vampire and the sightings are
+ * true then return true, otherwise false.
+ */
 static bool isKnownVampireLocation(GameView gv, PlaceId location)
 {
 	if (gv->vampireLocation[PLACE_ID_PARAM] == location)
@@ -365,15 +565,24 @@ static bool isKnownVampireLocation(GameView gv, PlaceId location)
 	return false;
 }
 
+/**
+ * If the given location is the location of Dracula and the sightings are true
+ * then return true, otherwise false.
+ */
 static bool isKnownDraculaLocation(GameView gv, PlaceId location)
 {
-	if (gv->draculaSightings[PLACE_ID_PARAM] == location)
-		if (gv->draculaSightings[IS_KNOWN_PARAM] == true)
+	if (gv->draculaRumour[PLACE_ID_PARAM] == location)
+		if (gv->draculaRumour[IS_KNOWN_PARAM] == true)
 			return true;
 
 	return false;
 }
 
+/**
+ * Reveals all traps in a single location if given location matches.
+ * 
+ * Returns number of traps on reveal else 0 if no traps are revealed.
+ */
 static int revealTrap(GameView gv, PlaceId location)
 {
 	int numTraps = 0;
@@ -386,6 +595,11 @@ static int revealTrap(GameView gv, PlaceId location)
 	return numTraps;
 }
 
+/**
+ * Reveals the vampire if given location matches.
+ * 
+ * Returns true on reveal else false.
+ */
 static int revealVampire(GameView gv, PlaceId location)
 {
 	int isVampire = 0;
@@ -397,15 +611,18 @@ static int revealVampire(GameView gv, PlaceId location)
 	return isVampire;
 }
 
-// static bool spottedDracula(GameView gv, PlaceId location)
-// {
-// 	if (gv->locationHistory[PLAYER_DRACULA][gv->round] == CASTLE_DRACULA)
-// 		gv->knownDraculaLocation = ;
-
-// 	return false;
-// }
-
-// static void revealedDracula(GameView gv)
-// {
-// 	if (spottedDracula(gv))
-// }
+/**
+ * Reveals Dracula's location if given location matches.
+ * 
+ * Returns true on reveal else false.
+ */
+static int revealDracula(GameView gv, PlaceId location)
+{
+	int isDracula = 0;
+	if (location == gv->draculaRumour[PLACE_ID_PARAM])
+	{
+		gv->draculaRumour[IS_KNOWN_PARAM] = true;
+		isDracula++;
+	}
+	return isDracula;
+}
