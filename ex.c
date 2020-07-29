@@ -34,21 +34,26 @@
 // }
 
 // multidimensional arrays
-int a[3][3] = {{0, 1, 2}, {7, 4, 5}, {6, 3, 8}};
 
-int *func()
+void func1(int *a)
 {
-    return &a[2][0];
+    printf("%d\n", a);
+}
+
+void func2(int *a)
+{
+    printf("%d\n", *a);
+    func1(*a);
 }
 
 int main()
 {
-    int b[5] = {[0] = {1}, [4] = {2}};
+    // int b[5] = {[0] = {1}, [4] = {2}};
 
     // int *ptr = func();
-
-    for (int i = 0; i < 5; i++)
-        printf("%d\n", b[i]);
+    int a[1];
+    *a = 3;
+    func2(a);
 
     return 0;
 }

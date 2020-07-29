@@ -253,6 +253,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
-// TODO
+PlaceId GvGetMoveByRound(GameView gv, Player player, Round round);
+PlaceId GvGetLocationByRound(GameView gv, Player player, Round round);
 
 #endif // !defined (FOD__GAME_VIEW_H_)

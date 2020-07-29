@@ -26,10 +26,6 @@
 #define MAX_ROUNDS (GAME_START_SCORE)
 #define MAX_ENCOUNTERS 6
 
-#define NUM_PARAM 2
-#define IS_KNOWN_PARAM 0
-#define PLACE_ID_PARAM 1
-
 typedef struct gameView
 {
 	/* Game information */
@@ -39,9 +35,9 @@ typedef struct gameView
 	Player currentPlayer; // Who the current player is
 
 	/* Encounter locations */
-	PlaceId trapLocations[NUM_PARAM][MAX_ENCOUNTERS]; // Usage: [PARAM][PLACE_ID]
-	PlaceId vampireLocation[NUM_PARAM];				  // Usage: [0] = IS_KNOWN_PARAM, [1] = PLACE_ID_PARAM,
-	PlaceId draculaRumour[NUM_PARAM];				  // Usage: [0] = IS_KNOWN_PARAM, [1] = PLACE_ID_PARAM
+	PlaceId trapLocations[MAX_ENCOUNTERS]; // Array of trap locations
+	PlaceId vampireLocation;			   // Vampire location
+	bool draculaHistory[MAX_ROUNDS];	   // Boolean to complement Dracula's moveHistory if is known to hunters
 
 	/* Player information */
 	int healths[NUM_PLAYERS];						  // Usage: [PLAYER]
@@ -59,30 +55,32 @@ static void playGame(GameView gv, char *pastPlays, Message messages[]);
 static void playDracula(GameView gv, char *play, Message messages[], PlaceId location);
 static void playHunter(GameView gv, char *play, Message messages[], PlaceId location);
 
-/* Update history functions */
+/* Move and location functions */
 static void updateMoveHistory(GameView gv, PlaceId move);
 static void updateLocationHistory(GameView gv, PlaceId location);
 
-/* Setters */
+/* Encounter functions */
 static void setTrap(GameView gv, PlaceId location);
 static void setVampire(GameView gv, PlaceId location);
-static void setDraculaRumour(GameView gv);
-
-/* Destroyers */
+static void revealDracula(GameView gv, int round);
 static void removeTrap(GameView gv, PlaceId location);
 static void removeVampire(GameView gv);
 static void expireTrap(GameView gv);
 static void expireVampire(GameView gv);
 
-/* Check if location is known to hunters */
-static bool isKnownTrapLocation(GameView gv, PlaceId location);
-static bool isKnownVampireLocation(GameView gv, PlaceId location);
-static bool isKnownDraculaLocation(GameView gv, PlaceId location);
-
 /* Revealing functions */
-static int revealTrap(GameView gv, PlaceId location);
-static int revealVampire(GameView gv, PlaceId location);
-static int revealDracula(GameView gv, PlaceId location);
+static bool isKnownTrapLocation(GameView gv, PlaceId trapLocation, PlaceId hunterLocation);
+static bool isKnownVampireLocation(GameView gv, PlaceId vampireLocation, PlaceId hunterLocation);
+static bool isKnownDraculaLocation(GameView gv, PlaceId draculaLocation, PlaceId hunterLocation);
+static void encounterTrap(GameView gv, PlaceId location);
+static void encounterVampire(GameView gv, PlaceId location);
+static void encounterDracula(GameView gv);
+
+/* Player functions */
+static bool isHunterResting(GameView gv);
+static bool isDraculaHiding(GameView gv);
+static bool isPlayerNotMoving(GameView gv);
+static void hunterDies(GameView gv);
 
 /******************************************************************************
  * 								GameView ADT							 	  *
@@ -96,9 +94,9 @@ void *GvNew(char *pastPlays, Message messages[])
 		.map = MapNew(),
 		.round = 0,
 		.currentPlayer = PLAYER_LORD_GODALMING,
-		.trapLocations = {{0}},
-		.vampireLocation = {0},
-		.draculaRumour = {0},
+		.trapLocations = {NOWHERE, NOWHERE, NOWHERE, NOWHERE, NOWHERE, NOWHERE},
+		.vampireLocation = NOWHERE,
+		.draculaHistory = {0},
 		.healths = {
 			[PLAYER_LORD_GODALMING] = GAME_START_HUNTER_LIFE_POINTS,
 			[PLAYER_DR_SEWARD] = GAME_START_HUNTER_LIFE_POINTS,
@@ -160,6 +158,10 @@ int GvGetHealth(GameView gv, Player player)
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
+	// Player hasn't started yet.
+	if (player >= gv->currentPlayer && gv->round == 0)
+		return NOWHERE;
+
 	// Get location of requested player.
 	int location = gv->locationHistory[player][gv->round];
 
@@ -172,7 +174,7 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 		return location;
 
 	// Hunters ask for Dracula's location.
-	if (isKnownDraculaLocation(gv, location))
+	if (isKnownDraculaLocation(gv, UNKNOWN_PLACE, location))
 		return location;
 
 	// Dracula's location is hidden.
@@ -183,16 +185,13 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	// Get vampire location
-	int location = gv->vampireLocation[PLACE_ID_PARAM];
-
 	// Vampire doesn't exist
-	if (location == NOWHERE)
+	if (gv->vampireLocation == NOWHERE)
 		return NOWHERE;
 
 	// Vampire location is known
-	if (isKnownVampireLocation(gv, location))
-		return location;
+	if (isKnownVampireLocation(gv, gv->vampireLocation, UNKNOWN_PLACE))
+		return gv->vampireLocation;
 
 	// Vampire location is unknown
 	return CITY_UNKNOWN;
@@ -207,10 +206,10 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
 	*numTraps = 0;
 	for (; *numTraps < MAX_ENCOUNTERS; numTraps++)
-		if (&gv->trapLocations[PLACE_ID_PARAM][*numTraps] == NULL)
+		if (&gv->trapLocations[*numTraps] == NULL)
 			break;
 
-	return &gv->trapLocations[PLACE_ID_PARAM][0];
+	return &gv->trapLocations[*numTraps];
 }
 
 /******************************************************************************
@@ -249,6 +248,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 							int *numReturnedLocs, bool *canFree)
 {
 	*canFree = false;
+
 	int j = 0; // counter for returned index
 
 	// Iterate 'numMoves' backwards through locationHistory
@@ -283,6 +283,26 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 }
 
 /******************************************************************************
+ * 							  Extra ADT Functions							  *
+ ******************************************************************************/
+
+PlaceId GvGetMoveByRound(GameView gv, Player player, Round round)
+{
+	if (gv->round > round)
+		return NOWHERE;
+
+	return gv->moveHistory[player][round];
+}
+
+PlaceId GvGetLocationByRound(GameView gv, Player player, Round round)
+{
+	if (gv->round > round)
+		return NOWHERE;
+
+	return gv->locationHistory[player][round];
+}
+
+/******************************************************************************
  * 								Play Functions							  	  *
  ******************************************************************************/
 
@@ -309,35 +329,11 @@ static void playGame(GameView gv, char *pastPlays, Message messages[])
 			// exit(EXIT_FAILURE);
 		}
 
-		// switch (play[0])
-		// {
-		// case 'G':
-		// 	gv->currentPlayer = PLAYER_LORD_GODALMING;
-		// 	break;
-		// case 'S':
-		// 	gv->currentPlayer = PLAYER_DR_SEWARD;
-		// 	break;
-		// case 'H':
-		// 	gv->currentPlayer = PLAYER_VAN_HELSING;
-		// 	break;
-		// case 'M':
-		// 	gv->currentPlayer = PLAYER_MINA_HARKER;
-		// 	break;
-		// case 'D':
-		// 	gv->currentPlayer = PLAYER_DRACULA;
-		// 	break;
-		// default:
-		// 	fprintf(stderr, "ERROR: Invalid char, %c, in play[%d].\n", play[0], 0);
-		// 	// exit(EXIT_FAILURE);
-		// }
-
-		/* Move Phase */
+		// Get location to move to.
 		char loc[3] = {[0] = *(play + 1), [1] = *(play + 2), [2] = '\0'};
 		PlaceId location = placeAbbrevToId(loc);
-		updateMoveHistory(gv, location);
-		updateLocationHistory(gv, location);
 
-		/* Action Phase */
+		// Dracula play string is different to hunter play string.
 		if (gv->currentPlayer == PLAYER_DRACULA)
 			playDracula(gv, play, messages, location);
 		else
@@ -346,8 +342,8 @@ static void playGame(GameView gv, char *pastPlays, Message messages[])
 		gv->currentPlayer = (gv->currentPlayer + 1) % NUM_PLAYERS;
 
 		// Game over
-		// if (gv->healths[PLAYER_DRACULA] <= 0 || gv->score <= 0)
-		// 	return;
+		if (gv->healths[PLAYER_DRACULA] <= 0 || gv->score <= 0) // this causes bug where round finishes at 21 instead of 28
+			return;
 	}
 
 	free(tmp);
@@ -357,8 +353,55 @@ static void playGame(GameView gv, char *pastPlays, Message messages[])
  * Play strings are interpretted differently depending on the player type.
  * Order of char matters in a Dracula string.
  */
-static void playDracula(GameView gv, char *play, Message messages[], PlaceId location)
+static void playDracula(GameView gv, char *play, Message messages[], int move)
 {
+	gv->score -= SCORE_LOSS_DRACULA_TURN;
+
+	/* Move Phase */
+
+	PlaceId location = move;
+	switch (move)
+	{
+	case TELEPORT:
+		location = CASTLE_DRACULA;
+		break;
+	case HIDE:
+		location = GvGetLocationByRound(gv, PLAYER_DRACULA, gv->round - 1);
+		break;
+	case DOUBLE_BACK_1:
+		location = GvGetLocationByRound(gv, PLAYER_DRACULA, gv->round - 1);
+		break;
+	case DOUBLE_BACK_2:
+		location = GvGetLocationByRound(gv, PLAYER_DRACULA, gv->round - 2);
+		break;
+	case DOUBLE_BACK_3:
+		location = GvGetLocationByRound(gv, PLAYER_DRACULA, gv->round - 3);
+		break;
+	case DOUBLE_BACK_4:
+		location = GvGetLocationByRound(gv, PLAYER_DRACULA, gv->round - 4);
+		break;
+	case DOUBLE_BACK_5:
+		location = GvGetLocationByRound(gv, PLAYER_DRACULA, gv->round - 5);
+		break;
+	}
+
+	updateMoveHistory(gv, move);
+	updateLocationHistory(gv, location);
+
+	/* Action Phase */
+
+	if (location == CASTLE_DRACULA || isKnownDraculaLocation(gv, location, UNKNOWN_PLACE))
+		revealDracula(gv, gv->round);
+
+	if (isDraculaHiding(gv))
+		gv->healths[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
+
+	if (placeIsSea(location))
+		gv->healths[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
+
+	if (location == CASTLE_DRACULA)
+		gv->healths[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
+
 	// Interpret 4th char
 	switch (play[3])
 	{
@@ -414,19 +457,48 @@ static void playDracula(GameView gv, char *play, Message messages[], PlaceId loc
 	gv->round++;
 }
 
-static void playHunter(GameView gv, char *play, Message messages[], PlaceId location)
+static void playHunter(GameView gv, char *play, Message messages[], int move)
 {
+	/* Move Phase */
+
+	PlaceId location = move;
+	updateMoveHistory(gv, move);
+	updateLocationHistory(gv, location);
+
+	/* Action Phase */
+
+	// Hunters gain `LIFE_GAIN_REST` hp for max of `GAME_START_HUNTER_LIFE_POINTS` hp.
+	if (isHunterResting(gv))
+	{
+		gv->healths[gv->currentPlayer] += LIFE_GAIN_REST;
+		if (gv->healths[gv->currentPlayer] > GAME_START_HUNTER_LIFE_POINTS)
+			gv->healths[gv->currentPlayer] = GAME_START_HUNTER_LIFE_POINTS;
+
+		gv->research++;
+	}
+
+	// Hunter research or HIDE revealed
+	if (gv->research == NUM_PLAYERS - 1 || GvGetMoveByRound(gv, PLAYER_DRACULA, gv->round - 6) == HIDE)
+		revealDracula(gv, gv->round - 6);
+
+	// Hunter dies and does nothing for remainder of their turn.
+	if (gv->healths[gv->currentPlayer] <= 0)
+	{
+		hunterDies(gv);
+		return;
+	}
+
 	for (int i = 3; i < 7; i++)
 		switch (play[i])
 		{
 		case 'T':
-			revealTrap(gv, location);
+			encounterTrap(gv, location);
 			break;
 		case 'V':
-			revealVampire(gv, location);
+			encounterVampire(gv, location);
 			break;
 		case 'D':
-			revealDracula(gv, location);
+			encounterDracula(gv);
 			break;
 		case '.':
 			break;
@@ -471,8 +543,7 @@ static void updateLocationHistory(GameView gv, PlaceId location)
  */
 static void setTrap(GameView gv, PlaceId location)
 {
-	gv->trapLocations[PLACE_ID_PARAM][gv->round] = location;
-	gv->trapLocations[IS_KNOWN_PARAM][gv->round] = false;
+	gv->trapLocations[gv->round] = location;
 }
 
 /**
@@ -480,17 +551,30 @@ static void setTrap(GameView gv, PlaceId location)
  */
 static void setVampire(GameView gv, PlaceId location)
 {
-	gv->vampireLocation[PLACE_ID_PARAM] = location;
-	gv->vampireLocation[IS_KNOWN_PARAM] = false;
+	gv->vampireLocation = location;
 }
 
 /**
- * Set a rumour of Dracula's location.
+ * Reveal Dracula's location that HIDE or DOUBLE_BACK was pointing to
+ * recursively.
  */
-static void setDraculaRumour(GameView gv)
+static void revealDracula(GameView gv, int round)
 {
-	gv->vampireLocation[PLACE_ID_PARAM] = gv->locationHistory[PLAYER_DRACULA][gv->round];
-	gv->vampireLocation[IS_KNOWN_PARAM] = false;
+	// Reveal HIDE when they become last move in Dracula's trail.
+	if (round == HIDE && gv->research == 0)
+	{
+		gv->draculaHistory[round] = true;
+		return;
+	}
+
+	// Base case for recursive search.
+	if (!(DOUBLE_BACK_1 < round && round < DOUBLE_BACK_5))
+	{
+		gv->draculaHistory[round] = true;
+		return;
+	}
+
+	return revealDracula(gv, round);
 }
 
 /**
@@ -500,14 +584,11 @@ static void removeTrap(GameView gv, PlaceId location)
 {
 	int i = 0;
 	for (; i < MAX_ENCOUNTERS - 1; i++)
-		if (gv->trapLocations[PLACE_ID_PARAM][i] == location)
+		if (gv->trapLocations[i] == location)
 			break;
 
 	for (int j = i; j < MAX_ENCOUNTERS - 1; j++)
-	{
-		gv->trapLocations[PLACE_ID_PARAM][j] = gv->trapLocations[PLACE_ID_PARAM][j + 1];
-		gv->trapLocations[IS_KNOWN_PARAM][j] = gv->trapLocations[IS_KNOWN_PARAM][j + 1];
-	}
+		gv->trapLocations[j] = gv->trapLocations[j + 1];
 }
 
 /**
@@ -516,8 +597,7 @@ static void removeTrap(GameView gv, PlaceId location)
  */
 static void removeVampire(GameView gv)
 {
-	gv->vampireLocation[PLACE_ID_PARAM] = NOWHERE;
-	gv->vampireLocation[IS_KNOWN_PARAM] = false;
+	gv->vampireLocation = NOWHERE;
 }
 
 /**
@@ -525,7 +605,7 @@ static void removeVampire(GameView gv)
  */
 static void expireTrap(GameView gv)
 {
-	removeTrap(gv, gv->trapLocations[PLACE_ID_PARAM][0]);
+	removeTrap(gv, gv->trapLocations[0]);
 }
 
 /**
@@ -538,90 +618,134 @@ static void expireVampire(GameView gv)
 }
 
 /**
- * If the given location is the location of a trap and its location is known
- * then return true, otherwise false.
+ * Trap location is known if it is shared with a hunter.
+ * 
+ * isKnownTrapLocation takes either trapLocation or hunterLocation.
  */
-static bool isKnownTrapLocation(GameView gv, PlaceId location)
+static bool isKnownTrapLocation(GameView gv, PlaceId trapLocation, PlaceId hunterLocation)
 {
-	for (int i = 0; i < MAX_ENCOUNTERS; i++)
-		if (gv->trapLocations[PLACE_ID_PARAM][i] == location)
-			if (gv->trapLocations[IS_KNOWN_PARAM][i] == true)
+	if (trapLocation != UNKNOWN_PLACE)
+		for (int i = 0; i < NUM_PLAYERS - 1; i++)
+			if (gv->moveHistory[i][gv->round] == trapLocation)
+				return true;
+
+	if (hunterLocation != UNKNOWN_PLACE)
+		for (int i = 0; i < MAX_ENCOUNTERS; i++)
+			if (gv->trapLocations[i] == hunterLocation)
 				return true;
 
 	return false;
 }
 
 /**
- * If the given location is the location of the vampire and the sightings are
- * true then return true, otherwise false.
+ * Vampire location is known if it is shared with a hunter.
+ * 
+ * isKnownVampireLocation takes either vampireLocation or hunterLocation.
  */
-static bool isKnownVampireLocation(GameView gv, PlaceId location)
+static bool isKnownVampireLocation(GameView gv, PlaceId vampireLocation, PlaceId hunterLocation)
 {
-	if (gv->vampireLocation[PLACE_ID_PARAM] == location)
-		if (gv->vampireLocation[IS_KNOWN_PARAM] == true)
+	// Use hunter location
+	if (hunterLocation != UNKNOWN_PLACE)
+		if (hunterLocation == gv->vampireLocation)
 			return true;
+
+	// Use vampire location
+	if (vampireLocation != UNKNOWN_PLACE)
+		for (int i = 0; i < NUM_PLAYERS - 1; i++)
+			if (gv->moveHistory[i][gv->round] == vampireLocation)
+				return true;
 
 	return false;
 }
 
 /**
- * If the given location is the location of Dracula and the sightings are true
- * then return true, otherwise false.
+ * Dracula location is known if it is shared with a hunter.
  */
-static bool isKnownDraculaLocation(GameView gv, PlaceId location)
+static bool isKnownDraculaLocation(GameView gv, PlaceId draculaLocation, PlaceId hunterLocation)
 {
-	if (gv->draculaRumour[PLACE_ID_PARAM] == location)
-		if (gv->draculaRumour[IS_KNOWN_PARAM] == true)
+	// Use hunter location
+	if (hunterLocation != UNKNOWN_PLACE)
+		if (hunterLocation == gv->moveHistory[PLAYER_DRACULA][gv->round])
 			return true;
+
+	// Use dracula location
+	if (draculaLocation != UNKNOWN_PLACE)
+		for (int i = 0; i < NUM_PLAYERS - 1; i++)
+			if (gv->moveHistory[i][gv->round] == draculaLocation)
+				return true;
 
 	return false;
 }
 
 /**
- * Reveals all traps in a single location if given location matches.
- * 
- * Returns number of traps on reveal else 0 if no traps are revealed.
+ * Hunter function where trap is encountered and effects take place.
  */
-static int revealTrap(GameView gv, PlaceId location)
+static void encounterTrap(GameView gv, PlaceId location)
 {
-	int numTraps = 0;
-	for (int i = 0; i < TRAIL_SIZE; i++)
-		if (location == gv->trapLocations[PLACE_ID_PARAM][i])
-		{
-			gv->trapLocations[IS_KNOWN_PARAM][i] = true;
-			numTraps++;
-		}
-	return numTraps;
+	gv->healths[gv->currentPlayer] -= LIFE_LOSS_TRAP_ENCOUNTER;
+	removeTrap(gv, location);
 }
 
 /**
- * Reveals the vampire if given location matches.
- * 
- * Returns true on reveal else false.
+ * Hunter function where vampire is encountered and effects take place.
  */
-static int revealVampire(GameView gv, PlaceId location)
+static void encounterVampire(GameView gv, PlaceId location)
 {
-	int isVampire = 0;
-	if (location == gv->vampireLocation[PLACE_ID_PARAM])
-	{
-		gv->vampireLocation[IS_KNOWN_PARAM] = true;
-		isVampire++;
-	}
-	return isVampire;
+	removeVampire(gv);
 }
 
 /**
- * Reveals Dracula's location if given location matches.
- * 
- * Returns true on reveal else false.
+ * Hunter function where Dracula is encountered and effects take place.
  */
-static int revealDracula(GameView gv, PlaceId location)
+static void encounterDracula(GameView gv)
 {
-	int isDracula = 0;
-	if (location == gv->draculaRumour[PLACE_ID_PARAM])
-	{
-		gv->draculaRumour[IS_KNOWN_PARAM] = true;
-		isDracula++;
-	}
-	return isDracula;
+	gv->healths[gv->currentPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+	gv->healths[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
+}
+
+/**
+ * Returns true if hunter has RESTED i.e. not changed locations between
+ * previous and current round.
+ */
+static bool isHunterResting(GameView gv)
+{
+	return isPlayerNotMoving(gv);
+}
+
+/**
+ * Returns true if Dracula is HIDING i.e. not changed locations between
+ * previous and current round.
+ */
+static bool isDraculaHiding(GameView gv)
+{
+	return isPlayerNotMoving(gv);
+}
+
+/**
+ * Hunter or Dracula can call this function to check if they are RESTING or
+ * HIDING respectively.
+ */
+static bool isPlayerNotMoving(GameView gv)
+{
+	int numReturned[1] = {0};
+	bool canFree[1] = {false};
+	PlaceId *locations = GvGetLastLocations(gv, gv->currentPlayer, 2, numReturned, canFree);
+
+	if (*numReturned < 2)
+		return false;
+
+	if (locations[0] == locations[1])
+		return true;
+
+	return false;
+}
+
+/**
+ * When hunter dies, they respawn at the Hospital and the score is deducted.
+ */
+static void hunterDies(GameView gv)
+{
+	updateLocationHistory(gv, HOSPITAL_PLACE);
+	gv->score -= SCORE_LOSS_HUNTER_HOSPITAL;
+	gv->healths[gv->currentPlayer] = GAME_START_HUNTER_LIFE_POINTS;
 }

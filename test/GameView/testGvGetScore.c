@@ -5,6 +5,8 @@ static void testGvGetScore2();
 static void testGvGetScore3();
 static void testGvGetScore4();
 static void testGvGetScore5();
+static void testGvGetScore6();
+static void testGvGetScore7();
 
 void testGvGetScore()
 {
@@ -15,6 +17,8 @@ void testGvGetScore()
     testGvGetScore3();
     testGvGetScore4();
     testGvGetScore5();
+    testGvGetScore6();
+    testGvGetScore7();
 
     printf("GvGetScore tests passed!\n\n");
 }
@@ -83,9 +87,49 @@ static void testGvGetScore4()
 }
 
 /**
+ * Test score when hunter dies.
+ */
+
+static void testGvGetScore5()
+{
+    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+                  "GLO.... SAL.... HCO.... MBR.... DBET... "
+                  "GED.... SBO.... HLI.... MPR.... DKLT... "
+                  "GLV....";
+    Message messages[] = {};
+    GameView gv = GvNew(trail, messages);
+
+    assert(GvGetScore(gv) == 363);
+
+    GvFree(gv);
+    printf("\tTest 5 passed!\n");
+}
+
+/**
+ * Test score when vampire matures.
+ */
+static void testGvGetScore6()
+{
+    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+                  "GLO.... SAL.... HCO.... MBR.... DBET... "
+                  "GED.... SBO.... HLI.... MPR.... DKLT... "
+                  "GLV.... SNA.... HNU.... MBD.... DCDT... "
+                  "GIR.... SPA.... HPR.... MKLT... DHIT... "
+                  "GAO.... SST.... HSZ.... MCDTTD. DGAT... "
+                  "GMS.... SFL.... HKL.... MSZ.... DCNT.V.";
+    Message messages[] = {};
+    GameView gv = GvNew(trail, messages);
+
+    assert(GvGetScore(gv) == 340);
+
+    GvFree(gv);
+    printf("\tTest 6 passed!\n");
+}
+
+/**
  * Test large number of rounds
  */
-static void testGvGetScore5()
+static void testGvGetScore7()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
                   "GLO.... SAL.... HCO.... MBR.... DBET... "
@@ -119,8 +163,9 @@ static void testGvGetScore5()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
+    printf("%d\n", GvGetScore(gv));
     assert(GvGetScore(gv) == 282);
 
     GvFree(gv);
-    printf("\tTest 5 passed!\n");
+    printf("\tTest 7 passed!\n");
 }
