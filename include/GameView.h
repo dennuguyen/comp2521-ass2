@@ -43,7 +43,7 @@ typedef struct gameView *GameView;
  * The "Message" type is defined in Game.h.
  * You are free to ignore messages if you wish.
  */
-void *GvNew(char *pastPlays, Message messages[]);
+GameView GvNew(char *pastPlays, Message messages[]);
 
 /**
  * Frees all memory allocated for `gv`.
