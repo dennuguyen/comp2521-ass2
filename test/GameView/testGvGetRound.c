@@ -58,7 +58,7 @@ static void testGvGetRound3()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetRound(gv) == 0);
+    assert(GvGetRound(gv) == 1);
 
     GvFree(gv);
     printf("\tTest 3 passed!\n");

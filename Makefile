@@ -17,7 +17,7 @@
 
 # Compiler Flags
 CC      = gcc
-CFLAGS  = -Wall -Werror -g -Iinclude
+CFLAGS  = -Wall -g -Iinclude
 LDFLAGS = -Llib
 
 # Directories

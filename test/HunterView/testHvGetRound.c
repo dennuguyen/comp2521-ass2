@@ -58,7 +58,7 @@ static void testHvGetRound3()
     Message messages[] = {};
     HunterView hv = HvNew(trail, messages);
 
-    assert(HvGetRound(hv) == 0);
+    assert(HvGetRound(hv) == 1);
 
     HvFree(hv);
     printf("\tTest 3 passed!\n");

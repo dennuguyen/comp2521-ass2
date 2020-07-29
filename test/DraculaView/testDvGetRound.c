@@ -58,7 +58,7 @@ static void testDvGetRound3()
     Message messages[] = {};
     DraculaView dv = DvNew(trail, messages);
 
-    assert(DvGetRound(dv) == 0);
+    assert(DvGetRound(dv) == 1);
 
     DvFree(dv);
     printf("\tTest 3 passed!\n");
