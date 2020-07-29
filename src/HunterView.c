@@ -31,7 +31,7 @@ typedef struct hunterView
 HunterView HvNew(char *pastPlays, Message messages[])
 {
 	HunterView new = (void *)GvNew(pastPlays, messages);
-  if (!NewHunterView) {
+  	if (!new) {
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
 		exit(EXIT_FAILURE);
 	}
@@ -109,10 +109,10 @@ PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
 	PlaceId *edges;
 	Round round = HvGetRound(hv);
-	PlayerID player = HvGetPlayer(hv);
-	PlaceId src = HvGetPlayerLocation(hv);
+	Player player = HvGetPlayer(hv);
+	PlaceId src = HvGetPlayerLocation(hv, player);
 
-	egdes = GvGetReachable(hv->gv, player, round, src, numReturnedLocs);
+	edges = GvGetReachable((GameView)hv, player, round, src, numReturnedLocs);
 
 	return edges;
 }
@@ -122,10 +122,10 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 {
 	PlaceId *edges;
 	Round round = HvGetRound(hv);
-	PlayerID player = HvGetPlayer(hv);
-	PlaceId src = HvGetPlayerLocation(hv);
+	Player player = HvGetPlayer(hv);
+	PlaceId src = HvGetPlayerLocation(hv, player);
 
-	egdes = GvGetReachableByType(hv->gv, player, round, src, road, rail, boat, numReturnedLocs);
+	edges = GvGetReachableByType((GameView)hv, player, round, src, road, rail, boat, numReturnedLocs);
 
 	return edges;
 }
@@ -135,9 +135,9 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 {
 	PlaceId *edges;
 	Round round = HvGetRound(hv);
-	PlaceId src = HvGetPlayerLocation(hv);
+	PlaceId src = HvGetPlayerLocation(hv, player);
 
-	egdes = GvGetReachableByType(hv->gv, player, round, src, numReturnedLocs);
+	edges = GvGetReachable((GameView)hv, player, round, src, numReturnedLocs);
 
 	return edges;
 }
@@ -148,9 +148,9 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 {
 	PlaceId *edges;
 	Round round = HvGetRound(hv);
-	PlaceId src = HvGetPlayerLocation(hv);
+	PlaceId src = HvGetPlayerLocation(hv, player);
 
-	egdes = GvGetReachableByType(hv->gv, player, round, src, road, rail, boat, numReturnedLocs);
+	edges = GvGetReachableByType((GameView)hv, player, round, src, road, rail, boat, numReturnedLocs);
 
 	return edges;
 }
