@@ -24,7 +24,6 @@
 
 struct draculaView
 {
-	GameView super;
 } draculaView;
 
 ////////////////////////////////////////////////////////////////////////
@@ -32,7 +31,7 @@ struct draculaView
 
 DraculaView DvNew(char *pastPlays, Message messages[])
 {
-	DraculaView new = (void *)GvNew(pastPlays, messages);
+	DraculaView new = GvNew(pastPlays, messages);
 	return new;
 }
 
