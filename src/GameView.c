@@ -13,7 +13,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "Game.h"
 #include "GameView.h"
@@ -88,7 +87,7 @@ static int revealDracula(GameView gv, PlaceId location);
  * 								GameView ADT							 	  *
  ******************************************************************************/
 
-GameView GvNew(char *pastPlays, Message messages[])
+void *GvNew(char *pastPlays, Message messages[])
 {
 	// Initialise the game
 	GameView gv = &(gameView){
@@ -119,7 +118,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 
 	if (gv == NULL)
 	{
-		fprintf(stderr, "ERROR: Could not allocate memory for GameView\n");
+		fprintf(stderr, "Couldn't allocate GameView!\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -127,12 +126,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 		playGame(gv, pastPlays, messages);
 
 	return gv;
-}
-
-void GvFree(GameView gv)
-{
-	// MapFree(gv->map);
-	// free(gv);
 }
 
 /******************************************************************************

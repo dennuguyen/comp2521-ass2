@@ -9,9 +9,6 @@ void testGvNew()
     testGvNew2();
 }
 
-/**
- * Test initialisation on empty string
- */
 static void testGvNew1()
 {
     char *trail = "";
@@ -29,9 +26,6 @@ static void testGvNew1()
     printf("\tTest passed!\n");
 }
 
-/**
- * Test initialisation on empty string
- */
 static void testGvNew2()
 {
 }

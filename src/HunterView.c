@@ -18,7 +18,7 @@
 #include "GameView.h"
 #include "HunterView.h"
 
-typedef struct hunterView
+struct hunterView
 {
 	GameView super;
 } hunterView;
@@ -28,8 +28,8 @@ typedef struct hunterView
 
 HunterView HvNew(char *pastPlays, Message messages[])
 {
-	HunterView new = (void *)GvNew(pastPlays, messages);
-	return new;
+	HunterView hv = (void *)GvNew(pastPlays, messages);
+	return hv;
 }
 
 void HvFree(HunterView hv)
