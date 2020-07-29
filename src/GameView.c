@@ -131,7 +131,7 @@ void *GvNew(char *pastPlays, Message messages[])
 
 void GvFree(GameView gv)
 {
-	free(gv);
+	// free(gv);
 }
 
 /******************************************************************************
@@ -346,8 +346,8 @@ static void playGame(GameView gv, char *pastPlays, Message messages[])
 		gv->currentPlayer = (gv->currentPlayer + 1) % NUM_PLAYERS;
 
 		// Game over
-		if (gv->healths[PLAYER_DRACULA] <= 0 || gv->score <= 0)
-			return;
+		// if (gv->healths[PLAYER_DRACULA] <= 0 || gv->score <= 0)
+		// 	return;
 	}
 
 	free(tmp);
