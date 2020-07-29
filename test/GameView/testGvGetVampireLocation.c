@@ -98,7 +98,7 @@ static void testGvGetPlayerLocation5()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
     
-    assert(GvGetVampireLocation1(gv) == SARAJEVO);
+    assert(GvGetVampireLocation(gv) == SARAJEVO);
     GvFree(gv);
     printf("\tTest 5 passed!\n");
 }
