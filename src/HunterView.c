@@ -19,28 +19,35 @@
 #include "HunterView.h"
 #include "Map.h"
 #include "Places.h"
+// add your own #includes here
 
-typedef struct hunterView
+// TODO: ADD YOUR OWN STRUCTS HERE
+
+struct hunterView
 {
-	GameView super;
-} hunterView;
+	// TODO: ADD FIELDS HERE
+};
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
 HunterView HvNew(char *pastPlays, Message messages[])
 {
-	HunterView new = (void *)GvNew(pastPlays, messages);
-  if (!NewHunterView) {
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	HunterView new = malloc(sizeof(*new));
+	if (new == NULL)
+	{
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
 		exit(EXIT_FAILURE);
 	}
+
 	return new;
 }
 
 void HvFree(HunterView hv)
 {
-	GvFree((GameView)hv);
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	free(hv);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -48,40 +55,38 @@ void HvFree(HunterView hv)
 
 Round HvGetRound(HunterView hv)
 {
-	return GvGetRound((GameView)hv);
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	return 0;
 }
 
 Player HvGetPlayer(HunterView hv)
 {
-	return GvGetPlayer((GameView)hv);
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	return PLAYER_LORD_GODALMING;
 }
 
 int HvGetScore(HunterView hv)
 {
-	return GvGetScore((GameView)hv);
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	return 0;
 }
 
 int HvGetHealth(HunterView hv, Player player)
 {
-	return GvGetHealth((GameView)hv, player);
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	return 0;
 }
 
 PlaceId HvGetPlayerLocation(HunterView hv, Player player)
 {
-	return GvGetPlayerLocation((GameView)hv, player);
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	return NOWHERE;
 }
 
 PlaceId HvGetVampireLocation(HunterView hv)
 {
-	int location = GvGetVampireLocation((GameView)hv);
-
-	if (location == NOWHERE)
-		return NOWHERE;
-
-	// if (location in hv->knownTraps)
-	// 	return location;
-	// else
-	return CITY_UNKNOWN;
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	return NOWHERE;
 }
 
 ////////////////////////////////////////////////////////////////////////
