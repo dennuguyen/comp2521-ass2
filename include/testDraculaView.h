@@ -16,7 +16,11 @@
 void testDvNew();
 void testDvFree();
 void testDvGetRound();
-void testDvGetPlayer();
+void testDvGetScore();
+void testDvGetHealth();
+void testDvGetPlayerLocation();
+void testDvGetVampireLocation();
+void testDvGetTrapLocations();
 
 // Integration Testing
 void testDv();

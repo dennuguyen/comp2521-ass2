@@ -17,37 +17,24 @@
 #include "Game.h"
 #include "GameView.h"
 #include "HunterView.h"
-#include "Map.h"
-#include "Places.h"
-// add your own #includes here
-
-// TODO: ADD YOUR OWN STRUCTS HERE
 
 struct hunterView
 {
-	// TODO: ADD FIELDS HERE
-};
+	GameView super;
+} hunterView;
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
 HunterView HvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	HunterView new = malloc(sizeof(*new));
-	if (new == NULL)
-	{
-		fprintf(stderr, "Couldn't allocate HunterView!\n");
-		exit(EXIT_FAILURE);
-	}
-
-	return new;
+	HunterView hv = (void *)GvNew(pastPlays, messages);
+	return hv;
 }
 
 void HvFree(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	free(hv);
+	GvFree((GameView)hv);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -55,38 +42,32 @@ void HvFree(HunterView hv)
 
 Round HvGetRound(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetRound((GameView)hv);
 }
 
 Player HvGetPlayer(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return PLAYER_LORD_GODALMING;
+	return GvGetPlayer((GameView)hv);
 }
 
 int HvGetScore(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetScore((GameView)hv);
 }
 
 int HvGetHealth(HunterView hv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetHealth((GameView)hv, player);
 }
 
 PlaceId HvGetPlayerLocation(HunterView hv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	return GvGetPlayerLocation((GameView)hv, player);
 }
 
 PlaceId HvGetVampireLocation(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	return GvGetVampireLocation((GameView)hv);
 }
 
 ////////////////////////////////////////////////////////////////////////

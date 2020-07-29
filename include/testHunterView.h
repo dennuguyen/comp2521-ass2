@@ -17,6 +17,9 @@ void testHvNew();
 void testHvFree();
 void testHvGetRound();
 void testHvGetPlayer();
+void testHvGetScore();
+void testHvGetHealth();
+void testHvGetPlayerLocation();
 
 // Integration Testing
 void testHv();

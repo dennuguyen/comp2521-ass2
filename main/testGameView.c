@@ -16,7 +16,12 @@
 
 int main(void)
 {
-	testGvNew();
-	testGv();
+	// testGvNew();
+	testGvGetRound();
+	testGvGetPlayer();
+	testGvGetScore();
+	testGvGetHealth();
+	// testGvGetPlayerLocation();
+	// testGv();
 	return EXIT_SUCCESS;
 }
