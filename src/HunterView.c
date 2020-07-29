@@ -19,37 +19,28 @@
 #include "HunterView.h"
 #include "Map.h"
 #include "Places.h"
-// add your own #includes here
 
-// TODO: ADD YOUR OWN STRUCTS HERE
-
-struct hunterView
+typedef struct hunterView
 {
-	GameView gv;
-	// PlayerMessage *messages;
-
-};
+	GameView super;
+} hunterView;
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
 HunterView HvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	HunterView NewHunterView = malloc(sizeof(* NewHunterView));
-	if (!NewHunterView) {
+	HunterView new = (void *)GvNew(pastPlays, messages);
+  if (!NewHunterView) {
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
 		exit(EXIT_FAILURE);
 	}
-	NewHunterView->gv = GvNew(pastPlays, messages);
-
-	return NewHunterView;
+	return new;
 }
 
 void HvFree(HunterView hv)
 {
-	GvFree(hv->gv);
-	free(hv);
+	GvFree((GameView)hv);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -57,33 +48,40 @@ void HvFree(HunterView hv)
 
 Round HvGetRound(HunterView hv)
 {
-	return GvGetRound(hv->gv);
+	return GvGetRound((GameView)hv);
 }
 
 Player HvGetPlayer(HunterView hv)
 {
-	return GvGetPlayer(hv->gv);
+	return GvGetPlayer((GameView)hv);
 }
 
 int HvGetScore(HunterView hv)
 {
-	return GvGetScore(hv->gv);
+	return GvGetScore((GameView)hv);
 }
 
 int HvGetHealth(HunterView hv, Player player)
 {
-	return GvGetHealth(hv->gv, player);
+	return GvGetHealth((GameView)hv, player);
 }
 
 PlaceId HvGetPlayerLocation(HunterView hv, Player player)
 {
-	return GvGetPlayerLocation(hv->gv, player);
+	return GvGetPlayerLocation((GameView)hv, player);
 }
 
 PlaceId HvGetVampireLocation(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	int location = GvGetVampireLocation((GameView)hv);
+
+	if (location == NOWHERE)
+		return NOWHERE;
+
+	// if (location in hv->knownTraps)
+	// 	return location;
+	// else
+	return CITY_UNKNOWN;
 }
 
 ////////////////////////////////////////////////////////////////////////
