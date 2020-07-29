@@ -4,7 +4,7 @@ static void testGvGetVampireLocation1();
 static void testGvGetVampireLocation2();
 static void testGvGetVampireLocation3();
 static void testGvGetVampireLocation4();
-static void testGvGetVampireLocation5();
+static void testGvGetVampireLocation6();
 
 void testGvGetPlayerLocation()
 {
@@ -15,6 +15,7 @@ void testGvGetPlayerLocation()
     testGvGetVampireLocation3();
     testGvGetVampireLocation4();
     testGvGetVampireLocation5();
+    testGvGetVampireLocation6();
 
     printf("GvGetVampireLocation tests passed!\n\n");
 }
