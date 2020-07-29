@@ -90,7 +90,7 @@ static void testGvGetPlayerLocation5()
         "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
         "GLO.... SAL.... HCO.... MBR.... DBET... "
         "GED.... SBO.... HLI.... MPR.... DKLT... "
-        "GIR.... SPA.... HPR.... MDU.... DHIT... "
+        "GIR.... SPA.... HPR.... MDU.... DBIT... "
         "GAO.... SST.... HSZ.... MCO.... DGAT... "
         "GMS.... SFL.... HMA.... MSZ.... DCNT... "
         "GMS.... SFL.... HMA.... MSZ....";
@@ -112,7 +112,7 @@ static void testGvGetPlayerLocation6()
         "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
         "GLO.... SAL.... HCO.... MBR.... DBET... "
         "GED.... SBO.... HLI.... MPR.... DKLT... "
-        "GIR.... SPA.... HPR.... MDU.... DHIT... "
+        "GIR.... SPA.... HPR.... MDU.... DBIT... "
         "GAO.... SST.... HSZ.... MCO.... DGAT... "
         "GMS.... SFL.... HMA.... MSZ.... DCNT... "
         "GIO.... SIO.... HBD.... MLI.... DECT... "
