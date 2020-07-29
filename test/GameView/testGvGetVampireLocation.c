@@ -56,7 +56,7 @@ static void testGvGetVampireLocation3()
 {
     char *trail = 
         "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
-        "GLO.... SSJ.... HCO.... MBR.... DBET...";
+        "GLO.... SAL.... HCO.... MBR.... DBET...";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
@@ -72,7 +72,7 @@ static void testGvGetVampireLocation4()
 {
     char *trail = 
         "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
-        "GSJVD.. SSJ.... HCO.... MBR.... DBET...";
+        "GSJVD.. SAL.... HCO.... MBR.... DBET...";
 
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
