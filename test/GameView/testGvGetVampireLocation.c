@@ -113,7 +113,7 @@ static void testGvGetVampireLocation6()
         "GSW.... SLS.... HMR.... MLO.... DSJ.V.. "
         "GSW.... SLS.... HMR.... MMN.... DBET... "
         "GSW.... SLS.... HMR.... MLO.... DKLT... "
-        "GSW.... SLS.... HMR.... MMN.... DBIT... "
+        "GSW.... SLS.... HMR.... MMN.... DBCT... "
         "GSW.... SLS.... HMR.... MLO.... DGAT... "
         "GSW.... SLS.... HMR.... MMN.... DCNT... "
         "GSW.... SLS.... HMR.... MLO.... DVRT.V.";
