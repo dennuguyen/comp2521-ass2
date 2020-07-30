@@ -21,8 +21,8 @@ static void testGvGetMoveHistory1()
     char *trail = "";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
-    int *numReturnedMoves;
-    bool *canFree;
+    int *numReturnedMoves = 0;
+    bool *canFree = 0;
     assert(GvGetMoveHistory(gv, PLAYER_LORD_GODALMING, numReturnedMoves, canFree)[0] == 0);
     assert(*numReturnedMoves == 0);
     assert(*canFree == 0);
@@ -46,18 +46,20 @@ static void testGvGetMoveHistory1()
 /**
  * Test no trap after malfunction
  */
-static void testGvGetMoveHistory3()
+static void testGvGetMoveHistory2()
 {
     char *trail = 
         "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
         "GLO.... SAL.... HCO.... MBR.... DBET... "
         "GED.... SBO.... HLI.... MPR.... DKLT... "
         "GLV.... SNA.... HNU.... MBD.... DCDT... "
-        "GIR.... SPA.... HPR.... MKLT... DHIT... "
+        "GIR.... SPA.... HPR.... MKLT... DHIT... ";
 
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
-    
+    int *numReturnedMoves = 0;
+    bool *canFree = 0;
+
     assert(GvGetMoveHistory(gv, PLAYER_LORD_GODALMING, numReturnedMoves, canFree)[0] == SWANSEA);
     assert(GvGetMoveHistory(gv, PLAYER_LORD_GODALMING, numReturnedMoves, canFree)[1] == LONDON);
     assert(GvGetMoveHistory(gv, PLAYER_LORD_GODALMING, numReturnedMoves, canFree)[2] == EDINBURGH);

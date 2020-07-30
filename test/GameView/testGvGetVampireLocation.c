@@ -48,7 +48,7 @@ static void testGvGetVampireLocation2()
     GvFree(gv);
     printf("\tTest 2 passed!\n");
 }
- */
+
 
 /**
  * Test vampire not encountered yet

@@ -27,8 +27,9 @@ static void testGvGetTrapLocations1()
     char *trail = "";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
-
-    assert(*GvGetTrapLocations(gv) == 0);
+    int *numTraps = 0;
+    assert(*GvGetTrapLocations(gv, numTraps) == 0);
+    assert(*numTraps == 0);
     GvFree(gv);
     printf("\tTest 1 passed!\n");
 }
@@ -41,12 +42,12 @@ static void testGvGetTrapLocations2()
     char *trail = "GSW.... SLS....";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
-
-    assert(*GvGetTrapLocations(gv) == 0);
+    int *numTraps = 0;
+    assert(*GvGetTrapLocations(gv, numTraps) == 0);
+    assert(*numTraps == 0);
     GvFree(gv);
     printf("\tTest 2 passed!\n");
 }
- */
 
 /**
  * Test trap not encountered yet
@@ -56,12 +57,14 @@ static void testGvGetTrapLocations3()
     char *trail = 
         "GSW.... SLS.... HMR.... MLO.... DSJ.V.. "
         "GSW.... SLS.... HMR.... MMN.... DBET... "
-        "GSW.... SLS.... HMR.... MLO.... DKLT... "
+        "GSW.... SLS.... HMR.... MLO.... DKLT...";
+
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
-
-    assert(GvGetTrapLocations(gv)[0] == BELGRADE);
-    assert(GvGetTrapLocations(gv)[1] == KLAUSENBURG);
+    int *numTraps = 0;
+    assert(GvGetTrapLocations(gv, numTraps)[0] == BELGRADE);
+    assert(GvGetTrapLocations(gv, numTraps)[1] == KLAUSENBURG);
+    assert(*numTraps == 2);
     GvFree(gv);
     printf("\tTest 3 passed!\n");
 }
@@ -74,11 +77,13 @@ static void testGvGetTrapLocations4()
     char *trail = 
         "GSW.... SLS.... HMR.... MZA.... DSJ.V.. "
         "GSW.... SLS.... HMR.... MJM.... DBET... "
-        "GSW.... SLS.... HMR.... MBETD.. DKLT... "
+        "GSW.... SLS.... HMR.... MBETD.. DKLT...";
 
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
-    assert(GvGetTrapLocations(gv)[0] == KLAUSENBURG);
+    int *numTraps = 0;
+    assert(GvGetTrapLocations(gv, numTraps)[0] == KLAUSENBURG);
+    assert(*numTraps == 1);
     GvFree(gv);
     printf("\tTest 4 passed!\n");
 }
@@ -100,12 +105,14 @@ static void testGvGetTrapLocations5()
 
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
-    assert(GvGetTrapLocations(gv)[0] == KLAUSENBURG);
-    assert(GvGetTrapLocations(gv)[1] == BUCHAREST);
-    assert(GvGetTrapLocations(gv)[2] == GALATZ);
-    assert(GvGetTrapLocations(gv)[3] == CONSTANTA);
-    assert(GvGetTrapLocations(gv)[4] == VARNA);
-    assert(GvGetTrapLocations(gv)[5] == SOFIA);
+    int *numTraps = 0;
+    assert(GvGetTrapLocations(gv, numTraps)[0] == KLAUSENBURG);
+    assert(GvGetTrapLocations(gv, numTraps)[1] == BUCHAREST);
+    assert(GvGetTrapLocations(gv, numTraps)[2] == GALATZ);
+    assert(GvGetTrapLocations(gv, numTraps)[3] == CONSTANTA);
+    assert(GvGetTrapLocations(gv, numTraps)[4] == VARNA);
+    assert(GvGetTrapLocations(gv, numTraps)[5] == SOFIA);
+    assert(*numTraps == 6);
     GvFree(gv);
     printf("\tTest 5 passed!\n");
 }
