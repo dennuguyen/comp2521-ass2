@@ -200,8 +200,8 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 		(rail == true))
 	{
 		int sum = (player + round) % 4;
-		
 
+	
 
 	}
 }
