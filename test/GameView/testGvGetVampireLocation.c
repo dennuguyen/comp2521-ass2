@@ -4,9 +4,10 @@ static void testGvGetVampireLocation1();
 static void testGvGetVampireLocation2();
 static void testGvGetVampireLocation3();
 static void testGvGetVampireLocation4();
+static void testGvGetVampireLocation5();
 static void testGvGetVampireLocation6();
 
-void testGvGetPlayerLocation()
+void testGvGetVampireLocation()
 {
     printf("Testing GvGetVampireLocation...\n");
 
@@ -55,8 +56,8 @@ static void testGvGetVampireLocation2()
 static void testGvGetVampireLocation3()
 {
     char *trail = 
-        "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
-        "GLO.... SAL.... HCO.... MBR.... DBET...";
+        "GED.... SGE.... HZU.... MCA.... DCF.V.. "
+        "GMN.... SGE.... HGE.... MLS.... DTOT...";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
@@ -71,12 +72,12 @@ static void testGvGetVampireLocation3()
 static void testGvGetVampireLocation4()
 {
     char *trail = 
-        "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
-        "GSJVD.. SAL.... HCO.... MBR.... DBET...";
+        "GED.... SGE.... HZU.... MCA.... DCF.V.. "
+        "GMN.... SCFVD.. HGE.... MLS.... DTOT...";
 
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
-    assert(GvGetVampireLocation1(gv) == NOWHERE);
+    assert(GvGetVampireLocation(gv) == NOWHERE);
     GvFree(gv);
     printf("\tTest 4 passed!\n");
 }
@@ -84,16 +85,16 @@ static void testGvGetVampireLocation4()
 /**
  * Test vampire discovered by research
  */
-static void testGvGetPlayerLocation5()
+static void testGvGetVampireLocation5()
 {
     char *trail = 
-        "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
-        "GLO.... SAL.... HCO.... MBR.... DBET... "
-        "GED.... SBO.... HLI.... MPR.... DKLT... "
-        "GIR.... SPA.... HPR.... MDU.... DBIT... "
-        "GAO.... SST.... HSZ.... MCO.... DGAT... "
-        "GMS.... SFL.... HMA.... MSZ.... DCNT... "
-        "GMS.... SFL.... HMA.... MSZ....";
+        "GSW.... SLS.... HMR.... MLO.... DSJ.V.. "
+        "GSW.... SLS.... HMR.... MMN.... DBET... "
+        "GSW.... SLS.... HMR.... MLO.... DKLT... "
+        "GSW.... SLS.... HMR.... MMN.... DBCT... "
+        "GSW.... SLS.... HMR.... MLO.... DGAT... "
+        "GSW.... SLS.... HMR.... MMN.... DCNT... "
+        "GSW.... SLS.... HMR.... MMN....";
 
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
@@ -109,19 +110,18 @@ static void testGvGetPlayerLocation5()
 static void testGvGetPlayerLocation6()
 {
     char *trail = 
-        "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
-        "GLO.... SAL.... HCO.... MBR.... DBET... "
-        "GED.... SBO.... HLI.... MPR.... DKLT... "
-        "GIR.... SPA.... HPR.... MDU.... DBIT... "
-        "GAO.... SST.... HSZ.... MCO.... DGAT... "
-        "GMS.... SFL.... HMA.... MSZ.... DCNT... "
-        "GIO.... SIO.... HBD.... MLI.... DECT... "
-        "GBD.... SMN.... HMU.... MBC.... DSOT...";
+        "GSW.... SLS.... HMR.... MLO.... DSJ.V.. "
+        "GSW.... SLS.... HMR.... MMN.... DBET... "
+        "GSW.... SLS.... HMR.... MLO.... DKLT... "
+        "GSW.... SLS.... HMR.... MMN.... DBIT... "
+        "GSW.... SLS.... HMR.... MLO.... DGAT... "
+        "GSW.... SLS.... HMR.... MMN.... DCNT... "
+        "GSW.... SLS.... HMR.... MLO.... DVRT...";
 
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
     
-    assert(GvGetVampireLocation1(gv) == NOWHERE);
+    assert(GvGetVampireLocation(gv) == NOWHERE);
     GvFree(gv);
-    printf("\tTest 5 passed!\n");
+    printf("\tTest 6 passed!\n");
 }
