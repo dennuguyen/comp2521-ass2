@@ -41,7 +41,7 @@ static void testGvGetHealth1()
 }
 
 /**
- * Test hunter and dracula encounter
+ * Test middle of round
  */
 static void testGvGetHealth2()
 {
@@ -49,11 +49,11 @@ static void testGvGetHealth2()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == 5);
-    assert(GvGetHealth(gv, PLAYER_DR_SEWARD) == 5);
+    assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == 9);
+    assert(GvGetHealth(gv, PLAYER_DR_SEWARD) == 9);
     assert(GvGetHealth(gv, PLAYER_VAN_HELSING) == 9);
     assert(GvGetHealth(gv, PLAYER_MINA_HARKER) == 9);
-    assert(GvGetHealth(gv, PLAYER_DRACULA) == 30);
+    assert(GvGetHealth(gv, PLAYER_DRACULA) == 40);
 
     GvFree(gv);
     printf("\tTest 2 passed!\n");
@@ -64,11 +64,10 @@ static void testGvGetHealth2()
  */
 static void testGvGetHealth3()
 {
-    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
-                  "GLO.... SAL.... HCO.... MBR.... DBET... "
-                  "GED.... SBO.... HLI.... MPR.... DKLT... "
-                  "GLV.... SNA.... HNU.... MBD.... DCDT... "
-                  "GIR.... SPA.... HPR.... MKLT...";
+    char *trail = "GSW.... SLS.... HMR.... MJM.... DSJ.V.. "
+                  "GLO.... SAL.... HCO.... MSZ.... DBET... "
+                  "GED.... SBO.... HLI.... MSZ.... DKLT... "
+                  "GLV.... SNA.... HNU.... MBET...";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
@@ -76,6 +75,8 @@ static void testGvGetHealth3()
     assert(GvGetHealth(gv, PLAYER_DR_SEWARD) == 9);
     assert(GvGetHealth(gv, PLAYER_VAN_HELSING) == 9);
     assert(GvGetHealth(gv, PLAYER_MINA_HARKER) == 7);
+    printf("%d\n", GvGetHealth(gv, PLAYER_DRACULA));
+
     assert(GvGetHealth(gv, PLAYER_DRACULA) == 40);
 
     GvFree(gv);

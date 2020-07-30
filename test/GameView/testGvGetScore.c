@@ -69,18 +69,26 @@ static void testGvGetScore3()
 }
 
 /**
- * Test small number of rounds
+ * Test small number of rounds.
  */
 static void testGvGetScore4()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
                   "GLO.... SAL.... HCO.... MBR.... DBET... "
                   "GED.... SBO.... HLI.... MPR.... DKLT... "
-                  "GLV....";
+                  "GLV.... SNA.... HNU.... MBD.... DCDT... "
+                  "GIR.... SPA.... HPR.... MKLT... DHIT... "
+                  "GAO.... SST.... HSZ.... MCDTTD. DGAT... "
+                  "GMS.... SFL.... HKL.... MSZ.... DCNT.V. "
+                  "GTS.... SRO.... HBC.... MCNTD.. DBS..M. "
+                  "GIO.... SBI.... HCN.... MCN.... DIO.... "
+                  "GIO.... SAS.... HBS.... MCN.... DTS.... "
+                  "GTS.... SAS.... HIO.... MBS.... DMS.... "
+                  "GMS.... SIO.... HTS.... MIO.... DAO..M.";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetScore(gv) == 363);
+    assert(GvGetScore(gv) == 335);
 
     GvFree(gv);
     printf("\tTest 4 passed!\n");
@@ -163,7 +171,6 @@ static void testGvGetScore7()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    printf("%d\n", GvGetScore(gv));
     assert(GvGetScore(gv) == 282);
 
     GvFree(gv);

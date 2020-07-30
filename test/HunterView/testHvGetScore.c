@@ -72,11 +72,19 @@ static void testHvGetScore4()
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
                   "GLO.... SAL.... HCO.... MBR.... DBET... "
                   "GED.... SBO.... HLI.... MPR.... DKLT... "
-                  "GLV....";
+                  "GLV.... SNA.... HNU.... MBD.... DCDT... "
+                  "GIR.... SPA.... HPR.... MKLT... DHIT... "
+                  "GAO.... SST.... HSZ.... MCDTTD. DGAT... "
+                  "GMS.... SFL.... HKL.... MSZ.... DCNT.V. "
+                  "GTS.... SRO.... HBC.... MCNTD.. DBS..M. "
+                  "GIO.... SBI.... HCN.... MCN.... DIO.... "
+                  "GIO.... SAS.... HBS.... MCN.... DTS.... "
+                  "GTS.... SAS.... HIO.... MBS.... DMS.... "
+                  "GMS.... SIO.... HTS.... MIO.... DAO..M.";
     Message messages[] = {};
     HunterView hv = HvNew(trail, messages);
 
-    assert(HvGetScore(hv) == 363);
+    assert(HvGetScore(hv) == 335);
 
     HvFree(hv);
     printf("\tTest 4 passed!\n");
