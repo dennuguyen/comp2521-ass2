@@ -107,7 +107,7 @@ static void testGvGetVampireLocation5()
 /**
  * Test no vampire after maturing
  */
-static void testGvGetPlayerLocation6()
+static void testGvGetVampireLocation6()
 {
     char *trail = 
         "GSW.... SLS.... HMR.... MLO.... DSJ.V.. "
