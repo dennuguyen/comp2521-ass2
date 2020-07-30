@@ -268,11 +268,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 						PlaceId from, int *numReturnedLocs)
 {
-<<<<<<< HEAD
-	
-=======
-	return MapGetConnections(gv->map, from);
->>>>>>> cd9cd4be4c8eb2ad46784b09a6fc4346e1bc585f
+	return GvGetReachableByType(gv, player, round, from, true, true, true, numReturnedLocs)
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
@@ -282,7 +278,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	PlaceId *LocationList = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
 	int visited[NUM_REAL_PLACES] = {0};
 
-	*numReturnedLocs = 0;
+	numReturnedLocs = 0;
 	LocationList[*numReturnedLocs++] = from;
 	visited[from] = 1;
 
@@ -310,18 +306,38 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 			visited[current->p] = 1;	
 		}
 	}
-
+	//
+	//
+	//
 	if ((player != PLAYER_DRACULA) && 
 		(rail == true))
 	{
 		int sum = (player + round) % 4;
+		for (i = sum; i >= 0; i--)
+		{
+			findRailConnections(g->map,from, i, visited, LocationList, numReturnedLocs);
+		}
+	}
+	return LocationList;
+}
 
-	
-
+static PlaceId findRailConnections(Map m, PlaceId from, int sum, int *visited, int *LocationList, int *numReturnedLocs)
+{
+	if (sum > 0)
+	{
+		for (ConnList current = g->map->connections[from]; !current; current = current->next) 
+		{
+			if (visited[current->p] == 0)
+			{
+				LocationList[numReturnedLocs++] = current->p;
+				visited[current->p] = 1;
+			}
+		}
+	} else {
+		return NULL;
 	}
 }
 
-<<<<<<< HEAD
 /******************************************************************************
  * 								Play Functions							  	  *
  ******************************************************************************/
@@ -665,19 +681,3 @@ static int revealDracula(GameView gv, PlaceId location)
 	}
 	return isDracula;
 }
-=======
-////////////////////////////////////////////////////////////////////////
-// Your own interface functions
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> cd9cd4be4c8eb2ad46784b09a6fc4346e1bc585f

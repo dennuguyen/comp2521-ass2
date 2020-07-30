@@ -1,43 +1,40 @@
 #include "testHunterView.h"
 
-static void testHvWhereCanIGo1();
-static void testHvWhereCanIGo2();
-static void testHvWhereCanIGo3();
-static void testHvWhereCanIGo4();
-static void testHvWhereCanIGo5();
+static void testHvWhereCanIGoByType1();
+static void testHvWhereCanIGoByType2();
+static void testHvWhereCanIGoByType3();
+static void testHvWhereCanIGoByType4();
+static void testHvWhereCanIGoByType5();
 
-void testHvWhereCanIGo()
+void testHvWhereCanIGoByType()
 {
     printf("Testing HvGetRound...\n");
 
-    testHvWhereCanIGo1();
-    testHvWhereCanIGo2();
-    testHvWhereCanIGo3();
-    testHvWhereCanIGo4();
-    testHvWhereCanIGo5();
+    testHvWhereCanIGoByType1();
+    testHvWhereCanIGoByType2();
+    testHvWhereCanIGoByType3();
+    testHvWhereCanIGoByType4();
+    testHvWhereCanIGoByType5();
 
     printf("HvGetRound tests passed!\n\n");
 }
 
 /**
- * Test initialisation on empty string
+ * Test if player cannot leave the location
  */
-static void testHvWhereCanIGo1()
+static void testHvWhereCanIGoByType1()
 {
     char *trail = "GPA...."; /*  IMPORTANT!!!!    */
     Message messages[] = {"Gone to Barceleno"};
     HunterView hv = HvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    PlaceId *edges = HvWhereCanIGoByType(hv, false, false, false, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs != -1)
-    assert(visited[PARIS]);
-    assert(visited[BRUSSELS]);
-    assert(!visited[SARAGOSSA]);
+    assert(numReturnedLocs != -1);
 
     free(edges);
     HvFree(hv);
@@ -49,20 +46,20 @@ static void testHvWhereCanIGo1()
  */
 static void testHvWhereCanIGo2()
 {
-    char *trail = "GGE... SBA...."; /*  IMPORTANT!!!!    */
+    char *trail = "GGO.... SIO.... HLS...."; /*  IMPORTANT!!!!    */
     Message messages[] = {"Gone to Barceleno"};
     HunterView hv = HvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    PlaceId *edges = HvWhereCanIGo(hv, true, false, false, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs != -1)
-    assert(visited[BARCELONA]);
-    assert(visited[MEDITERRANEAN_SEA]);
-    assert(visited[SARAGOSSA]);
+    assert(numReturnedLocs == 3)
+    assert(visited[LISBON]);
+    assert(visited[CADIZ]);
+    assert(visited[MADRID]);
 
     free(edges);
     HvFree(hv);
@@ -74,19 +71,18 @@ static void testHvWhereCanIGo2()
  */
 static void testHvWhereCanIGo3()
 {
-    char *trail = "GPA.... SCA .... HGE....";
+    char *trail = "GGE....";
     Message messages[] = {"Gone to Geneva"};
     HunterView hv = HvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    PlaceId *edges = HvWhereCanIGo(hv, false, true, true, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
-    assert(visited[GRANADA]);
-    assert(visited[LISBON]);
-    assert(visited[MADRID]);
+    assert(numReturnedLocs != -1);
+    assert(visited[MILAN]);
 
     free(edges);
     HvFree(hv);
@@ -102,12 +98,13 @@ static void testHvWhereCanIGo4()
     Message messages[] = {"Gone to Galatz"};
     HunterView hv = HvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    PlaceId *edges = HvWhereCanIGo(hv, true, false, false, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
+    asser(numReturnedLocs == 4);
     assert(visited[GALATZ]);
     assert(visited[CONSTANTA);
 
@@ -121,19 +118,19 @@ static void testHvWhereCanIGo4()
  */
 static void testHvWhereCanIGo5()
 {
-    char *trail = "GSW....";
+    char *trail = "GSW.... SMU....";
     
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    PlaceId *edges = HvWhereCanIGo(hv, true, true, true, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs != 1);
-    assert(visited[SWANSEA]);
-    assert(visited[LONDON]);
-    assert(visited[LIVERPOOL]);
+    assert(numReturnedLocs != -1);
+    assert(visited[MUNICH]);
+    assert(visited[VIENNA]);
+    assert(visited[NUREMBURG]);
 
     free(edges);
     HvFree(hv);

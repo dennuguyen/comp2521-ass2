@@ -1,43 +1,42 @@
 #include "testHunterView.h"
 
-static void testHvWhereCanIGo1();
-static void testHvWhereCanIGo2();
-static void testHvWhereCanIGo3();
-static void testHvWhereCanIGo4();
-static void testHvWhereCanIGo5();
+static void testHvWhereCanTheyGo1();
+static void testHvWhereCanTheyGo2();
+static void testHvWhereCanTheyGo3();
+static void testHvWhereCanTheyGo4();
+static void testHvWhereCanTheyGo5();
 
-void testHvWhereCanIGo()
+void testHvWhereCanTheyGo()
 {
     printf("Testing HvGetRound...\n");
 
-    testHvWhereCanIGo1();
-    testHvWhereCanIGo2();
-    testHvWhereCanIGo3();
-    testHvWhereCanIGo4();
-    testHvWhereCanIGo5();
+    testHvWhereCanTheyGo1();
+    testHvWhereCanTheyGo2();
+    testHvWhereCanTheyGo3();
+    testHvWhereCanTheyGo4();
+    testHvWhereCanTheyGo5();
 
     printf("HvGetRound tests passed!\n\n");
 }
 
 /**
- * Test initialisation on empty string
+ * Test if string will not be empty
  */
-static void testHvWhereCanIGo1()
+static void testHvWhereCanTheyGo1()
 {
-    char *trail = "GPA...."; /*  IMPORTANT!!!!    */
-    Message messages[] = {"Gone to Barceleno"};
+    char *trail = "GGE.... SGE.... HGE.... MGE...."; /*  IMPORTANT!!!!    */
+    Message messages[] = {"I DO NOT KNOW WHAT TO TYPE IN HERE!"};
     HunterView hv = HvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    PlaerId player = HvGetPlayer(hv);
+    PlaceId *edges = HvWhereCanTheyGo(hv, PLAYER_MINA_HARKER, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs != -1)
-    assert(visited[PARIS]);
-    assert(visited[BRUSSELS]);
-    assert(!visited[SARAGOSSA]);
+    assert(numReturnedLocs != -1);
+    asser(visited[MILAN] != 1);
 
     free(edges);
     HvFree(hv);
@@ -47,21 +46,20 @@ static void testHvWhereCanIGo1()
 /**
  * Test in middle of a round
  */
-static void testHvWhereCanIGo2()
+static void testHvWhereCanTheyGo2()
 {
-    char *trail = "GGE... SBA...."; /*  IMPORTANT!!!!    */
+    char *trail = "GBA...."; /*  IMPORTANT!!!!    */
     Message messages[] = {"Gone to Barceleno"};
     HunterView hv = HvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    PlaerId player = HvGetPlayer(hv);
+    PlaceId *edges = HvWhereCanTheyGo(hv, PLAYER_LORD_GODALMING, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs != -1)
-    assert(visited[BARCELONA]);
-    assert(visited[MEDITERRANEAN_SEA]);
+    assert(numReturnedLocs != -1); 
     assert(visited[SARAGOSSA]);
 
     free(edges);
@@ -72,21 +70,23 @@ static void testHvWhereCanIGo2()
 /**
  * Test at end of round
  */
-static void testHvWhereCanIGo3()
+static void testHvWhereCanTheyGo3()
 {
-    char *trail = "GPA.... SCA .... HGE....";
+    char *trail = "GGE.... SBA.... HGE....";
     Message messages[] = {"Gone to Geneva"};
     HunterView hv = HvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    PlaerId player = HvGetPlayer(hv);
+    PlaceId *edges = HvWhereCanTheyGo(hv, PLAYER_VAN_HELSING, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
-    assert(visited[GRANADA]);
-    assert(visited[LISBON]);
-    assert(visited[MADRID]);
+    assert(visited[GENEVA]);
+    assert(visited[ZURICH);
+    assert(visited[MILAN]);
+    assert(visited[PARIS]);
 
     free(edges);
     HvFree(hv);
@@ -96,13 +96,13 @@ static void testHvWhereCanIGo3()
 /**
  * Test small number of rounds
  */
-static void testHvWhereCanIGo4()
+static void testHvWhereCanTheyGo4()
 {
-    char *trail = "GGA....";
+    char *trail = "GGA.... SBA.... HIO.... MGA....";
     Message messages[] = {"Gone to Galatz"};
     HunterView hv = HvNew(trail, messages);
-    int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    int *numReturnedLocs = -1
+    PlaceId *edges = HvWhereCanTheyGo(hv, PLAYER_MINA_HARKER, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
@@ -119,12 +119,12 @@ static void testHvWhereCanIGo4()
 /**
  * Test large number of rounds
  */
-static void testHvWhereCanIGo5()
+static void testHvWhereCanTheyGo5()
 {
     char *trail = "GSW....";
     
-    int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    int *numReturnedLocs = -1
+    PlaceId *edges = HvWhereCanIGo(hv, PLAYER_LORD_GODALMING, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
