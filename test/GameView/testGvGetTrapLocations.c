@@ -5,7 +5,6 @@ static void testGvGetTrapLocations2();
 static void testGvGetTrapLocations3();
 static void testGvGetTrapLocations4();
 static void testGvGetTrapLocations5();
-static void testGvGetTrapLocations6();
 
 void testGvGetTrapLocations()
 {
@@ -16,7 +15,6 @@ void testGvGetTrapLocations()
     testGvGetTrapLocations3();
     testGvGetTrapLocations4();
     testGvGetTrapLocations5();
-    testGvGetTrapLocations6();
 
     printf("GvGetTrapLocations tests passed!\n\n");
 }
