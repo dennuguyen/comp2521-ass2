@@ -17,11 +17,20 @@
 int main(void)
 {
 	// testGvNew();
-	testGvGetRound();
-	testGvGetPlayer();
-	testGvGetScore();
-	testGvGetHealth();
+	// testGvGetRound();
+	// testGvGetPlayer();
+	// testGvGetScore();
+	// testGvGetHealth();
 	// testGvGetPlayerLocation();
+	// testGvGetVampireLocation();
+	// testGvGetTrapLocations();
+	// testGvGetMoveHistory();
+	testGvGetLastMoves();
+	testGvGetLocationHistory();
+	testGvGetLastLocations();
+	// testGvGetReachable();
+	// testGvGetReachableByType();
+
 	// testGv();
 	return EXIT_SUCCESS;
 }

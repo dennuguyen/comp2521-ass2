@@ -119,8 +119,6 @@ static void testGvGetRound5()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    printf("health = %d\n", GvGetHealth(gv, PLAYER_DRACULA));
-    printf("round = %d\n", GvGetRound(gv));
     assert(GvGetRound(gv) == 28);
 
     GvFree(gv);

@@ -75,8 +75,6 @@ static void testGvGetHealth3()
     assert(GvGetHealth(gv, PLAYER_DR_SEWARD) == 9);
     assert(GvGetHealth(gv, PLAYER_VAN_HELSING) == 9);
     assert(GvGetHealth(gv, PLAYER_MINA_HARKER) == 7);
-    printf("%d\n", GvGetHealth(gv, PLAYER_DRACULA));
-
     assert(GvGetHealth(gv, PLAYER_DRACULA) == 40);
 
     GvFree(gv);
@@ -94,7 +92,7 @@ static void testGvGetHealth4()
                   "GSW.... SLS.... HMR.... MJM.... DBCT... "
                   "GSW.... SLS.... HMR.... MJM.... DSOT... "
                   "GSW.... SLS.... HMR.... MSJV... DSAT... "
-                  "GSW.... SLS.... HMR.... MJM.... DVAT... ";
+                  "GSW.... SLS.... HMR.... MJM.... DVAT...";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
@@ -114,7 +112,7 @@ static void testGvGetHealth4()
 static void testGvGetHealth5()
 {
     char *trail = "GSW.... SLS.... HMR.... MJM.... DCN.V.. "
-                  "GSW.... SLS.... HMR.... MJM.... DBS.... ";
+                  "GSW.... SLS.... HMR.... MJM.... DBS....";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 

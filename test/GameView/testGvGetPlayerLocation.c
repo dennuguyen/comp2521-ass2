@@ -5,6 +5,7 @@ static void testGvGetPlayerLocation2();
 static void testGvGetPlayerLocation3();
 static void testGvGetPlayerLocation4();
 static void testGvGetPlayerLocation5();
+static void testGvGetPlayerLocation9();
 
 void testGvGetPlayerLocation()
 {
@@ -15,6 +16,7 @@ void testGvGetPlayerLocation()
     testGvGetPlayerLocation3();
     testGvGetPlayerLocation4();
     testGvGetPlayerLocation5();
+    testGvGetPlayerLocation9();
 
     printf("GvGetPlayerLocation tests passed!\n\n");
 }
@@ -88,7 +90,7 @@ static void testGvGetPlayerLocation4()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == EDINBURGH);
+    assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == LIVERPOOL);
     assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == BORDEAUX);
     assert(GvGetPlayerLocation(gv, PLAYER_VAN_HELSING) == LEIPZIG);
     assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == PRAGUE);
@@ -99,9 +101,42 @@ static void testGvGetPlayerLocation4()
 }
 
 /**
- * Test large number of rounds
+ * Test getting dracula's location after teleport
  */
 static void testGvGetPlayerLocation5()
+{
+    char *trail = "GMN.... SLS.... HMR.... MHA.... DLO.V.. "
+                  "GLV.... SAL.... HCO.... MBR.... DTPT... "
+                  "GSW....";
+    Message messages[] = {};
+    GameView gv = GvNew(trail, messages);
+
+    assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == SWANSEA);
+    assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == ALICANTE);
+    assert(GvGetPlayerLocation(gv, PLAYER_VAN_HELSING) == COLOGNE);
+    assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == BERLIN);
+    assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CASTLE_DRACULA);
+
+    GvFree(gv);
+    printf("\tTest 5 passed!\n");
+}
+
+/**
+ * Test getting dracula's location after hide
+ */
+
+/**
+ * Test getting dracula's location after double back
+ */
+
+/**
+ * Test getting hunter's location after rest
+ */
+
+/**
+ * Test large number of rounds
+ */
+static void testGvGetPlayerLocation9()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
                   "GLO.... SAL.... HCO.... MBR.... DBET... "
@@ -138,9 +173,9 @@ static void testGvGetPlayerLocation5()
     assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == SZEGED);
     assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == SOFIA);
     assert(GvGetPlayerLocation(gv, PLAYER_VAN_HELSING) == BUCHAREST);
-    assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == SOFIA);
+    assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == ST_JOSEPH_AND_ST_MARY);
     assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == SOFIA);
 
     GvFree(gv);
-    printf("\tTest 5 passed!\n");
+    printf("\tTest 9 passed!\n");
 }
