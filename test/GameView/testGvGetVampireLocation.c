@@ -116,7 +116,7 @@ static void testGvGetVampireLocation6()
         "GSW.... SLS.... HMR.... MMN.... DBIT... "
         "GSW.... SLS.... HMR.... MLO.... DGAT... "
         "GSW.... SLS.... HMR.... MMN.... DCNT... "
-        "GSW.... SLS.... HMR.... MLO.... DVRT...";
+        "GSW.... SLS.... HMR.... MLO.... DVRT.V.";
 
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
