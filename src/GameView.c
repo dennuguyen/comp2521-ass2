@@ -268,18 +268,60 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 						PlaceId from, int *numReturnedLocs)
 {
+<<<<<<< HEAD
 	
+=======
+	return MapGetConnections(gv->map, from);
+>>>>>>> cd9cd4be4c8eb2ad46784b09a6fc4346e1bc585f
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 							  PlaceId from, bool road, bool rail,
 							  bool boat, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	PlaceId *LocationList = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	int visited[NUM_REAL_PLACES] = {0};
+
 	*numReturnedLocs = 0;
-	return NULL;
+	LocationList[*numReturnedLocs++] = from;
+	visited[from] = 1;
+
+	for (ConnList current = g->map->connections[from]; !current; current = current->next)
+	{
+		// 1.  
+		// 2. 
+		// 3. 
+		if ((current->type == ROAD) &&
+			(road = true) &&
+			(visited[current->p] == 0))
+		{
+			// connListInsert(LocationList, current);
+			LocationList[numReturnedLocs++] = current->p;
+			visited[current->p] = 1;
+		}
+		// 1.
+		// 2.
+		// 3.
+		if (current->type == BOAT) &&
+			(boat = true) &&
+			(visited[current->p] == 0))
+		{
+			LocationList[numReturnedLocs++] = current->p
+			visited[current->p] = 1;	
+		}
+	}
+
+	if ((player != PLAYER_DRACULA) && 
+		(rail == true))
+	{
+		int sum = (player + round) % 4;
+
+	
+
+	}
 }
 
+<<<<<<< HEAD
 /******************************************************************************
  * 								Play Functions							  	  *
  ******************************************************************************/
@@ -623,3 +665,19 @@ static int revealDracula(GameView gv, PlaceId location)
 	}
 	return isDracula;
 }
+=======
+////////////////////////////////////////////////////////////////////////
+// Your own interface functions
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> cd9cd4be4c8eb2ad46784b09a6fc4346e1bc585f
