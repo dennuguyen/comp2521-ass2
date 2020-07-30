@@ -44,7 +44,7 @@ static void testHvWhereCanIGoByType1()
 /**
  * Test in middle of a round
  */
-static void testHvWhereCanIGo2()
+static void testHvWhereCanIGoByType2()
 {
     char *trail = "GGO.... SIO.... HLS...."; /*  IMPORTANT!!!!    */
     Message messages[] = {"Gone to Barceleno"};
@@ -69,7 +69,7 @@ static void testHvWhereCanIGo2()
 /**
  * Test at end of round
  */
-static void testHvWhereCanIGo3()
+static void testHvWhereCanIGoByType3()
 {
     char *trail = "GGE....";
     Message messages[] = {"Gone to Geneva"};
@@ -92,7 +92,7 @@ static void testHvWhereCanIGo3()
 /**
  * Test small number of rounds
  */
-static void testHvWhereCanIGo4()
+static void testHvWhereCanIGoByType4()
 {
     char *trail = "GGA....";
     Message messages[] = {"Gone to Galatz"};
@@ -104,7 +104,7 @@ static void testHvWhereCanIGo4()
     {
         visited[edges[i]] = 1;
     }
-    asser(numReturnedLocs == 4);
+    asser(numReturnedLocs == 5);
     assert(visited[GALATZ]);
     assert(visited[CONSTANTA);
 
@@ -116,7 +116,7 @@ static void testHvWhereCanIGo4()
 /**
  * Test large number of rounds
  */
-static void testHvWhereCanIGo5()
+static void testHvWhereCanIGoByType5()
 {
     char *trail = "GSW.... SMU....";
     
