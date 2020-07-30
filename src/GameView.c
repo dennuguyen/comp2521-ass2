@@ -342,7 +342,7 @@ static void playGame(GameView gv, char *pastPlays, Message messages[])
 		gv->currentPlayer = (gv->currentPlayer + 1) % NUM_PLAYERS;
 
 		// Game over
-		if (gv->healths[PLAYER_DRACULA] <= 0 || gv->score <= 0) // this causes bug where round finishes at 21 instead of 28
+		if (gv->healths[PLAYER_DRACULA] <= 0 || gv->score <= 0)
 			return;
 	}
 
@@ -393,8 +393,8 @@ static void playDracula(GameView gv, char *play, Message messages[], int move)
 	if (location == CASTLE_DRACULA || isKnownDraculaLocation(gv, location, UNKNOWN_PLACE))
 		revealDracula(gv, gv->round);
 
-	if (isDraculaHiding(gv))
-		gv->healths[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
+	// if (isDraculaHiding(gv))
+	// gv->healths[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
 
 	if (placeIsSea(location))
 		gv->healths[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
@@ -481,14 +481,8 @@ static void playHunter(GameView gv, char *play, Message messages[], int move)
 	if (gv->research == NUM_PLAYERS - 1 || GvGetMoveByRound(gv, PLAYER_DRACULA, gv->round - 6) == HIDE)
 		revealDracula(gv, gv->round - 6);
 
-	// Hunter dies and does nothing for remainder of their turn.
-	if (gv->healths[gv->currentPlayer] <= 0)
-	{
-		hunterDies(gv);
-		return;
-	}
-
 	for (int i = 3; i < 7; i++)
+	{
 		switch (play[i])
 		{
 		case 'T':
@@ -506,6 +500,14 @@ static void playHunter(GameView gv, char *play, Message messages[], int move)
 			fprintf(stderr, "ERROR: Invalid char, %c, in play[%d].\n", play[3], 3);
 			// exit(EXIT_FAILURE);
 		}
+
+		// Hunter dies and does nothing for remainder of their turn.
+		if (gv->healths[gv->currentPlayer] <= 0)
+		{
+			hunterDies(gv);
+			return;
+		}
+	}
 }
 
 /******************************************************************************
@@ -624,11 +626,13 @@ static void expireVampire(GameView gv)
  */
 static bool isKnownTrapLocation(GameView gv, PlaceId trapLocation, PlaceId hunterLocation)
 {
+	// Use trap location
 	if (trapLocation != UNKNOWN_PLACE)
 		for (int i = 0; i < NUM_PLAYERS - 1; i++)
 			if (gv->moveHistory[i][gv->round] == trapLocation)
 				return true;
 
+	// Use hunter location
 	if (hunterLocation != UNKNOWN_PLACE)
 		for (int i = 0; i < MAX_ENCOUNTERS; i++)
 			if (gv->trapLocations[i] == hunterLocation)
