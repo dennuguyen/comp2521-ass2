@@ -88,7 +88,7 @@ static void testGvGetLastMoves3()
     assert(GvGetLastMoves(gv, PLAYER_DRACULA, 4, numReturnedMoves, canFree)[1] == KLAUSENBURG);
     assert(GvGetLastMoves(gv, PLAYER_DRACULA, 4, numReturnedMoves, canFree)[2] == CASTLE_DRACULA);
     assert(GvGetLastMoves(gv, PLAYER_DRACULA, 4, numReturnedMoves, canFree)[3] == CASTLE_DRACULA);
-    assert(*numReturnedMoves == 2);
+    assert(*numReturnedMoves == 4);
     assert(*canFree == 0);
 
     GvFree(gv);
