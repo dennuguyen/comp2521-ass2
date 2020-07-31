@@ -56,9 +56,8 @@ static void testGvGetVampireLocation2()
  */
 static void testGvGetVampireLocation3()
 {
-    char *trail =
-        "GED.... SGE.... HZU.... MCA.... DCF.V.. "
-        "GMN.... SGE.... HGE.... MLS.... DTOT...";
+    char *trail = "GED.... SGE.... HZU.... MCA.... DCF.V.. "
+                  "GMN.... SGE.... HGE.... MLS.... DTOT...";
 
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
@@ -74,9 +73,8 @@ static void testGvGetVampireLocation3()
  */
 static void testGvGetVampireLocation4()
 {
-    char *trail =
-        "GED.... SGE.... HZU.... MCA.... DCF.V.. "
-        "GMN.... SCFVD.. HGE.... MLS.... DTOT...";
+    char *trail = "GED.... SGE.... HZU.... MCA.... DCF.V.. "
+                  "GMN.... SCFVD.. HGE.... MLS.... DTOT...";
 
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
@@ -92,14 +90,13 @@ static void testGvGetVampireLocation4()
  */
 static void testGvGetVampireLocation5()
 {
-    char *trail =
-        "GSW.... SLS.... HMR.... MLO.... DSJ.V.. "
-        "GSW.... SLS.... HMR.... MMN.... DBET... "
-        "GSW.... SLS.... HMR.... MLO.... DKLT... "
-        "GSW.... SLS.... HMR.... MMN.... DBCT... "
-        "GSW.... SLS.... HMR.... MLO.... DGAT... "
-        "GSW.... SLS.... HMR.... MMN.... DCNT... "
-        "GSW.... SLS.... HMR.... MMN....";
+    char *trail = "GSW.... SLS.... HMR.... MLO.... DSJ.V.. "
+                  "GSW.... SLS.... HMR.... MMN.... DBET... "
+                  "GSW.... SLS.... HMR.... MLO.... DKLT... "
+                  "GSW.... SLS.... HMR.... MMN.... DBCT... "
+                  "GSW.... SLS.... HMR.... MLO.... DGAT... "
+                  "GSW.... SLS.... HMR.... MMN.... DCNT... "
+                  "GSW.... SLS.... HMR.... MMN....";
 
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);

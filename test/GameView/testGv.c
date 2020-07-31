@@ -224,7 +224,7 @@ static void testGv8()
     Message messages[6] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetHealth(gv, GAME_START_HUNTER_LIFE_POINTS));
+    assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == GAME_START_HUNTER_LIFE_POINTS);
 
     GvFree(gv);
     printf("Test passed!\n");
@@ -370,7 +370,7 @@ static void testGv14()
     assert(GvGetHealth(gv, PLAYER_DR_SEWARD) ==
            GAME_START_HUNTER_LIFE_POINTS - 2 * LIFE_LOSS_TRAP_ENCOUNTER);
     assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CITY_UNKNOWN);
-    assert(GvGetVampireLocation(gv) == STRASBOURG);
+    assert(GvGetVampireLocation(gv) == NOWHERE);
 
     // Lord Godalming's move/location history
     {
@@ -485,7 +485,7 @@ static void testGv15()
         assert(numLocs == 7);
         sortPlaces(locs, numLocs);
         assert(locs[0] == BORDEAUX);
-        assert(locs[1] == BUCHAREST);
+        assert(locs[1] == BRUSSELS);
         assert(locs[2] == COLOGNE);
         assert(locs[3] == LE_HAVRE);
         assert(locs[4] == MARSEILLES);

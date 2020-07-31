@@ -284,6 +284,11 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 			break;
 
 	(*numReturnedMoves) = gv->round - i;
+
+	// Off-set round increment
+	if (player < gv->currentPlayer)
+		(*numReturnedMoves)++;
+
 	return &gv->moveHistory[player][i];
 }
 
@@ -319,6 +324,11 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 			break;
 
 	(*numReturnedLocs) = gv->round - i;
+
+	// Off-set round increment
+	if (player < gv->currentPlayer)
+		(*numReturnedLocs)++;
+
 	return &gv->locationHistory[player][i];
 }
 
@@ -646,11 +656,11 @@ static void setVampire(GameView gv, PlaceId location)
 static void revealDracula(GameView gv, int round)
 {
 	// Reveal HIDE when they become last move in Dracula's trail.
-	// if (round == HIDE && gv->research == 0)
-	// {
-	// 	gv->draculaHistory[round] = true;
-	// 	return;
-	// }
+	if (round == HIDE && gv->research == 0)
+	{
+		gv->draculaHistory[round] = true;
+		return;
+	}
 
 	// // Base case for recursive search.
 	// if (!(DOUBLE_BACK_1 < round && round < DOUBLE_BACK_5))
@@ -675,7 +685,7 @@ static void removeTrap(GameView gv, PlaceId location)
 	for (; j < MAX_ENCOUNTERS - 1; j++)
 		gv->trapLocations[j] = gv->trapLocations[j + 1];
 
-	// gv->trapLocations[j] = NOWHERE;
+	gv->trapLocations[j] = NOWHERE;
 	// gv->trapIndex--;
 }
 

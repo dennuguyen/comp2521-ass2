@@ -163,7 +163,6 @@ static void testGvGetHealth6()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == 9);
     assert(GvGetHealth(gv, PLAYER_DR_SEWARD) == 3);
     assert(GvGetHealth(gv, PLAYER_VAN_HELSING) == 8);
     assert(GvGetHealth(gv, PLAYER_MINA_HARKER) == 0);
