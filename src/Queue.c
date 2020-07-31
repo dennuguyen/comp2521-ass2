@@ -1,3 +1,9 @@
+//dan-jack-vi-jamie
+// dennuguyen, Dan Nguyen, z5206032, W13B
+// vii-le, Vi Le, z5205798, H13B
+// jamie-rahme, Jamie Rahme, z5209611, T15A
+
+
 /**
  * TrailView ADT is implemented to utilise getters and have queue implementation.
  */

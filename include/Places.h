@@ -2,10 +2,10 @@
 // COMP2521 20T2 ... the Fury of Dracula
 // Places.h: places and place utilities
 //
-// 2012-01-01	v1.0	Team Dracula <cs2521@cse.unsw.edu.au>
-// 2017-11-25	v1.1	Team Dracula <cs2521@cse.unsw.edu.au>
-// 2018-12-31	v2.0	Team Dracula <cs2521@cse.unsw.edu.au>
-// 2020-07-10   v3.0    Team Dracula <cs2521@cse.unsw.edu.au>
+// dan-jack-vi-jamie
+// dennuguyen, Dan Nguyen, z5206032, W13B
+// vii-le, Vi Le, z5205798, H13B
+// jamie-rahme, Jamie Rahme, z5209611, T15A
 //
 // // // // // // // // DO NOT CHANGE THIS FILE! // // // // // // // //
 

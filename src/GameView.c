@@ -2,10 +2,12 @@
 // COMP2521 20T2 ... the Fury of Dracula
 // GameView.c: GameView ADT implementation
 //
-// 2014-07-01	v1.0	Team Dracula <cs2521@cse.unsw.edu.au>
-// 2017-12-01	v1.1	Team Dracula <cs2521@cse.unsw.edu.au>
-// 2018-12-31	v2.0	Team Dracula <cs2521@cse.unsw.edu.au>
-// 2020-07-10   v3.0    Team Dracula <cs2521@cse.unsw.edu.au>
+// dan-jack-vi-jamie
+// dennuguyen, Dan Nguyen, z5206032, W13B
+// vii-le, Vi Le, z5205798, H13B
+// jamie-rahme, Jamie Rahme, z5209611, T15A
+//
+
 //
 ////////////////////////////////////////////////////////////////////////
 
@@ -355,7 +357,7 @@ static int findRailConnections(Map m, PlaceId from, int sum, int *visited, Place
 	{
 		// D0 NOTHING!!!
 	}
-	return numReturnedLocs
+	return numReturnedLocs;
 }
 <<<<<<< HEAD
  * 								Play Functions							  	  *
