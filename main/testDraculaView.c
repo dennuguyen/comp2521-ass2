@@ -16,14 +16,6 @@
 
 int main(void)
 {
-	testDvNew();
-	// testDvFree();
-	testDvGetRound();
-	testDvGetScore();
-	testDvGetHealth();
-	testDvGetPlayerLocation();
-	testDvGetVampireLocation();
-	// testDvGetTrapLocations();
 	testDv();
 	return EXIT_SUCCESS;
 }

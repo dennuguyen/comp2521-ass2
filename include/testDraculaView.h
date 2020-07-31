@@ -13,14 +13,6 @@
 #include "testUtils.h"
 
 // Unit Testing
-void testDvNew();
-void testDvFree();
-void testDvGetRound();
-void testDvGetScore();
-void testDvGetHealth();
-void testDvGetPlayerLocation();
-void testDvGetVampireLocation();
-void testDvGetTrapLocations();
 
 // Integration Testing
 void testDv();

@@ -13,13 +13,7 @@
 #include "testUtils.h"
 
 // Unit Testing
-void testHvNew();
-void testHvFree();
-void testHvGetRound();
-void testHvGetPlayer();
-void testHvGetScore();
-void testHvGetHealth();
-void testHvGetPlayerLocation();
+void testHvGetLastKnownDraculaLocation();
 
 // Integration Testing
 void testHv();

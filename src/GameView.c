@@ -282,7 +282,7 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 	if (player >= gv->currentPlayer)
 		i--;
 
-	for (; i > gv->round - numMoves && i > 0; i--)
+	for (; i >= gv->round - numMoves && i >= 0; i--)
 		if (gv->moveHistory[player][i] == NOWHERE)
 			break;
 
@@ -322,7 +322,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 	if (player >= gv->currentPlayer)
 		i--;
 
-	for (; i > gv->round - numLocs && i > 0; i--)
+	for (; i >= gv->round - numLocs && i >= 0; i--)
 		if (gv->locationHistory[player][i] == NOWHERE)
 			break;
 
@@ -374,6 +374,18 @@ PlaceId GvGetLocationByRound(GameView gv, Player player, Round round)
 		return NOWHERE;
 
 	return gv->locationHistory[player][round];
+}
+
+PlaceId GvGetLastKnownDraculaLocation(GameView gv, Round *round)
+{
+	for (int i = gv->round; i >= 0; i--)
+		if (placeIsReal(gv->locationHistory[PLAYER_DRACULA][i]))
+		{
+			*round = i;
+			return gv->locationHistory[PLAYER_DRACULA][i];
+		}
+
+	return NOWHERE;
 }
 
 /******************************************************************************

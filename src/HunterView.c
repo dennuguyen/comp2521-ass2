@@ -75,9 +75,7 @@ PlaceId HvGetVampireLocation(HunterView hv)
 
 PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*round = 0;
-	return NOWHERE;
+	return GvGetLastKnownDraculaLocation((GameView)hv, round);
 }
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,

@@ -16,13 +16,7 @@
 
 int main(void)
 {
-	// testHvNew();
-	// testHvFree();
-	testHvGetRound();
-	testHvGetPlayer();
-	testHvGetScore();
-	testHvGetHealth();
-	testHvGetPlayerLocation();
+	testHvGetLastKnownDraculaLocation();
 	testHv();
 	return EXIT_SUCCESS;
 }
