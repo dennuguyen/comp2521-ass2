@@ -20,7 +20,7 @@ void testDvWhereCanIGoByType()
 }
 
 /**
- * Test if player cannot leave the location
+ * Testing for Draculs at Le-Havre in Round 1 without baot
  */
 static void testDvWhereCanIGoByType1()
 {
@@ -42,7 +42,7 @@ static void testDvWhereCanIGoByType1()
 }
 
 /**
- * Test in middle of a round
+ * Testing for Dracula in Zurich to see if rail value affects the Dracula traversal in Round 1
  */
 static void testDvWhereCanIGoByType2()
 {
@@ -57,7 +57,7 @@ static void testDvWhereCanIGoByType2()
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs != 0)
+    assert(numReturnedLocs >= 0);
     assert(visited[LISBON]);
     assert(visited[CADIZ]);
     assert(visited[MADRID]);
@@ -68,7 +68,7 @@ static void testDvWhereCanIGoByType2()
 }
 
 /**
- * Test at end of round
+ * Testing for Dracula at Madrid in Round 1
  */
 static void testDvWhereCanIGoByType3()
 {
@@ -91,7 +91,7 @@ static void testDvWhereCanIGoByType3()
 }
 
 /**
- * Test small number of rounds
+ * Testing for Dracula at Galatz in Round 1
  */
 static void testHvWhereCanIGo4()
 {

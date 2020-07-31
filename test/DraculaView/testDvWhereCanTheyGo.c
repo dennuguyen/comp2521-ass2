@@ -20,7 +20,7 @@ void testDvWhereCanTheyGo()
 }
 
 /**
- * Test initialisation on empty string
+ * Testing for Van Helsing at Brussels in Round 1
  */
 static void testDvWhereCanTheyGo1()
 {
@@ -34,7 +34,7 @@ static void testDvWhereCanTheyGo1()
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs >= 5)
+    assert(numReturnedLocs >= 5);
     assert(visited[LE_HAVRE]);
     assert(visited[BRUSSELS]);
     assert(!visited[PARIS]);
@@ -45,7 +45,7 @@ static void testDvWhereCanTheyGo1()
 }
 
 /**
- * Test in middle of a round
+ * Testing for Mina Harker in Round 1
  */
 static void testDvWhereCanTheyGo2()
 {
@@ -59,7 +59,8 @@ static void testDvWhereCanTheyGo2()
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs != -1)
+    assert(numReturnedLocs != -1);
+    assert(numReturnedLocs >= 7);
     assert(visited[PARIS]);
     assert(visited[CLERMONT_FERRAND]);
     assert(!visited[NANTES]);
@@ -70,11 +71,12 @@ static void testDvWhereCanTheyGo2()
 }
 
 /**
- * Test at end of round
+ * Testing for Lord Godalming at Lisbon in Round 2
  */
 static void testDvWhereCanTheyGo3()
 {
-    char *trail = "GCA.... SBA.... HIO.... MGE.... DMA?...."; /*  IMPORTANT!!!!    */
+    char *trail = "GCA.... SBA.... HIO.... MGE.... DMA?....
+                   GLS.... "; /*  IMPORTANT!!!!    */
     Message messages[] = {"Gone to Barceleno"};
     HunterView dv = HvNew(trail, messages);
     int *numReturnedLocs = -1;
@@ -84,7 +86,7 @@ static void testDvWhereCanTheyGo3()
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs != -1)
+    assert(numReturnedLocs != -1);
     assert(visited[LISBON]);
     assert(visited[MADRID]);
     assert(visited[GRANADA]);
@@ -93,11 +95,11 @@ static void testDvWhereCanTheyGo3()
 
     free(edges);
     DvFree(dv);
-    printf("\tTest 2 passed!\n");
+    printf("\tTest 3 passed!\n");
 }
 
 /**
- * Test small number of rounds
+ * Testing for Lord Godalming at Toulouse in Round 1
  */
 static void testDvWhereCanTheyGo4()
 {
@@ -125,7 +127,7 @@ static void testDvWhereCanTheyGo4()
 }
 
 /**
- * Test large number of rounds
+ * Testing for Dracula at Varna in Round 2
  */
 static void testDvWhereCanTheyGo5()
 {

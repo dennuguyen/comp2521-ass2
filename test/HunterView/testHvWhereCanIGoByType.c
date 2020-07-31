@@ -43,7 +43,7 @@ static void testHvWhereCanIGoByType1()
 }
 
 /**
- * Test in middle of a round
+ * Test for Van Helsing at Lisbon in Round 1.
  */
 static void testHvWhereCanIGoByType2()
 {
@@ -69,7 +69,7 @@ static void testHvWhereCanIGoByType2()
 }
 
 /**
- * Test at end of round
+ * Testing for Lord Godaling at Geneva in Round 2.
  */
 static void testHvWhereCanIGoByType3()
 {
@@ -92,15 +92,15 @@ static void testHvWhereCanIGoByType3()
 }
 
 /**
- * Test small number of rounds
+ * Testing for Lord Godaling at Galway in Round 1.
  */
 static void testHvWhereCanIGoByType4()
 {
-    char *trail = "GGW....";
-    Message messages[] = {"Gone to Galatz"};
+    char *trail = "GGW.... ";
+    Message messages[] = {"Gone to Galway"};
     HunterView hv = HvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, true, false, false, numReturnedLocs);
+    PlaceId *edges = HvWhereCanIGo(hv, true, true, false, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
@@ -116,7 +116,7 @@ static void testHvWhereCanIGoByType4()
 }
 
 /**
- * Test large number of rounds
+ * Testing for Dr. Seward at Munich in Round 1.
  */
 static void testHvWhereCanIGoByType5()
 {

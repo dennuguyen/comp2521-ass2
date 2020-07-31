@@ -20,7 +20,7 @@ void testDvWhereCanIGo()
 }
 
 /**
- * Test initialisation on empty string
+ * Testing for Dracula at Le-Havre in Round 1
  */
 static void testDvWhereCanIGo1()
 {
@@ -34,7 +34,8 @@ static void testDvWhereCanIGo1()
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs != -1)
+    assert(numReturnedLocs != -1);
+    assert()
     assert(visited[NANTES]);
     assert(visited[BRUSSELS]);
     assert(!visited[PARIS]);
@@ -45,12 +46,12 @@ static void testDvWhereCanIGo1()
 }
 
 /**
- * Test in middle of a round
+ * Testing for Dracula at Munich in Round 2.
  */
 static void testDvWhereCanIGo2()
 {
-    char *trail = "GMN.... SNU.... HAM.... MPA.... DZU.V..
-                    GLV.... SPR.... HBU.... MGE...."; /*  IMPORTANT!!!!    */
+    char *trail = "GMN.... SNU.... HAM.... MPA.... DZU.V....
+                    GLV.... SPR.... HBU.... MGE.... DMU?...."; /*  IMPORTANT!!!!    */
     Message messages[] = {"Gone to Barceleno"};
     HunterView dv = HvNew(trail, messages);
     int *numReturnedLocs = -1;
@@ -60,7 +61,8 @@ static void testDvWhereCanIGo2()
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs != -1)
+    assert(numReturnedLocs != -1);
+    assert(numReturnedLocs >= 3);
     assert(visited[ZURICH]);
     assert(visited[MUNICH]);
     assert(!visited[GENEVA]);
@@ -71,7 +73,7 @@ static void testDvWhereCanIGo2()
 }
 
 /**
- * Test at end of round
+ * Testing for Dracula at Manchester in Round 1
  */
 static void testDvWhereCanIGo3()
 {
@@ -85,7 +87,7 @@ static void testDvWhereCanIGo3()
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs != -1)
+    assert(numReturnedLocs == 7);
     assert(visited[LISBON]);
     assert(visited[MADRID]);
     assert(!visited[GRANADA]);
@@ -96,7 +98,7 @@ static void testDvWhereCanIGo3()
 }
 
 /**
- * Test small number of rounds
+ * Testing for Dracula at Constanta in Round 1
  */
 static void testDvWhereCanIGo4()
 {
@@ -123,7 +125,7 @@ static void testDvWhereCanIGo4()
 }
 
 /**
- * Test large number of rounds
+ * Testsing for Dracula at Varna in Round 2
  */
 static void testDvWhereCanIGo5()
 {

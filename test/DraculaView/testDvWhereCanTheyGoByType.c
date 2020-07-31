@@ -20,11 +20,11 @@ void testDvWhereCanTheyGoByType()
 }
 
 /**
- * Test if player cannot leave the location
+ * Testing for Dracula at Venice without boat transport in Round 1
  */
 static void testDvWhereCanTheyGoByType1()
 {
-    char *trail = "GPA.... SCA.... HGE.... MIO...."; /*  IMPORTANT!!!!    */
+    char *trail = "GPA.... SCA.... HGE.... MIO.... DVE.V.."; /*  IMPORTANT!!!!    */
     Message messages[] = {"Gone to Barceleno"};
     HunterView dv = DvNew(trail, messages);
     int *numReturnedLocs = -1;
@@ -42,7 +42,7 @@ static void testDvWhereCanTheyGoByType1()
 }
 
 /**
- * Test in middle of a round
+ * Testing for Van Helsing at Amsterdam without rail in Round 2
  */
 static void testDvWhereCanTheyGoByType2()
 {
@@ -57,7 +57,7 @@ static void testDvWhereCanTheyGoByType2()
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs != 2)
+    assert(numReturnedLocs != 2);
     assert(visited[AMSTERDAM]);
     assert(visited[COLOGNE]);
     assert(visited[BRUSSELS]);
@@ -68,7 +68,7 @@ static void testDvWhereCanTheyGoByType2()
 }
 
 /**
- * Test at end of round
+ * Testing for Mina Harker at Geneva without boat in Round 1
  */
 static void testDvWhereCanTheyGoByType3()
 {
@@ -93,7 +93,7 @@ static void testDvWhereCanTheyGoByType3()
 }
 
 /**
- * Test small number of rounds
+ * Testing for Dracula at Galatz with road only in Round 1
  */
 static void testDvWhereCanTheyGo4()
 {
@@ -119,7 +119,7 @@ static void testDvWhereCanTheyGo4()
 }
 
 /**
- * Test large number of rounds
+ * Testing for Mina Harker at Manchester without rail in Round 1
  */
 static void testHvWhereCanTheyGo5()
 {

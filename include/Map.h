@@ -50,4 +50,11 @@ int MapNumConnections(Map m, TransportType type);
  */
 ConnList MapGetConnections(Map m, PlaceId p);
 
+/**
+ *  Checks if the PlaceId 'v' exists in the ConnList by 
+ * a specific type of transport 'type'.
+*/
+bool connListContains(ConnList l, PlaceId v, TransportType type);
+
 #endif // !defined(FOD__MAP_H_)
+

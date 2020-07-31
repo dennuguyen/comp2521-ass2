@@ -84,16 +84,25 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 							 int *pathLength)
 {
-	assert (g->map != NULL);
+	assert ((GameView)hv != NULL);
+	PlaceId src = HvGetPlayerLocation(hv, hunter);
+	if (src == dest) {
+		*pathLength = 1;
+		PlaceId *Location = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+		assert(Location != NULL);
+		*Location = src;
+		return Location;
+	}
 
-	int visited[NUM_REAL_PLACES];
-	PlaceId pred[NUM_REAL_PLACES];
-	for (int i = 0; i < NUM_REAL_PLACES; i++) { 
+	int visited[NUM_REAL_PLACES] = {0};
+	int pred[NUM_REAL_PLACES];
+	for (int i = 0; i < NUM_REAL_PLACES; i++)
+	{
 		pred[i] = -1;
 	}
 
-	PlaceId src = HvGetPlayerLocation(hv, hunter);
-	QueueView queue = QueueNew();
+
+	struct QueueView queue = QueueNew();
 	Enqueue(queue, src, 0); 
 	while (!QueueIsEmpty(queue)) {
 		PlaceId current = Dequeue(queue)->location;
@@ -101,6 +110,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		{ 
 			break; 
 		} 
+		ConnList *LocationList = MapGetConnections(hv->map, current);
 		for (PlaceId w = 0; w < NUM_REAL_PLACES; w++) 
 		{
 			if (connListContains(g->map->connections, w, ANY) && visited[w] == 0) 

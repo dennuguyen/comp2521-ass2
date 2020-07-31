@@ -20,7 +20,7 @@ void testHvWhereCanTheyGoByType()
 }
 
 /**
- * Test if string will not be empty
+ * Testing for Mina Harker at Geneva in Round 1
  */
 static void testHvWhereCanTheyGoByType1()
 {
@@ -44,7 +44,7 @@ static void testHvWhereCanTheyGoByType1()
 }
 
 /**
- * Test in middle of a round
+ * Testing for Lord Godaling at Barcelona only by boat in Round 1
  */
 static void testHvWhereCanTheyGoByType2()
 {
@@ -69,7 +69,7 @@ static void testHvWhereCanTheyGoByType2()
 }
 
 /**
- * Test at end of round
+ * Testing for Van Helsing at Geneva withouth any rails in Round 1
  */
 static void testHvWhereCanTheyGoByType3()
 {
@@ -95,7 +95,7 @@ static void testHvWhereCanTheyGoByType3()
 }
 
 /**
- * Test small number of rounds
+ * Testing for Van Helsing at Ionion Sea only by boat in Round 1
  */
 static void testHvWhereCanTheyGoByType4()
 {
@@ -119,7 +119,7 @@ static void testHvWhereCanTheyGoByType4()
 }
 
 /**
- * Test large number of rounds
+ * Testng for Lord Godaling at Swansea without ant restrictions on transport type in Round 1
  */
 static void testHvWhereCanTheyGoByType5()
 {

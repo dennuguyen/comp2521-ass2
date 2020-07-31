@@ -32,7 +32,7 @@ static void addConnection(Map m, PlaceId v, PlaceId w, TransportType type);
 static inline bool isSentinelEdge(Connection c);
 
 static ConnList connListInsert(ConnList l, PlaceId v, TransportType type);
-static bool connListContains(ConnList l, PlaceId v, TransportType type);
+bool connListContains(ConnList l, PlaceId v, TransportType type);
 
 ////////////////////////////////////////////////////////////////////////
 

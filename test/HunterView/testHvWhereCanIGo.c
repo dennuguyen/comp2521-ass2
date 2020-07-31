@@ -20,7 +20,7 @@ void testHvWhereCanIGo()
 }
 
 /**
- * Test initialisation on empty string
+ * Testing for Lord Godalming at Paris in Round 1.
  */
 static void testHvWhereCanIGo1()
 {
@@ -46,7 +46,7 @@ static void testHvWhereCanIGo1()
 }
 
 /**
- * Test in middle of a round
+ * Testing for Dr. Seward at Barcelona in Round 1. 
  */
 static void testHvWhereCanIGo2()
 {
@@ -72,7 +72,7 @@ static void testHvWhereCanIGo2()
 }
 
 /**
- * Test at end of round
+ * Testing for Van Helsing at Geneva in Round 1.
  */
 static void testHvWhereCanIGo3()
 {
@@ -97,7 +97,7 @@ static void testHvWhereCanIGo3()
 }
 
 /**
- * Test small number of rounds
+ * Testing for Lord Godaling at Galatz in Round 1
  */
 static void testHvWhereCanIGo4()
 {
@@ -121,7 +121,7 @@ static void testHvWhereCanIGo4()
 }
 
 /**
- * Test large number of rounds
+ * Testing for Lord Godaling at Swansea in Round 1.
  */
 static void testHvWhereCanIGo5()
 {

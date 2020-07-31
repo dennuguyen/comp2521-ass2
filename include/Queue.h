@@ -4,7 +4,7 @@
 #define QUEUE_H
 
 
-typedef struct QueueNode QueueNode
+typedef struct QueueNode QueueNode;
 typedef struct QueueView *Queue;
 
 QueueNode NewNode(PlaceId, int);
