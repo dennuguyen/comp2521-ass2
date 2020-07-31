@@ -17,7 +17,7 @@
 #include "Game.h"
 #include "GameView.h"
 #include "HunterView.h"
-#include "Queue.h"
+#include "Map.h"
 
 struct hunterView
 {
@@ -79,20 +79,32 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 	return GvGetLastKnownDraculaLocation((GameView)hv, round);
 }
 
+//static int adjacent(Map m, PlaceId x, PlaceId y) {
+   //for (int i = 0; i < )
+   
+   //return (g->edges[x][y] != 0);
+//}
+
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 							 int *pathLength)
-{
+{	/*
 	assert ((GameView)hv != NULL);
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
-	int *visited = calloc(MapNumPlaces(hv->map), sizeo(int));
-	
-	
-	
-	
-	
-	
-	
-	
+	int *visited = calloc(MapNumPlaces(hv->map), sizeof(int));
+	PlaceId *pred = calloc(MapNumPlaces(hv->map), sizeof(PlaceId));
+	ConnQueue q = newQueue();
+	Enqueue(q,src, );
+	bool isFound = false;
+	visited[src] = 1;
+	if (src == dest) isFound = true;
+	else {
+		while (q->head != NULL && !isFound) {
+			PlaceId y, x = Dequeue(q);
+			for (y = 0; y < MapNumPlaces(hv->map); y++) {
+				if (!)
+			}
+		}
+	}
 	
 	
 	
@@ -146,6 +158,8 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		free(temp);
 		return path; 
 	}
+	return NULL;*/
+	*pathLength = 0;
 	return NULL;
 }
 
