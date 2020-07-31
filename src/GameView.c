@@ -282,8 +282,9 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	numReturnedLocs = 0;
 	LocationList[numReturnedLocs++] = from;
 	visited[from] = 1;
+	ConnList current = MapGetConnections();
 
-	for (ConnList current = g->map->connections[from]; !current; current = current->next)
+	for (; !current; current = current->next)
 	{
 		// 1.  
 		// 2. 

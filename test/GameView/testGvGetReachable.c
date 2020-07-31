@@ -1,20 +1,20 @@
-#include "testHunterView.h"
+#include "testGameView.h"
 
-static void testHvWhereCanIGo1();
-static void testHvWhereCanIGo2();
-static void testHvWhereCanIGo3();
-static void testHvWhereCanIGo4();
-static void testHvWhereCanIGo5();
+static void testGvGetReachable1();
+static void testGvGetReachable2();
+static void testGvGetReachable3();
+static void testGvGetReachable4();
+static void testGvGetReachable5();
 
-void testHvWhereCanIGo()
+void testGvGetReachable()
 {
     printf("Testing HvGetRound...\n");
 
-    testHvWhereCanIGo1();
-    testHvWhereCanIGo2();
-    testHvWhereCanIGo3();
-    testHvWhereCanIGo4();
-    testHvWhereCanIGo5();
+    testGvGetReachable1();
+    testGvGetReachable2();
+    testGvGetReachable3();
+    testGvGetReachable4();
+    testGvGetReachable5();
 
     printf("HvGetRound tests passed!\n\n");
 }
@@ -22,13 +22,15 @@ void testHvWhereCanIGo()
 /**
  * Testing for Lord Godalming at Paris in Round 1.
  */
-static void testHvWhereCanIGo1()
+static void testGvGetReachable1()
 {
     char *trail = "GPA...."; /*  IMPORTANT!!!!    */
     Message messages[] = {"Gone to Barceleno"};
-    HunterView hv = HvNew(trail, messages);
+    GameView gv = GvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    Round round = GvGetRound(gv);
+    PlaceId from = GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING); 
+    PlaceId *edges = GvGetReachable(hv, PLAYER_LORD_GODALMING, round, from, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
@@ -41,71 +43,80 @@ static void testHvWhereCanIGo1()
     assert(!visited[SARAGOSSA]);
 
     free(edges);
-    HvFree(hv);
+    GvFree(gv);
     printf("\tTest 1 passed!\n");
 }
 
 /**
  * Testing for Dr. Seward at Barcelona in Round 1. 
  */
-static void testHvWhereCanIGo2()
+static void testGvGetReachable2()
 {
     char *trail = "GGE... SBA...."; /*  IMPORTANT!!!!    */
     Message messages[] = {"Gone to Barceleno"};
-    HunterView hv = HvNew(trail, messages);
+    GameView gv = GvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    Round round = GvGetRound(gv);
+    PlaceId from = GvGetPlayerLocation(gv, PLAYER_DR_SEWARD);
+    PlaceId *edges = GvGetReachable(gv, PLAYER_DR_SEWARD, round, from, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
     assert(numReturnedLocs != -1);
-    assert(numReturnedLocs == 5);
+    assert(numReturnedLocs == 6);
     assert(visited[BARCELONA]);
     assert(visited[MEDITERRANEAN_SEA]);
     assert(visited[SARAGOSSA]);
 
     free(edges);
-    HvFree(hv);
+    GvFree(gv);
     printf("\tTest 2 passed!\n");
 }
 
 /**
  * Testing for Van Helsing at Geneva in Round 1.
  */
-static void testHvWhereCanIGo3()
+static void testGvGetReachable3()
 {
-    char *trail = "GPA.... SGE .... HCA....";
+    char *trail = "GPA.... SCA .... HGE....";
     Message messages[] = {"Gone to Geneva"};
-    HunterView hv = HvNew(trail, messages);
+    GameView gv = GvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    Round round = GvGetRound(gv);
+    PlaceId from = GvGetPlayerLocation(gv, PLAYER_VAN_HELSING);
+    PlaceId *edges = GvGetReachable(gv, PLAYER_VAN_HELSING, round, from, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs >= 7);
-    assert(visited[GRANADA]);
-    assert(visited[LISBON]);
-    assert(visited[MADRID]);
+    assert(numReturnedLocs <= 11);
+    assert(numReturnedLocs != -1);
+    assert(numReturnedLocs > 0);
+    assert(!visited[GRANADA]);
+    assert(!visited[LISBON]);
+    assert(!visited[MADRID]);
+    assert(visite[GENEVA]);
 
     free(edges);
-    HvFree(hv);
+    GvFree(gv);
     printf("\tTest 3 passed!\n");
 }
 
 /**
  * Testing for Lord Godaling at Galatz in Round 1
  */
-static void testHvWhereCanIGo4()
+static void testGvGetReachable4()
 {
     char *trail = "GGA....";
     Message messages[] = {"Gone to Galatz"};
-    HunterView hv = HvNew(trail, messages);
+    GameView gv = GvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    Round round = GvGetRound(gv);
+    PlaceId from = GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING);
+    PlaceId *edges = GvGetReachable(gv, PLAYER_LORD_GODALMING, round, from, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
@@ -116,19 +127,24 @@ static void testHvWhereCanIGo4()
     assert(visited[CONSTANTA);
 
     free(edges);
-    HvFree(hv);
+    GvFree(gv);
     printf("\tTest 4 passed!\n");
 }
 
 /**
  * Testing for Lord Godaling at Swansea in Round 1.
  */
-static void testHvWhereCanIGo5()
+static void testGvGetReachable5()
 {
     char *trail = "GSW....";
-    
+    Message messages[] = {"Gone to Galatz"};
+    GameView gv = GvNew(trail, messages);
     int *numReturnedLocs = -1;
-    PlaceId *edges = HvWhereCanIGo(hv, numReturnedLocs);
+    Round round = GvGetRound(gv);
+    PlaceId from = GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING);
+    PlaceId *edges = GvGetReachable(gv, PLAYER_LORD_GODALMING, round, from, numReturnedLocs);
+    int *numReturnedLocs = -1;
+    PlaceId *edges = GvGetReachable(hv, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {

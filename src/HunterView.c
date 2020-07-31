@@ -78,7 +78,7 @@ PlaceId HvGetVampireLocation(HunterView hv)
 
 PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
-	
+
 }
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
@@ -100,7 +100,6 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	{
 		pred[i] = -1;
 	}
-
 
 	struct QueueView queue = QueueNew();
 	Enqueue(queue, src, 0); 
