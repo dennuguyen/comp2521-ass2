@@ -66,7 +66,7 @@ static void updateLocationHistory(GameView gv, PlaceId location);
 /* Setters */
 static void setTrap(GameView gv, PlaceId location);
 static void setVampire(GameView gv, PlaceId location);
-static void setDraculaRumour(GameView gv);
+// static void setDraculaRumour(GameView gv);
 
 /* Destroyers */
 static void removeTrap(GameView gv, PlaceId location);
@@ -75,7 +75,7 @@ static void expireTrap(GameView gv);
 static void expireVampire(GameView gv);
 
 /* Check if location is known to hunters */
-static bool isKnownTrapLocation(GameView gv, PlaceId location);
+// static bool isKnownTrapLocation(GameView gv, PlaceId location);
 static bool isKnownVampireLocation(GameView gv, PlaceId location);
 static bool isKnownDraculaLocation(GameView gv, PlaceId location);
 
@@ -487,11 +487,11 @@ static void setVampire(GameView gv, PlaceId location)
 /**
  * Set a rumour of Dracula's location.
  */
-static void setDraculaRumour(GameView gv)
-{
-	gv->vampireLocation[PLACE_ID_PARAM] = gv->locationHistory[PLAYER_DRACULA][gv->round];
-	gv->vampireLocation[IS_KNOWN_PARAM] = false;
-}
+// static void setDraculaRumour(GameView gv)
+// {
+// 	gv->vampireLocation[PLACE_ID_PARAM] = gv->locationHistory[PLAYER_DRACULA][gv->round];
+// 	gv->vampireLocation[IS_KNOWN_PARAM] = false;
+// }
 
 /**
  * Removes a trap in the given location by splicing the trap from the array.
@@ -541,15 +541,15 @@ static void expireVampire(GameView gv)
  * If the given location is the location of a trap and its location is known
  * then return true, otherwise false.
  */
-static bool isKnownTrapLocation(GameView gv, PlaceId location)
-{
-	for (int i = 0; i < MAX_ENCOUNTERS; i++)
-		if (gv->trapLocations[PLACE_ID_PARAM][i] == location)
-			if (gv->trapLocations[IS_KNOWN_PARAM][i] == true)
-				return true;
+// static bool isKnownTrapLocation(GameView gv, PlaceId location)
+// {
+// 	for (int i = 0; i < MAX_ENCOUNTERS; i++)
+// 		if (gv->trapLocations[PLACE_ID_PARAM][i] == location)
+// 			if (gv->trapLocations[IS_KNOWN_PARAM][i] == true)
+// 				return true;
 
-	return false;
-}
+// 	return false;
+// }
 
 /**
  * If the given location is the location of the vampire and the sightings are
