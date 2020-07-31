@@ -282,9 +282,9 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	numReturnedLocs = 0;
 	LocationList[numReturnedLocs++] = from;
 	visited[from] = 1;
-	ConnList current = MapGetConnections();
+	ConnList current = MapGetConnections(g->map, );
 
-	for (; !current; current = current->next)
+	while (!current)
 	{
 		// 1.  
 		// 2. 
@@ -307,21 +307,24 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 			LocationList[numReturnedLocs++] = current->p
 			visited[current->p] = 1;	
 		}
+
+		current = current->next;
 	}
-	//
-	//
-	//
+	// 1. 
+	// 2. 
+	// 3. 
 	if ((player != PLAYER_DRACULA) && 
 		(rail == true))
 	{
 		int sum = (player + round) % 4;
-		for (i = sum; i >= 0; i--)
-		{
-			numReturnedLocs = findRailConnections(gv->map, from, i, visited, LocationList, numReturnedLocs);
-		}
+		numReturnedLocs = findRailConnections(gv->map, from, i, visited, LocationList, numReturnedLocs);
+	}
+
+	return LocationList;
+}
 
 
-static PlaceId findRailConnections(Map m, PlaceId from, int sum, int *LocationList, int *numReturnedLocs)
+static int findRailConnections(Map m, PlaceId from, int sum, int *visited, PlaceId *LocationList, int *numReturnedLocs)
 {
 		/*
 	findRailConnections
@@ -332,11 +335,27 @@ static PlaceId findRailConnections(Map m, PlaceId from, int sum, int *LocationLi
        look for rail connections, add to q();
 		*/
 	
-	while () {
-
-
+	if (sum > 0) 
+	{
+		ConnList current = MapGetConnections(gv->map, from);
+		while (!current->type)
+		{
+			if (current->type == RAIL)
+			{		
+				if (visited[current->p] == 0))
+				{
+				LocationList[numReturnedLocs++] = current->p;
+				visited[current->p] = 1;
+				}
+				numReturnedLocs = findRailConnections(gv->map, current->p, sum - 1, visited, LocationList, numReturnedLocs);
+			}
+			current = current->next;
+		}
+	} else 
+	{
+		// D0 NOTHING!
 	}
-		return numReturnedLocs
+	return numReturnedLocs
 }
 <<<<<<< HEAD
  * 								Play Functions							  	  *

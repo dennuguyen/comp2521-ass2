@@ -109,7 +109,8 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		{ 
 			break; 
 		} 
-		ConnList *LocationList = MapGetConnections(hv->map, current);
+		ConnList *LocationList = MapGetConnections(hv->map, src);
+		
 		for (PlaceId w = 0; w < NUM_REAL_PLACES; w++) 
 		{
 			if (connListContains(g->map->connections, w, ANY) && visited[w] == 0) 
