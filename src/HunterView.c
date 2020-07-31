@@ -101,10 +101,10 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		pred[i] = -1;
 	}
 
-	struct QueueView queue = QueueNew();
+	Queue queue = QueueNew();
 	Enqueue(queue, src, 0); 
 	while (!QueueIsEmpty(queue)) {
-		PlaceId current = Dequeue(queue)->location;
+		QueueNode current = Dequeue(queue);
 		if (current == dest) 
 		{ 
 			break; 
