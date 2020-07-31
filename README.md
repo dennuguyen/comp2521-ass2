@@ -13,9 +13,7 @@ jamie-rahme, Jamie Rahme, z5209611, T15A
 ### Glossary
 GV = game view\
 DV = dracula view\
-HV = hunter view\
-PV = player view\
-TV = trap view
+HV = hunter view
 
 ### Directory Tree
 ```
@@ -67,32 +65,7 @@ Turn on "format on save" if your editor has the feature.
 
 At minimum must complete and submit: GameView.c, DraculaView.c, HunterView.c, testGameView.c, testDraculaView.c, testHunterView.c.
 
-We can modify the existing headerfiles and add new ADTs e.g. Queue.c and Queue.h which will be submitted if added/changed.
-
-The draculaView, hunterView structs inherit the gameView struct. draculaView and hunterView do not directly interact with gameView. They must use their ADT getters which calls the gameView getters.
-
-There is a lot of overlap in the expected behaviour of given GameView functions. Move and locations are basically the same since the only moves the players can make is by changing their location. For the getters:
-
-- Special getters
-    - get player location
-    - get vampire location
-    - get trap locations
-
-- Location getters
-    - get last locations
-    - get location history (history getter)
-
-- Move getters
-    - get last moves
-    - get move history (history getter)
-    
-History getters get the full move or location array.\
-Location getters behave the same as move getters unless the specified player is Dracula then CITY_UKNOWN and SEA_UNKNOWN is possible to return.\
-Special getters get the requested item from the view of the current player. Dracula sees everything but hunters will see CITY_UNKNOWN or SEA_UNKNOWN.
-
-Therefore these getters can be compared by the two following criteria:
-- player requesting the information (hunter vs dracula)
-- special requests (player location, vampire location, trap location)
+The draculaView, hunterView structs inherit the gameView struct i.e. shares the same memory allocation as gameView. Therefore, using GameView's ADT functions requires a typecast from draculaView and hunterView.
 
 ## The Hunt
 
