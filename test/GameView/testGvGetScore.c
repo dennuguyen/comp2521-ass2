@@ -5,6 +5,8 @@ static void testGvGetScore2();
 static void testGvGetScore3();
 static void testGvGetScore4();
 static void testGvGetScore5();
+static void testGvGetScore6();
+static void testGvGetScore7();
 
 void testGvGetScore()
 {
@@ -15,6 +17,8 @@ void testGvGetScore()
     testGvGetScore3();
     testGvGetScore4();
     testGvGetScore5();
+    testGvGetScore6();
+    testGvGetScore7();
 
     printf("GvGetScore tests passed!\n\n");
 }
@@ -58,54 +62,111 @@ static void testGvGetScore3()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetScore(gv) == GAME_START_SCORE);
+    assert(GvGetScore(gv) == GAME_START_SCORE - SCORE_LOSS_DRACULA_TURN);
 
     GvFree(gv);
     printf("\tTest 3 passed!\n");
 }
 
 /**
- * Test small number of rounds
+ * Test small number of rounds.
  */
 static void testGvGetScore4()
 {
-    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL.... "
-                  "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR.... "
-                  "DKLT... GLV....";
+    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+                  "GLO.... SAL.... HCO.... MBR.... DBET... "
+                  "GED.... SBO.... HLI.... MPR.... DKLT... "
+                  "GLV.... SNA.... HNU.... MBD.... DCDT... "
+                  "GIR.... SPA.... HPR.... MKLT... DHIT... "
+                  "GAO.... SST.... HSZ.... MCDTTD. DGAT... "
+                  "GMS.... SFL.... HKL.... MSZ.... DCNT.V. "
+                  "GTS.... SRO.... HBC.... MCNTD.. DBS..M. "
+                  "GIO.... SBI.... HCN.... MCN.... DIO.... "
+                  "GIO.... SAS.... HBS.... MCN.... DTS.... "
+                  "GTS.... SAS.... HIO.... MBS.... DMS.... "
+                  "GMS.... SIO.... HTS.... MIO.... DAO..M.";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetScore(gv) == 363);
+    assert(GvGetScore(gv) == 335);
 
     GvFree(gv);
     printf("\tTest 4 passed!\n");
 }
 
 /**
- * Test large number of rounds
+ * Test score when hunter dies.
  */
+
 static void testGvGetScore5()
 {
-    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL.... "
-                  "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR.... "
-                  "DKLT... GLV.... SNA.... HNU.... MBD.... DCDT... GIR.... "
-                  "SPA.... HPR.... MKLT... DHIT... GAO.... SST.... HSZ.... "
-                  "MCDTTD. DGAT... GMS.... SFL.... HKL.... MSZ.... DCNT.V. "
-                  "GTS.... SRO.... HBC.... MCNTD.. DBS..M. GIO.... SBI.... "
-                  "HCN.... MCN.... DIO.... GIO.... SAS.... HBS.... MCN.... "
-                  "DTS.... GTS.... SAS.... HIO.... MBS.... DMS.... GMS.... "
-                  "SIO.... HTS.... MIO.... DAO..M. GAO.... STS.... HMS.... "
-                  "MTS.... DNS.... GBB.... SMS.... HAO.... MMS.... DED.V.. "
-                  "GNA.... SAO.... HEC.... MAO.... DMNT... GBO.... SIR.... "
-                  "HLE.... MEC.... DD2T... GSR.... SDU.... HBU.... MPL.... "
-                  "DHIT... GSN.... SIR.... HAM.... MLO.... DTPT... GAL.... "
-                  "SAO.... HCO.... MEC.... DCDT... GMS.... SMS.... HFR.... "
-                  "MLE.... DKLT.V. GTS.... STS.... HBR.... MCO.... DGAT.M. "
-                  "GIO.... SIO.... HBD.... MLI.... DD3T.M. GBS.... SBS.... "
-                  "HKLT... MBR.... DHI..M. GCN.... SCN.... HCDTTTD MVI.... "
-                  "DTPT... GGAT... SGA.... HSZ.... MBC.... DCDT... GCDTTD. "
-                  "SCDD... HKL.... MGA.... DKLT... GSZ.... SKLTD.. HKLD... "
-                  "MKLD... DBC.V.. GBD.... SBE.... HGA.... MBCVD.. DSOT... "
+    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+                  "GLO.... SAL.... HCO.... MBR.... DBET... "
+                  "GED.... SBO.... HLI.... MPR.... DKLT... "
+                  "GLV....";
+    Message messages[] = {};
+    GameView gv = GvNew(trail, messages);
+
+    assert(GvGetScore(gv) == 363);
+
+    GvFree(gv);
+    printf("\tTest 5 passed!\n");
+}
+
+/**
+ * Test score when vampire matures.
+ */
+static void testGvGetScore6()
+{
+    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+                  "GLO.... SAL.... HCO.... MBR.... DBET... "
+                  "GED.... SBO.... HLI.... MPR.... DKLT... "
+                  "GLV.... SNA.... HNU.... MBD.... DCDT... "
+                  "GIR.... SPA.... HPR.... MKLT... DHIT... "
+                  "GAO.... SST.... HSZ.... MCDTTD. DGAT... "
+                  "GMS.... SFL.... HKL.... MSZ.... DCNT.V.";
+    Message messages[] = {};
+    GameView gv = GvNew(trail, messages);
+
+    assert(GvGetScore(gv) == 340);
+
+    GvFree(gv);
+    printf("\tTest 6 passed!\n");
+}
+
+/**
+ * Test large number of rounds
+ */
+static void testGvGetScore7()
+{
+    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+                  "GLO.... SAL.... HCO.... MBR.... DBET... "
+                  "GED.... SBO.... HLI.... MPR.... DKLT... "
+                  "GLV.... SNA.... HNU.... MBD.... DCDT... "
+                  "GIR.... SPA.... HPR.... MKLT... DHIT... "
+                  "GAO.... SST.... HSZ.... MCDTTD. DGAT... "
+                  "GMS.... SFL.... HKL.... MSZ.... DCNT.V. "
+                  "GTS.... SRO.... HBC.... MCNTD.. DBS..M. "
+                  "GIO.... SBI.... HCN.... MCN.... DIO.... "
+                  "GIO.... SAS.... HBS.... MCN.... DTS.... "
+                  "GTS.... SAS.... HIO.... MBS.... DMS.... "
+                  "GMS.... SIO.... HTS.... MIO.... DAO..M. "
+                  "GAO.... STS.... HMS.... MTS.... DNS.... "
+                  "GBB.... SMS.... HAO.... MMS.... DED.V.. "
+                  "GNA.... SAO.... HEC.... MAO.... DMNT... "
+                  "GBO.... SIR.... HLE.... MEC.... DD2T... "
+                  "GSR.... SDU.... HBU.... MPL.... DHIT... "
+                  "GSN.... SIR.... HAM.... MLO.... DTPT... "
+                  "GAL.... SAO.... HCO.... MEC.... DCDT... "
+                  "GMS.... SMS.... HFR.... MLE.... DKLT.V. "
+                  "GTS.... STS.... HBR.... MCO.... DGAT.M. "
+                  "GIO.... SIO.... HBD.... MLI.... DD3T.M. "
+                  "GBS.... SBS.... HKLT... MBR.... DHI..M. "
+                  "GCN.... SCN.... HCDTTTD MVI.... DTPT... "
+                  "GGAT... SGA.... HSZ.... MBC.... DCDT... "
+                  "GCDTTD. SCDD... HKL.... MGA.... DKLT... "
+                  "GSZ.... SKLTD.. HKLD... MKLD... DBC.V.. "
+                  "GBD.... SBE.... HGA.... MBCVD.. DSOT... "
                   "GSZ.... SSOTD.. HBC.... MSOD...";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
@@ -113,5 +174,5 @@ static void testGvGetScore5()
     assert(GvGetScore(gv) == 282);
 
     GvFree(gv);
-    printf("\tTest 5 passed!\n");
+    printf("\tTest 7 passed!\n");
 }
