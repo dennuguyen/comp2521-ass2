@@ -252,62 +252,74 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
  * 								Game History								  *
  ******************************************************************************/
 
+/**
+ * Returns the whole moveHistory.
+ */
 PlaceId *GvGetMoveHistory(GameView gv, Player player, int *numReturnedMoves,
 						  bool *canFree)
 {
-	int num = 0;
-	PlaceId *moves = GvGetLastMoves(gv, player, gv->round, &num, canFree);
-	*numReturnedMoves = num;
-	printf("num = %d\nnumReturned = %d\n", num, *numReturnedMoves);
-	return moves;
+	return GvGetLastMoves(gv, player, gv->round, numReturnedMoves, canFree);
 }
 
 /**
- * Iterate 'numMoves' backwards through moveHistory
+ * Iterate 'numMoves' backwards through moveHistory and returns the address
+ * to the static array 'numMoves' ago.
  */
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 						int *numReturnedMoves, bool *canFree)
 {
 	*canFree = false;
-	int i = gv->round;
 
-	for (; i > gv->round - numMoves; i--)
-	{
+	// Player hasn't started yet.
+	if (player >= gv->currentPlayer && gv->round == 0)
+		return &gv->moveHistory[player][gv->round];
+
+	// i increments history backwards
+	int i = gv->round;
+	if (player >= gv->currentPlayer)
+		i--;
+
+	for (; i > gv->round - numMoves && i > 0; i--)
 		if (gv->moveHistory[player][i] == NOWHERE)
 			break;
-		(*numReturnedMoves)++;
-	}
 
-	return &gv->moveHistory[player][gv->round - i];
-}
-
-PlaceId *GvGetLocationHistory(GameView gv, Player player,
-							  int *numReturnedLocs, bool *canFree)
-{
-	int num = 0;
-	PlaceId *locs = GvGetLastLocations(gv, player, gv->round, numReturnedLocs, canFree);
-	*numReturnedLocs = num;
-	return locs;
+	(*numReturnedMoves) = gv->round - i;
+	return &gv->moveHistory[player][i];
 }
 
 /**
- * Iterate 'numMoves' backwards through locationHistory
+ * Returns the whole locationHistory.
+ */
+PlaceId *GvGetLocationHistory(GameView gv, Player player,
+							  int *numReturnedLocs, bool *canFree)
+{
+	return GvGetLastLocations(gv, player, gv->round, numReturnedLocs, canFree);
+}
+
+/**
+ * Iterate 'numLocs' backwards through locationHistory and returns the address
+ * to the static array 'numLocs' ago.
  */
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 							int *numReturnedLocs, bool *canFree)
 {
 	*canFree = false;
-	int i = gv->round;
 
-	for (; i > gv->round - numLocs; i--)
-	{
+	// Player hasn't started yet.
+	if (player >= gv->currentPlayer && gv->round == 0)
+		return &gv->locationHistory[player][gv->round];
+
+	// i increments history backwards
+	int i = gv->round;
+	if (player >= gv->currentPlayer)
+		i--;
+
+	for (; i > gv->round - numLocs && i > 0; i--)
 		if (gv->locationHistory[player][i] == NOWHERE)
 			break;
-	}
 
-	(*numReturnedLocs)++;
-
-	return &gv->locationHistory[player][gv->round - i];
+	(*numReturnedLocs) = gv->round - i;
+	return &gv->locationHistory[player][i];
 }
 
 /******************************************************************************
@@ -614,6 +626,7 @@ static void setTrap(GameView gv, PlaceId location)
 
 	fprintf(stderr, "ERROR: trap locations array is full.\n");
 
+	// circular array implementation
 	// gv->trapLocations[gv->trapIndex % MAX_ENCOUNTERS] = location;
 	// gv->trapIndex++;
 }
@@ -662,7 +675,7 @@ static void removeTrap(GameView gv, PlaceId location)
 	for (; j < MAX_ENCOUNTERS - 1; j++)
 		gv->trapLocations[j] = gv->trapLocations[j + 1];
 
-	gv->trapLocations[j] = NOWHERE;
+	// gv->trapLocations[j] = NOWHERE;
 	// gv->trapIndex--;
 }
 
@@ -681,6 +694,8 @@ static void removeVampire(GameView gv)
 static void expireTrap(GameView gv)
 {
 	removeTrap(gv, gv->trapLocations[0]);
+
+	// circular array implementation
 	// removeTrap(gv, gv->trapLocations[(gv->trapIndex) % MAX_ENCOUNTERS]);
 }
 

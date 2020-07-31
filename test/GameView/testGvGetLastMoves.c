@@ -58,7 +58,6 @@ static void testGvGetLastMoves2()
     bool canFree = false;
 
     assert(GvGetLastMoves(gv, PLAYER_LORD_GODALMING, 2, &numReturnedMoves, &canFree)[0] == SWANSEA);
-    printf("NUM MOVES = %d\n", numReturnedMoves);
     assert(numReturnedMoves == 1);
     assert(canFree == false);
 
@@ -95,7 +94,7 @@ static void testGvGetLastMoves3()
     assert(draculaMoves[0] == BELGRADE);
     assert(draculaMoves[1] == KLAUSENBURG);
     assert(draculaMoves[2] == CASTLE_DRACULA);
-    assert(draculaMoves[3] == CASTLE_DRACULA);
+    assert(draculaMoves[3] == HIDE);
     assert(numReturnedMoves == 4);
     assert(canFree == false);
 

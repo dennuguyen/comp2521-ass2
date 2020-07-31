@@ -20,11 +20,11 @@ int main(void)
 	// testGvGetRound();
 	// testGvGetPlayer();
 	// testGvGetScore();
-	// testGvGetHealth();
-	// testGvGetPlayerLocation();
+	// testGvGetHealth(); // bugged
+	// testGvGetPlayerLocation(); // bugged
 	// testGvGetVampireLocation();
 	// testGvGetTrapLocations();
-	// testGvGetMoveHistory();
+	testGvGetMoveHistory();
 	testGvGetLastMoves();
 	testGvGetLocationHistory();
 	testGvGetLastLocations();
