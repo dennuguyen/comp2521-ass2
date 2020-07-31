@@ -5,6 +5,7 @@ static void testGvGetPlayerLocation2();
 static void testGvGetPlayerLocation3();
 static void testGvGetPlayerLocation4();
 static void testGvGetPlayerLocation5();
+static void testGvGetPlayerLocation9();
 
 void testGvGetPlayerLocation()
 {
@@ -15,6 +16,7 @@ void testGvGetPlayerLocation()
     testGvGetPlayerLocation3();
     testGvGetPlayerLocation4();
     testGvGetPlayerLocation5();
+    testGvGetPlayerLocation9();
 
     printf("GvGetPlayerLocation tests passed!\n\n");
 }
@@ -81,13 +83,14 @@ static void testGvGetPlayerLocation3()
  */
 static void testGvGetPlayerLocation4()
 {
-    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL.... "
-                  "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR.... "
-                  "DKLT... GLV....";
+    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+                  "GLO.... SAL.... HCO.... MBR.... DBET... "
+                  "GED.... SBO.... HLI.... MPR.... DKLT... "
+                  "GLV....";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == EDINBURGH);
+    assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == LIVERPOOL);
     assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == BORDEAUX);
     assert(GvGetPlayerLocation(gv, PLAYER_VAN_HELSING) == LEIPZIG);
     assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == PRAGUE);
@@ -98,30 +101,71 @@ static void testGvGetPlayerLocation4()
 }
 
 /**
- * Test large number of rounds
+ * Test getting dracula's location after teleport
  */
 static void testGvGetPlayerLocation5()
 {
-    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL.... "
-                  "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR.... "
-                  "DKLT... GLV.... SNA.... HNU.... MBD.... DCDT... GIR.... "
-                  "SPA.... HPR.... MKLT... DHIT... GAO.... SST.... HSZ.... "
-                  "MCDTTD. DGAT... GMS.... SFL.... HKL.... MSZ.... DCNT.V. "
-                  "GTS.... SRO.... HBC.... MCNTD.. DBS..M. GIO.... SBI.... "
-                  "HCN.... MCN.... DIO.... GIO.... SAS.... HBS.... MCN.... "
-                  "DTS.... GTS.... SAS.... HIO.... MBS.... DMS.... GMS.... "
-                  "SIO.... HTS.... MIO.... DAO..M. GAO.... STS.... HMS.... "
-                  "MTS.... DNS.... GBB.... SMS.... HAO.... MMS.... DED.V.. "
-                  "GNA.... SAO.... HEC.... MAO.... DMNT... GBO.... SIR.... "
-                  "HLE.... MEC.... DD2T... GSR.... SDU.... HBU.... MPL.... "
-                  "DHIT... GSN.... SIR.... HAM.... MLO.... DTPT... GAL.... "
-                  "SAO.... HCO.... MEC.... DCDT... GMS.... SMS.... HFR.... "
-                  "MLE.... DKLT.V. GTS.... STS.... HBR.... MCO.... DGAT.M. "
-                  "GIO.... SIO.... HBD.... MLI.... DD3T.M. GBS.... SBS.... "
-                  "HKLT... MBR.... DHI..M. GCN.... SCN.... HCDTTTD MVI.... "
-                  "DTPT... GGAT... SGA.... HSZ.... MBC.... DCDT... GCDTTD. "
-                  "SCDD... HKL.... MGA.... DKLT... GSZ.... SKLTD.. HKLD... "
-                  "MKLD... DBC.V.. GBD.... SBE.... HGA.... MBCVD.. DSOT... "
+    char *trail = "GMN.... SLS.... HMR.... MHA.... DLO.V.. "
+                  "GLV.... SAL.... HCO.... MBR.... DTPT... "
+                  "GSW....";
+    Message messages[] = {};
+    GameView gv = GvNew(trail, messages);
+
+    assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == SWANSEA);
+    assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == ALICANTE);
+    assert(GvGetPlayerLocation(gv, PLAYER_VAN_HELSING) == COLOGNE);
+    assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == BERLIN);
+    assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CASTLE_DRACULA);
+
+    GvFree(gv);
+    printf("\tTest 5 passed!\n");
+}
+
+/**
+ * Test getting dracula's location after hide
+ */
+
+/**
+ * Test getting dracula's location after double back
+ */
+
+/**
+ * Test getting hunter's location after rest
+ */
+
+/**
+ * Test large number of rounds
+ */
+static void testGvGetPlayerLocation9()
+{
+    char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+                  "GLO.... SAL.... HCO.... MBR.... DBET... "
+                  "GED.... SBO.... HLI.... MPR.... DKLT... "
+                  "GLV.... SNA.... HNU.... MBD.... DCDT... "
+                  "GIR.... SPA.... HPR.... MKLT... DHIT... "
+                  "GAO.... SST.... HSZ.... MCDTTD. DGAT... "
+                  "GMS.... SFL.... HKL.... MSZ.... DCNT.V. "
+                  "GTS.... SRO.... HBC.... MCNTD.. DBS..M. "
+                  "GIO.... SBI.... HCN.... MCN.... DIO.... "
+                  "GIO.... SAS.... HBS.... MCN.... DTS.... "
+                  "GTS.... SAS.... HIO.... MBS.... DMS.... "
+                  "GMS.... SIO.... HTS.... MIO.... DAO..M. "
+                  "GAO.... STS.... HMS.... MTS.... DNS.... "
+                  "GBB.... SMS.... HAO.... MMS.... DED.V.. "
+                  "GNA.... SAO.... HEC.... MAO.... DMNT... "
+                  "GBO.... SIR.... HLE.... MEC.... DD2T... "
+                  "GSR.... SDU.... HBU.... MPL.... DHIT... "
+                  "GSN.... SIR.... HAM.... MLO.... DTPT... "
+                  "GAL.... SAO.... HCO.... MEC.... DCDT... "
+                  "GMS.... SMS.... HFR.... MLE.... DKLT.V. "
+                  "GTS.... STS.... HBR.... MCO.... DGAT.M. "
+                  "GIO.... SIO.... HBD.... MLI.... DD3T.M. "
+                  "GBS.... SBS.... HKLT... MBR.... DHI..M. "
+                  "GCN.... SCN.... HCDTTTD MVI.... DTPT... "
+                  "GGAT... SGA.... HSZ.... MBC.... DCDT... "
+                  "GCDTTD. SCDD... HKL.... MGA.... DKLT... "
+                  "GSZ.... SKLTD.. HKLD... MKLD... DBC.V.. "
+                  "GBD.... SBE.... HGA.... MBCVD.. DSOT... "
                   "GSZ.... SSOTD.. HBC.... MSOD...";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
@@ -129,9 +173,9 @@ static void testGvGetPlayerLocation5()
     assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == SZEGED);
     assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == SOFIA);
     assert(GvGetPlayerLocation(gv, PLAYER_VAN_HELSING) == BUCHAREST);
-    assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == SOFIA);
+    assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == ST_JOSEPH_AND_ST_MARY);
     assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == SOFIA);
 
     GvFree(gv);
-    printf("\tTest 5 passed!\n");
+    printf("\tTest 9 passed!\n");
 }

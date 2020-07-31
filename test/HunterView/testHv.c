@@ -358,10 +358,10 @@ static void testHv12()
         assert(pathLength == 7);
         assert(path[0] == SARAGOSSA);
         assert(path[1] == MARSEILLES);
-        assert(path[2] == GENOA);
+        assert(path[2] == GENOA || path[2] == MILAN);
         assert(path[3] == VENICE);
         assert(path[4] == BUDAPEST);
-        assert(path[5] == GALATZ);
+        assert(path[5] == GALATZ || path[5] == KLAUSENBURG);
         assert(path[6] == CASTLE_DRACULA);
         free(path);
     }
