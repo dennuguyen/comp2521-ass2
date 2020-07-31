@@ -1,34 +1,38 @@
 #include "testGameView.h"
 
-static void testGvGetScore1();
-static void testGvGetScore2();
-static void testGvGetScore3();
-static void testGvGetScore4();
-static void testGvGetScore5();
+static void testGvGetPlayerLocation1();
+static void testGvGetPlayerLocation2();
+static void testGvGetPlayerLocation3();
+static void testGvGetPlayerLocation4();
+static void testGvGetPlayerLocation5();
 
-void testGvGetScore()
+void testGvGetPlayerLocation()
 {
-    printf("Testing GvGetScore...\n");
+    printf("Testing GvGetPlayerLocation...\n");
 
-    testGvGetScore1();
-    testGvGetScore2();
-    testGvGetScore3();
-    testGvGetScore4();
-    testGvGetScore5();
+    testGvGetPlayerLocation1();
+    testGvGetPlayerLocation2();
+    testGvGetPlayerLocation3();
+    testGvGetPlayerLocation4();
+    testGvGetPlayerLocation5();
 
-    printf("GvGetScore tests passed!\n\n");
+    printf("GvGetPlayerLocation tests passed!\n\n");
 }
 
 /**
  * Test initialisation on empty string
  */
-static void testGvGetScore1()
+static void testGvGetPlayerLocation1()
 {
     char *trail = "";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetScore(gv) == GAME_START_SCORE);
+    assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == NOWHERE);
+    assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == NOWHERE);
+    assert(GvGetPlayerLocation(gv, PLAYER_VAN_HELSING) == NOWHERE);
+    assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == NOWHERE);
+    assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == NOWHERE);
 
     GvFree(gv);
     printf("\tTest 1 passed!\n");
@@ -37,13 +41,17 @@ static void testGvGetScore1()
 /**
  * Test in middle of a round
  */
-static void testGvGetScore2()
+static void testGvGetPlayerLocation2()
 {
     char *trail = "GSW.... SLS....";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetScore(gv) == GAME_START_SCORE);
+    assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == SWANSEA);
+    assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == LISBON);
+    assert(GvGetPlayerLocation(gv, PLAYER_VAN_HELSING) == NOWHERE);
+    assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == NOWHERE);
+    assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == NOWHERE);
 
     GvFree(gv);
     printf("\tTest 2 passed!\n");
@@ -52,13 +60,17 @@ static void testGvGetScore2()
 /**
  * Test at end of round
  */
-static void testGvGetScore3()
+static void testGvGetPlayerLocation3()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V..";
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetScore(gv) == GAME_START_SCORE);
+    assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == SWANSEA);
+    assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == LISBON);
+    assert(GvGetPlayerLocation(gv, PLAYER_VAN_HELSING) == MARSEILLES);
+    assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == HAMBURG);
+    assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == SARAJEVO);
 
     GvFree(gv);
     printf("\tTest 3 passed!\n");
@@ -67,7 +79,7 @@ static void testGvGetScore3()
 /**
  * Test small number of rounds
  */
-static void testGvGetScore4()
+static void testGvGetPlayerLocation4()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL.... "
                   "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR.... "
@@ -75,7 +87,11 @@ static void testGvGetScore4()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetScore(gv) == 363);
+    assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == EDINBURGH);
+    assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == BORDEAUX);
+    assert(GvGetPlayerLocation(gv, PLAYER_VAN_HELSING) == LEIPZIG);
+    assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == PRAGUE);
+    assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == KLAUSENBURG);
 
     GvFree(gv);
     printf("\tTest 4 passed!\n");
@@ -84,7 +100,7 @@ static void testGvGetScore4()
 /**
  * Test large number of rounds
  */
-static void testGvGetScore5()
+static void testGvGetPlayerLocation5()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL.... "
                   "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR.... "
@@ -110,7 +126,11 @@ static void testGvGetScore5()
     Message messages[] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetScore(gv) == 282);
+    assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == SZEGED);
+    assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == SOFIA);
+    assert(GvGetPlayerLocation(gv, PLAYER_VAN_HELSING) == BUCHAREST);
+    assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == SOFIA);
+    assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == SOFIA);
 
     GvFree(gv);
     printf("\tTest 5 passed!\n");

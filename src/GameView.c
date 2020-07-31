@@ -269,7 +269,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 						PlaceId from, int *numReturnedLocs)
 {
-	return GvGetReachableByType(gv, player, round, from, true, true, true, numReturnedLocs)
+	return GvGetReachableByType(gv, player, round, from, true, true, true, numReturnedLocs);
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
@@ -280,7 +280,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	int visited[NUM_REAL_PLACES] = {0};
 
 	numReturnedLocs = 0;
-	LocationList[*numReturnedLocs++] = from;
+	LocationList[numReturnedLocs++] = from;
 	visited[from] = 1;
 
 	for (ConnList current = g->map->connections[from]; !current; current = current->next)
@@ -316,35 +316,29 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 		int sum = (player + round) % 4;
 		for (i = sum; i >= 0; i--)
 		{
-			findRailConnections(g->map, from, i, visited, LocationList, numReturnedLocs);
+			numReturnedLocs = findRailConnections(gv->map, from, i, visited, LocationList, numReturnedLocs);
 		}
-	}
-	return LocationList;
-}
 
-static void findRailConnections(Map m, PlaceId from, int sum, int *visited, int *LocationList, int *numReturnedLocs)
+
+static PlaceId findRailConnections(Map m, PlaceId from, int sum, int *LocationList, int *numReturnedLocs)
 {
-	if (sum > 0)
-	{
-		for (ConnList current = g->map->connections[from]; !current; current = current->next) 
-		{
-			if (visited[current->p] == 0)
-			{
-				LocationList[numReturnedLocs++] = current->p;
-				visited[current->p] = 1;
-			}
-		}
-		return 
-	} else {
-		return NULL;
+		/*
+	findRailConnections
+	init queue with from + visited_rail
+	while (sum >= 0)
+       dequeue
+       add to visited
+       look for rail connections, add to q();
+		*/
+	
+	while () {
+
+
 	}
+		return numReturnedLocs
 }
-
-/******************************************************************************
+<<<<<<< HEAD
  * 								Play Functions							  	  *
- ******************************************************************************/
-
-/**
  * 
  */
 static void playGame(GameView gv, char *pastPlays, Message messages[])
@@ -360,10 +354,7 @@ static void playGame(GameView gv, char *pastPlays, Message messages[])
 
 	char *play;
 	while ((play = strsep(&end, " ")) != NULL)
-	{
 		if (strlen(play) != 7)
-		{
-			fprintf(stderr, "ERROR: Invalid length, %ld, of play string.\n", strlen(play));
 			// exit(EXIT_FAILURE);
 		}
 

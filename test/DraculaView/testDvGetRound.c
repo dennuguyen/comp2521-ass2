@@ -1,90 +1,90 @@
-#include "testGameView.h"
+#include "testDraculaView.h"
 
-static void testGvGetScore1();
-static void testGvGetScore2();
-static void testGvGetScore3();
-static void testGvGetScore4();
-static void testGvGetScore5();
+static void testDvGetRound1();
+static void testDvGetRound2();
+static void testDvGetRound3();
+static void testDvGetRound4();
+static void testDvGetRound5();
 
-void testGvGetScore()
+void testDvGetRound()
 {
-    printf("Testing GvGetScore...\n");
+    printf("Testing DvGetRound...\n");
 
-    testGvGetScore1();
-    testGvGetScore2();
-    testGvGetScore3();
-    testGvGetScore4();
-    testGvGetScore5();
+    testDvGetRound1();
+    testDvGetRound2();
+    testDvGetRound3();
+    testDvGetRound4();
+    testDvGetRound5();
 
-    printf("GvGetScore tests passed!\n\n");
+    printf("DvGetRound tests passed!\n\n");
 }
 
 /**
  * Test initialisation on empty string
  */
-static void testGvGetScore1()
+static void testDvGetRound1()
 {
     char *trail = "";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    DraculaView dv = DvNew(trail, messages);
 
-    assert(GvGetScore(gv) == GAME_START_SCORE);
+    assert(DvGetRound(dv) == 0);
 
-    GvFree(gv);
+    DvFree(dv);
     printf("\tTest 1 passed!\n");
 }
 
 /**
  * Test in middle of a round
  */
-static void testGvGetScore2()
+static void testDvGetRound2()
 {
     char *trail = "GSW.... SLS....";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    DraculaView dv = DvNew(trail, messages);
 
-    assert(GvGetScore(gv) == GAME_START_SCORE);
+    assert(DvGetRound(dv) == 0);
 
-    GvFree(gv);
+    DvFree(dv);
     printf("\tTest 2 passed!\n");
 }
 
 /**
  * Test at end of round
  */
-static void testGvGetScore3()
+static void testDvGetRound3()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V..";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    DraculaView dv = DvNew(trail, messages);
 
-    assert(GvGetScore(gv) == GAME_START_SCORE);
+    assert(DvGetRound(dv) == 1);
 
-    GvFree(gv);
+    DvFree(dv);
     printf("\tTest 3 passed!\n");
 }
 
 /**
  * Test small number of rounds
  */
-static void testGvGetScore4()
+static void testDvGetRound4()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL.... "
                   "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR.... "
                   "DKLT... GLV....";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    DraculaView dv = DvNew(trail, messages);
 
-    assert(GvGetScore(gv) == 363);
+    assert(DvGetRound(dv) == 3);
 
-    GvFree(gv);
+    DvFree(dv);
     printf("\tTest 4 passed!\n");
 }
 
 /**
  * Test large number of rounds
  */
-static void testGvGetScore5()
+static void testDvGetRound5()
 {
     char *trail = "GSW.... SLS.... HMR.... MHA.... DSJ.V.. GLO.... SAL.... "
                   "HCO.... MBR.... DBET... GED.... SBO.... HLI.... MPR.... "
@@ -108,10 +108,10 @@ static void testGvGetScore5()
                   "MKLD... DBC.V.. GBD.... SBE.... HGA.... MBCVD.. DSOT... "
                   "GSZ.... SSOTD.. HBC.... MSOD...";
     Message messages[] = {};
-    GameView gv = GvNew(trail, messages);
+    DraculaView dv = DvNew(trail, messages);
 
-    assert(GvGetScore(gv) == 282);
+    assert(DvGetRound(dv) == 28);
 
-    GvFree(gv);
+    DvFree(dv);
     printf("\tTest 5 passed!\n");
 }

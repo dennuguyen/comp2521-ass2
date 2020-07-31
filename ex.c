@@ -1,49 +1,54 @@
-// example on inheritance
+// example on comparator arguments
 
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef struct foo_s
-{
-    int a;
-} foo;
+// typedef struct BA
+// {
+//     int a;
+// } BA;
 
-typedef struct bar_s
-{
-    foo *super;
-    int b;
-} bar;
+// int funct(int a)
+// {
+//     printf("a = %d\n", a);
+// }
 
-int getA(foo *x)
-{
-    return x->a;
-}
+// int bar(BA *structure, void *lambda(const void *))
+// {
+//     if (lambda == NULL)
+//         printf("lambda is null\n");
+//     else if (lambda(3))
+//         printf("wow lambda said something\n");
 
-int getB(bar *x)
-{
-    return x->b;
-}
+//     return 0;
+// }
 
-foo *newA()
-{
-    foo *new = malloc(sizeof(foo));
-    new->a = 10;
-    return new;
-}
+// int main()
+// {
+//     BA *derived = &(BA){.a = 200};
 
-bar *newB()
+//     printf("%d\n", bar(derived, NULL));
+//     // printf("%d\n", bar(derived, funct));
+
+//     return 0;
+// }
+
+// multidimensional arrays
+int a[3][3] = {{0, 1, 2}, {7, 4, 5}, {6, 3, 8}};
+
+int *func()
 {
-    bar *new = (void *)newA();
-    printf("A: %d\n", getA((void *)new));
-    printf("B: %d\n", getB((void *)new));
-    new->b = 3;
-    return new;
+    return &a[2][0];
 }
 
 int main()
 {
-    bar *derived = newB();
-    printf("A: %d\n", getA((void *)derived));
-    printf("B: %d\n", getB((void *)derived));
+    int b[5] = {[0] = {1}, [4] = {2}};
+
+    // int *ptr = func();
+
+    for (int i = 0; i < 5; i++)
+        printf("%d\n", b[i]);
+
     return 0;
 }

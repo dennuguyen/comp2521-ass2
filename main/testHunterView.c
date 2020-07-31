@@ -16,6 +16,13 @@
 
 int main(void)
 {
+	// testHvNew();
+	// testHvFree();
+	testHvGetRound();
+	testHvGetPlayer();
+	testHvGetScore();
+	testHvGetHealth();
+	testHvGetPlayerLocation();
 	testHv();
 	return EXIT_SUCCESS;
 }

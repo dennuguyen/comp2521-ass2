@@ -18,11 +18,12 @@
 #include "GameView.h"
 #include "HunterView.h"
 #include "Queue.h"
+#include "Map.h"
+
 
 struct hunterView
 {
 	GameView super;
-	PlaceId *ShortestPath[NUM_REAL_PLACES];
 } hunterView;
 
 ////////////////////////////////////////////////////////////////////////
@@ -92,10 +93,10 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	}
 
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
-	TrailView queue = TvNew();
-	TvEnqueue(queue, src); 
-	while (!TvIsEmpty(queue)) {
-		PlaceId current = TvDequeue(queue)->location;
+	QueueView queue = QueueNew();
+	Enqueue(queue, src, 0); 
+	while (!QueueIsEmpty(queue)) {
+		PlaceId current = Dequeue(queue)->location;
 		if (current == dest) 
 		{ 
 			break; 
@@ -106,7 +107,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 			{
 				pred[w] = current;
 				visited[w] = 1;
-				QueueJoin(queue, w);	
+				Enqueue(queue, w, 0);	
 			}
 		}			
 	}
@@ -119,7 +120,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		}
 		PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
 		for (int i = 0; i < pathLength; i++) {
-			hv->ShortestPath[from][i] = path[i] = temp[pathLength - 1 - i]; 
+			path[i] = temp[pathLength - 1 - i]; 
 		}
 		free(temp);
 		return path; 

@@ -10,6 +10,7 @@
 typedef struct QueueNode
 {
     PlaceId location;
+    int level;
     struct QueueNode *next;
 } QueueNode;
 
@@ -22,7 +23,7 @@ typedef struct QueueView
 /**
  * Create TrailNode.
  */
-static QueueNode NewNode(PlaceId location)
+QueueNode NewNode(PlaceId location, int level)
 {
     QueueNode new = malloc(sizeof(QueueNode));
     if (new == NULL)
@@ -32,6 +33,7 @@ static QueueNode NewNode(PlaceId location)
     }
 
     new->location = location;
+    new->level = level;
     new->next = NULL;
 
     return new;
@@ -76,12 +78,12 @@ void QueueFree(QueueView q)
 /**
  * Enqueue a trail to the queue given location and isVampire arguments.
  */
-void Enqueue(TrailView q, PlaceId location)
+void Enqueue(QueueView q, PlaceId location, int level)
 {
     if (q == NULL || q->head == NULL)
         return;
 
-    TrailNode head = NewNode(location);
+    TrailNode head = NewNode(location, level);
 
     if (q->head == NULL)
         q->head = head;
@@ -93,7 +95,7 @@ void Enqueue(TrailView q, PlaceId location)
 /**
  * Dequere a trail from the queue.
  */
-QueueNode Dequeue(TrailView q)
+QueueNode Dequeue(QueueView q)
 {
     if (q == NULL || q->head == NULL)
         return NULL;
@@ -110,28 +112,8 @@ QueueNode Dequeue(TrailView q)
     return node;
 }
 
-/**
- * Removes a trail from the queue. If there exists multiple traps with the same
- * location, the oldest trail is removed.
- */
-QueueNode QueueRemove(QueueView q, PlaceId location)
+// check for no items
+int QueueIsEmpty (Queue Q)
 {
-    if (q == NULL || q->head == NULL)
-        return NULL;
-
-    TrailNode prev = NULL, curr = q->head;
-    while (curr->next != NULL)
-    {
-        if (curr->location == location)
-        {
-            QueueNode node = &(queueNode){.location = curr->location};
-            prev->next = NULL;
-            free(curr);
-            return node;
-        }
-        prev = curr;
-        curr = curr->next;
-    }
-
-    return NULL;
+	return (Q->head == NULL);
 }
