@@ -252,7 +252,7 @@ void Enqueue(ConnQueue q, PlaceId p, TransportType type)
 	q->tail = head;
 }
 
-ConnList Dequeue(ConnQueue q, PlaceId p, TransportType type)
+ConnList Dequeue(ConnQueue q)
 {
 	if (q == NULL || q->head == NULL)
 		return NULL;
@@ -267,4 +267,9 @@ ConnList Dequeue(ConnQueue q, PlaceId p, TransportType type)
 	free(temp);
 
 	return node;
+}
+
+bool IsQueueEmpty(ConnQueue q)
+{
+	return q->head == NULL;
 }

@@ -363,12 +363,31 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	*numReturnedLocs = 0;
 	locations[(*numReturnedLocs)++] = from;
 
-	// ConnQueue queue = ;
+	// Create queue to keep track of BFS and depth
+	ConnQueue q = QueueNew();
+	ConnQueue d = QueueNew();
+	Enqueue(q, from, NONE);
+	Enqueue(q, 0, NONE);
 
-	ConnList connections = MapGetConnections(gv->map, from);
-
-	for (ConnList curr = connections; curr != NULL; curr = curr->next)
+	while (!IsQueueEmpty(q))
 	{
+		ConnNode city = Dequeue(q);
+		Round depth = Dequeue(d);
+
+		if (round == depth)
+			return;
+
+		// Get connections from current city
+		ConnList connections = MapGetConnections(gv->map, city);
+
+		// Enqueue children cities from parent city
+		for (ConnNode curr = connections; curr != NULL; curr = curr->next)
+		{
+			if (player == PLAYER_DRACULA && curr->type == RAIL)
+				continue;
+			Enqueue(q, curr->p, curr->type);
+			Enqueue(q, depth + 1, NONE);
+		}
 	}
 
 	// for (ConnList curr = connections; curr != NULL; curr = curr->next)

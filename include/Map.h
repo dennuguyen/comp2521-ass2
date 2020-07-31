@@ -87,6 +87,11 @@ void Enqueue(ConnQueue q, PlaceId p, TransportType type);
  * Enqueues an edge which consists of the destination and transport type to
  * the ConnQueue.
  */
-ConnList Dequeue(ConnQueue q, PlaceId p, TransportType type);
+ConnList Dequeue(ConnQueue q);
+
+/**
+ * Check if queue is empty.
+ */
+bool IsQueueEmpty(ConnQueue q);
 
 #endif // !defined(FOD__MAP_H_)
