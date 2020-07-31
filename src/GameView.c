@@ -29,8 +29,8 @@
 typedef struct gameView
 {
 	/* Game information */
-	int score; // Number of current score
-	// Map map;			  // Map ADT
+	int score;			  // Number of current score
+	Map map;			  // Map ADT
 	Round round;		  // Number of current round
 	Player currentPlayer; // Who the current player is
 
@@ -38,7 +38,6 @@ typedef struct gameView
 	int trapIndex;						   // Incrementor for trapLocations
 	PlaceId trapLocations[MAX_ENCOUNTERS]; // Array of trap locations
 	PlaceId vampireLocation;			   // Vampire location
-	bool draculaHistory[MAX_ROUNDS];	   // Boolean to complement Dracula's moveHistory if is known to hunters
 
 	/* Player information */
 	int healths[NUM_PLAYERS];						  // Usage: [PLAYER]
@@ -93,27 +92,27 @@ static void draculaDies(GameView gv);
 
 void *GvNew(char *pastPlays, Message messages[])
 {
-	// Initialise the game
-	GameView gv = &(gameView){
-		.score = GAME_START_SCORE,
-		// .map = MapNew(),
-		.round = 0,
-		.currentPlayer = PLAYER_LORD_GODALMING,
-		.trapIndex = 0,
-		.trapLocations = {NOWHERE, NOWHERE, NOWHERE, NOWHERE, NOWHERE, NOWHERE},
-		.vampireLocation = NOWHERE,
-		.draculaHistory = {0},
-		.healths = {
-			[PLAYER_LORD_GODALMING] = GAME_START_HUNTER_LIFE_POINTS,
-			[PLAYER_DR_SEWARD] = GAME_START_HUNTER_LIFE_POINTS,
-			[PLAYER_VAN_HELSING] = GAME_START_HUNTER_LIFE_POINTS,
-			[PLAYER_MINA_HARKER] = GAME_START_HUNTER_LIFE_POINTS,
-			[PLAYER_DRACULA] = GAME_START_BLOOD_POINTS,
-		},
-		.moveHistory = {{0}},
-		.locationHistory = {{0}},
-		.research = 0,
-	};
+	GameView gv = malloc(sizeof(gameView));
+	if (gv == NULL)
+	{
+		fprintf(stderr, "Couldn't allocate GameView!\n");
+		exit(EXIT_FAILURE);
+	}
+
+	gv->score = GAME_START_SCORE;
+	gv->map = MapNew();
+	gv->round = 0;
+	gv->currentPlayer = PLAYER_LORD_GODALMING;
+
+	for (int i = 0; i < MAX_ENCOUNTERS; i++)
+		gv->trapLocations[i] = NOWHERE;
+
+	gv->vampireLocation = NOWHERE;
+
+	for (int i = 0; i < NUM_PLAYERS - 1; i++)
+		gv->healths[i] = GAME_START_HUNTER_LIFE_POINTS;
+
+	gv->healths[PLAYER_DRACULA] = GAME_START_BLOOD_POINTS;
 
 	for (int i = 0; i < NUM_PLAYERS; i++)
 		for (int j = 0; j < MAX_REAL_PLACE; j++)
@@ -122,19 +121,9 @@ void *GvNew(char *pastPlays, Message messages[])
 			gv->locationHistory[i][j] = NOWHERE;
 		}
 
-	// GameView gv = malloc(sizeof(gameView));
-	// gv->score = GAME_START_SCORE;
-	// gv->map = MapNew();
-	// gv->round = 0;
-	// gv->currentPlayer = PLAYER_LORD_GODALMING;
-	// gv->tra
+	gv->research = 0;
 
-	if (gv == NULL)
-	{
-		fprintf(stderr, "Couldn't allocate GameView!\n");
-		exit(EXIT_FAILURE);
-	}
-
+	// Parse the pastPlays string and update the GameView accordingly.
 	if (*pastPlays != '\0')
 		playGame(gv, pastPlays, messages);
 
@@ -143,7 +132,8 @@ void *GvNew(char *pastPlays, Message messages[])
 
 void GvFree(GameView gv)
 {
-	// MapFree(gv->map);
+	MapFree(gv->map);
+	free(gv);
 	gv = NULL;
 }
 
@@ -679,18 +669,9 @@ static void revealDracula(GameView gv, int round)
 	// Reveal HIDE when they become last move in Dracula's trail.
 	if (round == HIDE && gv->research == 0)
 	{
-		gv->draculaHistory[round] = true;
+		// gv->locationHistory[round] = ; //dracula's real location;
 		return;
 	}
-
-	// // Base case for recursive search.
-	// if (!(DOUBLE_BACK_1 < round && round < DOUBLE_BACK_5))
-	// {
-	// 	gv->draculaHistory[round] = true;
-	// 	return;
-	// }
-
-	// return revealDracula(gv, round);
 }
 
 /**

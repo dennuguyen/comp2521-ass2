@@ -65,6 +65,11 @@ static void testGvGetMoveHistory2()
     bool canFree = false;
 
     PlaceId *godalmingMoves = GvGetMoveHistory(gv, PLAYER_LORD_GODALMING, &numReturnedMoves, &canFree);
+    printf("%s\n", placeIdToName(godalmingMoves[0]));
+    printf("%s\n", placeIdToName(godalmingMoves[1]));
+    printf("%s\n", placeIdToName(godalmingMoves[2]));
+    printf("%s\n", placeIdToName(godalmingMoves[3]));
+    printf("%s\n", placeIdToName(godalmingMoves[4]));
     assert(godalmingMoves[0] == SWANSEA);
     assert(godalmingMoves[1] == LONDON);
     assert(godalmingMoves[2] == EDINBURGH);
