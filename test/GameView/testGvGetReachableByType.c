@@ -1,36 +1,36 @@
 #include "testGameView.h"
 
-static void testGvGetReachable1();
-static void testGvGetReachable2();
-static void testGvGetReachable3();
-static void testGvGetReachable4();
-static void testGvGetReachable5();
+static void testGvGetReachableByType1();
+static void testGvGetReachableByType2();
+static void testGvGetReachableByType3();
+static void testGvGetReachableByType4();
+static void testGvGetReachableByType5();
 
-void testGvGetReachable()
+void testGvGetReachableByType()
 {
     printf("Testing GvGetRound...\n");
 
-    testGvGetReachable1();
-    testGvGetReachable2();
-    testGvGetReachable3();
-    testGvGetReachable4();
-    testGvGetReachable5();
+    testGvGetReachableByType1();
+    testGvGetReachableByType2();
+    testGvGetReachableByType3();
+    testGvGetReachableByType4();
+    testGvGetReachableByType5();
 
     printf("GvGetRound tests passed!\n\n");
 }
 
 /**
- * Testing for Lord Godalming at Paris in Round 1.
+ * Testing for Lord Godalming at Paris without restrictions in Round 1.
  */
-static void testGvGetReachable1()
+static void testGvGetReachableByType1()
 {
-    char *trail = "GPA....";
+    char *trail = "GPA...."; /*  IMPORTANT!!!!    */
     Message messages[] = {"Gone to Barceleno"};
     GameView gv = GvNew(trail, messages);
-    int numReturnedLocs = 0;
+    int numReturnedLocs = -1;
     Round round = GvGetRound(gv);
     PlaceId from = GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING);
-    PlaceId *edges = GvGetReachable(gv, PLAYER_LORD_GODALMING, round, from, &numReturnedLocs);
+    PlaceId *edges = GvGetReachableByType(gv, PLAYER_LORD_GODALMING, round, from, true, true, true, &numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
@@ -48,26 +48,25 @@ static void testGvGetReachable1()
 }
 
 /**
- * Testing for Dr. Seward at Barcelona in Round 1. 
+ * Testing for Dr. Seward at Barcelona without boat in Round 1. 
  */
-static void testGvGetReachable2()
+static void testGvGetReachableByType2()
 {
-    char *trail = "GGE... SBA....";
+    char *trail = "GGE... SBA...."; /*  IMPORTANT!!!!    */
     Message messages[] = {"Gone to Barceleno"};
     GameView gv = GvNew(trail, messages);
-    int numReturnedLocs = 0;
+    int numReturnedLocs = -1;
     Round round = GvGetRound(gv);
     PlaceId from = GvGetPlayerLocation(gv, PLAYER_DR_SEWARD);
-    PlaceId *edges = GvGetReachable(gv, PLAYER_DR_SEWARD, round, from, &numReturnedLocs);
+    PlaceId *edges = GvGetReachableByType(gv, PLAYER_LORD_GODALMING, round, from, true, true, false, &numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
     assert(numReturnedLocs != -1);
-    assert(numReturnedLocs == 6);
+    assert(numReturnedLocs == 4);
     assert(visited[BARCELONA]);
-    assert(visited[MEDITERRANEAN_SEA]);
     assert(visited[SARAGOSSA]);
 
     free(edges);
@@ -78,27 +77,22 @@ static void testGvGetReachable2()
 /**
  * Testing for Van Helsing at Geneva in Round 1.
  */
-static void testGvGetReachable3()
+static void testGvGetReachableByType3()
 {
-    char *trail = "GPA.... SCA .... HGE....";
+    char *trail = "GPA.... SCA .... HCA....";
     Message messages[] = {"Gone to Geneva"};
     GameView gv = GvNew(trail, messages);
-    int numReturnedLocs = 0;
+    int numReturnedLocs = -1;
     Round round = GvGetRound(gv);
     PlaceId from = GvGetPlayerLocation(gv, PLAYER_VAN_HELSING);
-    PlaceId *edges = GvGetReachable(gv, PLAYER_VAN_HELSING, round, from, &numReturnedLocs);
+    PlaceId *edges = GvGetReachableByType(gv, PLAYER_VAN_HELSING, round, from, false, false, false, &numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs <= 11);
-    assert(numReturnedLocs != -1);
-    assert(numReturnedLocs > 0);
-    assert(!visited[GRANADA]);
-    assert(!visited[LISBON]);
-    assert(!visited[MADRID]);
-    assert(visited[GENEVA]);
+    assert(numReturnedLocs == 1);
+    assert(visited[CADIZ]);
 
     free(edges);
     GvFree(gv);
@@ -108,12 +102,12 @@ static void testGvGetReachable3()
 /**
  * Testing for Lord Godaling at Galatz in Round 1
  */
-static void testGvGetReachable4()
+static void testGvGetReachableByType4()
 {
     char *trail = "GGA....";
     Message messages[] = {"Gone to Galatz"};
     GameView gv = GvNew(trail, messages);
-    int numReturnedLocs = 0;
+    int numReturnedLocs = -1;
     Round round = GvGetRound(gv);
     PlaceId from = GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING);
     PlaceId *edges = GvGetReachable(gv, PLAYER_LORD_GODALMING, round, from, &numReturnedLocs);
@@ -132,27 +126,26 @@ static void testGvGetReachable4()
 }
 
 /**
- * Testing for Lord Godaling at Swansea in Round 1.
+ * Testing for Lord Godaling at Berlin in Round 2.
  */
-static void testGvGetReachable5()
+static void testGvGetReachableByType5()
 {
-    char *trail = "GSW....";
-    Message messages[] = {"Gone to Galatz"};
+    char *trail = "GHA.... SGE.... HSW.... MIO.... DGA.V.. "
+                  "GBR....";
+    Message messages[] = {"Gone to Berlin"};
     GameView gv = GvNew(trail, messages);
-    int numReturnedLocs = 0;
+    int numReturnedLocs = -1;
     Round round = GvGetRound(gv);
     PlaceId from = GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING);
-    PlaceId *edges = GvGetReachable(gv, PLAYER_LORD_GODALMING, round, from, &numReturnedLocs);
-    // PlaceId *edges = GvGetReachable(gv, &numReturnedLocs);
+    PlaceId *edges = GvGetReachableByType(gv, PLAYER_LORD_GODALMING, round, from, false, false, true, &numReturnedLocs);
+    // PlaceId *edges = GvGetReachable(gv, numReturnedLocs);
     int visited[NUM_REAL_PLACES];
     for (int i = 0; i < NUM_REAL_PLACES; i++)
     {
         visited[edges[i]] = 1;
     }
-    assert(numReturnedLocs >= 1);
-    assert(visited[SWANSEA]);
-    assert(visited[LONDON]);
-    assert(visited[LIVERPOOL]);
+    assert(numReturnedLocs == 1);
+    assert(visited[BERLIN]);
 
     free(edges);
     GvFree(gv);
