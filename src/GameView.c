@@ -328,22 +328,79 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 /******************************************************************************
  * 								Making a Move								  *
  ******************************************************************************/
-
+static int findRailConnections(Map m, PlaceId from, int railDistance, int *visited, PlaceId *LocationList, int *numReturnedLocs);
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 						PlaceId from, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	bool rail = (player == PLAYER_DRACULA) ? false : true;
+	return GvGetReachableByType(gv, player, round, from, true, rail, true, numReturnedLocs);
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 							  PlaceId from, bool road, bool rail,
 							  bool boat, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	PlaceId *LocationList = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	
+	int visited[NUM_REAL_PLACES] = {0};
+
 	*numReturnedLocs = 0;
-	return NULL;
+	LocationList[*numReturnedLocs] = from;
+	visited[from] = 1;
+	
+	ConnList connections = MapGetConnections(gv->map, from);
+	
+	for (ConnList curr = connections; curr != NULL; curr = curr->next)
+	{
+		if ((curr->type == ROAD) && (road == true) && (visited[curr->p] == 0))
+		{
+			if ((player == PLAYER_DRACULA) && (curr->p == HOSPITAL_PLACE)) continue;
+			LocationList[*numReturnedLocs++] = curr->p;
+			visited[curr->p] = 1;
+		}
+		else if ((curr->type == BOAT) && (boat == true) && (visited[curr->p] == 0))
+		{
+			LocationList[*numReturnedLocs++] = curr->p;
+			visited[curr->p] = 1;	
+		}
+	}
+
+	if (rail == true)
+	{
+		int railDistance = (player + round) % 4;
+		if (railDistance > 0) 
+			*numReturnedLocs = findRailConnections(gv->map, from, railDistance, visited, LocationList, numReturnedLocs);
+	}
+
+	return LocationList;
+
+}
+
+static int findRailConnections(Map m, PlaceId from, int railDistance, int *visited, PlaceId *LocationList, int *numReturnedLocs)
+{
+		/*
+	findRailConnections
+	init queue with from + visited_rail
+	while (sum >= 0)
+       dequeue
+       add to visited
+       look for rail connections, add to q();
+		*/
+	
+	ConnList connections = MapGetConnections(m, from);
+	for (ConnList curr = connections; curr != NULL; curr = curr->next)
+	{
+		if (curr->type == RAIL)
+		{		
+			if (visited[curr->p] == 0)
+			{
+			LocationList[*numReturnedLocs++] = curr->p;
+			visited[curr->p] = 1;
+			}
+			*numReturnedLocs = findRailConnections(m, curr->p, railDistance--, visited, LocationList, numReturnedLocs);
+		}
+	}
+	return *numReturnedLocs;
 }
 
 /******************************************************************************
