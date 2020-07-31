@@ -17,6 +17,7 @@
 #include "Game.h"
 #include "GameView.h"
 #include "HunterView.h"
+#include "Queue.h"
 
 struct hunterView
 {
@@ -81,8 +82,70 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 							 int *pathLength)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*pathLength = 0;
+	assert ((GameView)hv != NULL);
+	PlaceId src = HvGetPlayerLocation(hv, hunter);
+	int *visited = calloc(MapNumPlaces(hv->map), sizeo(int));
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	if (src == dest) {
+		*pathLength = 1;
+		PlaceId *Location = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+		assert(Location != NULL);
+		*Location = src;
+		return Location;
+	}
+
+	int visited[NUM_REAL_PLACES] = {0};
+	int pred[NUM_REAL_PLACES];
+	for (int i = 0; i < NUM_REAL_PLACES; i++)
+	{
+		pred[i] = -1;
+	}
+
+	Queue queue = QueueNew();
+	Enqueue(queue, src, 0); 
+	while (!QueueIsEmpty(queue)) {
+		QueueNode current = Dequeue(queue);
+		if (current->head->location == dest) 
+		{ 
+			break; 
+		} 
+		ConnList *LocationList = MapGetConnections((GameView)hv, src);
+
+		for (PlaceId w = 0; w < NUM_REAL_PLACES; w++) 
+		{
+			if (visited[w] == 0) 
+			{
+				pred[w] = current;
+				visited[w] = 1;
+				Enqueue(queue, w, 0);	
+			}
+		}			
+	}
+	if (pred[dest] != -1) {
+		PlaceId *temp = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+		PlaceId v = dest;
+		while (v != src) {
+			temp[*pathLength++] = v;
+			v = pred[v];
+		}
+		PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+		for (int i = 0; i < pathLength; i++) {
+			path[i] = temp[*pathLength - 1 - i]; 
+		}
+		free(temp);
+		return path; 
+	}
 	return NULL;
 }
 
@@ -91,34 +154,64 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	Player player = HvGetPlayer(hv);
+	bool road = true, rail = true, boat = true;
+	return HvWhereCanTheyGoByType(hv, player, road, rail, boat, numReturnedLocs);
 }
 
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 							 bool boat, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	Player player = HvGetPlayer(hv);
+	return HvWhereCanTheyGoByType(hv, player, road, rail, boat, numReturnedLocs);
 }
 
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 						  int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	bool road = true, rail = true, boat = true;
+	return HvWhereCanTheyGoByType(hv, player, road, rail, boat, numReturnedLocs);
 }
 
 PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 								bool road, bool rail, bool boat,
 								int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
-	return NULL;
+	// player  hasn't  made  a move yet
+	int numPlayerMoves = 0;
+	bool canFree = false;
+	GvGetMoveHistory((GameView)hv, player, &numPlayerMoves, &canFree);
+	if (numPlayerMoves == 0) return NULL;
+
+	int numReachable = 0;
+	Round round = HvGetRound(hv);
+	PlaceId from = HvGetPlayerLocation(hv, player);
+	PlaceId *reachable = GvGetReachableByType((GameView)hv, player, round, from, 
+												road, rail, boat, &numReachable);
+	
+	if (player != PLAYER_DRACULA) {
+		*numReturnedLocs = numReachable;
+		return reachable;
+	}
+	// Dracula cannot make a LOCATION move if he has already made 
+	// a LOCATION move to that same location in the last 5 rounds
+	PlaceId *validLocations = malloc(numReachable*sizeof(PlaceId));
+	assert(validLocations != NULL);
+	int numLastFive = 0;
+	PlaceId *lastFiveLocations = GvGetLastMoves((GameView)hv, PLAYER_DRACULA, 5, &numLastFive, &canFree);
+	for (int i = 0; i < numReachable; i++) {
+		bool found = false;
+		for (int j = 0; j < numLastFive; j++) {
+			if (reachable[i] == lastFiveLocations[j]) {
+				found = true;
+				break;
+			}
+		}
+		if (found == true) continue;
+		validLocations[(*numReturnedLocs)++] = reachable[i];
+	}
+	return validLocations;
 }
 
 ////////////////////////////////////////////////////////////////////////
