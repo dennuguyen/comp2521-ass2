@@ -109,7 +109,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		{ 
 			break; 
 		} 
-		ConnList *LocationList = MapGetConnections((GameView)hv->map, src);
+		ConnList *LocationList = MapGetConnections((GameView)hv, src);
 
 		for (PlaceId w = 0; w < NUM_REAL_PLACES; w++) 
 		{
@@ -125,12 +125,12 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		PlaceId *temp = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
 		PlaceId v = dest;
 		while (v != src) {
-			temp[pathLength++] = v;
+			temp[*pathLength++] = v;
 			v = pred[v];
 		}
 		PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
 		for (int i = 0; i < pathLength; i++) {
-			path[i] = temp[pathLength - 1 - i]; 
+			path[i] = temp[*pathLength - 1 - i]; 
 		}
 		free(temp);
 		return path; 
