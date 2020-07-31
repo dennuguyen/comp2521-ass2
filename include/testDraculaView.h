@@ -13,6 +13,7 @@
 #include "testUtils.h"
 
 // Unit Testing
+void testDvNew();
 
 // Integration Testing
 void testDv();

@@ -13,6 +13,7 @@
 #include "testUtils.h"
 
 // Unit Testing
+void testHvNew();
 void testHvGetLastKnownDraculaLocation();
 
 // Integration Testing

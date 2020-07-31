@@ -16,6 +16,7 @@
 
 int main(void)
 {
+	testHvNew();
 	testHvGetLastKnownDraculaLocation();
 	testHv();
 	return EXIT_SUCCESS;

@@ -37,20 +37,9 @@ static void testGvNew1()
     free(traps);
 
     assert(GvGetMoveHistory(gv, PLAYER_DRACULA, &numReturned, &canFree)[0] == NOWHERE);
-    assert(numReturned == 0);
-    assert(canFree == false);
-
     assert(GvGetLastMoves(gv, PLAYER_DRACULA, 2, &numReturned, &canFree)[0] == NOWHERE);
-    assert(numReturned == 0);
-    assert(canFree == false);
-
     assert(GvGetLocationHistory(gv, PLAYER_DRACULA, &numReturned, &canFree)[0] == NOWHERE);
-    assert(numReturned == 0);
-    assert(canFree == false);
-
     assert(GvGetLastLocations(gv, PLAYER_DRACULA, 2, &numReturned, &canFree)[0] == NOWHERE);
-    assert(numReturned == 0);
-    assert(canFree == false);
 
     GvFree(gv);
     printf("\tTest passed!\n");
