@@ -21,6 +21,10 @@ void testDvGetHealth();
 void testDvGetPlayerLocation();
 void testDvGetVampireLocation();
 void testDvGetTrapLocations();
+void testDvWhereCanIGo();
+void testDvWhereCanIGoByType();
+void testDvWhereCanTheyGo();
+void testDvWhereCanTheyGoByType();
 
 // Integration Testing
 void testDv();

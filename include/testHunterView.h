@@ -20,6 +20,10 @@ void testHvGetPlayer();
 void testHvGetScore();
 void testHvGetHealth();
 void testHvGetPlayerLocation();
+void testHvWhereCanIGo();
+void testHvWhereCanIGoByType();
+void testHvWhereCanTheyGo();
+void testHvWhereCanTheyGoByType();
 
 // Integration Testing
 void testHv();
