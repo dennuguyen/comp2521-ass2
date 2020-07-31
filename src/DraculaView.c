@@ -74,43 +74,108 @@ PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 
 PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedMoves = 0;
-	return NULL;
+	// Dracula  hasn't  made  a move yet
+	int numDraculaMoves = 0;
+	bool canFree = false;
+	GvGetMoveHistory((GameView)dv, PLAYER_DRACULA, &numDraculaMoves, &canFree);
+	if (numDraculaMoves == 0) return NULL;
+
+	// Dracula cannot make a HIDE or DOUBLE_BACK move if he has made on in the
+	// last five rounds
+	int numLastFive = 0;
+	PlaceId *lastFiveLocations = GvGetLastMoves((GameView)dv, PLAYER_DRACULA, 5, &numLastFive, &canFree);
+	bool canHide = true, canDoubleBack1 = true, canDoubleBack2 = true, 
+	canDoubleBack3 = true, canDoubleBack4 = true, canDoubleBack5 = true;
+	for (int i = 0; i < numLastFive; i++) {
+		if (lastFiveLocations[i] == HIDE) canHide = false;
+		else if (lastFiveLocations[i] == DOUBLE_BACK_1) canDoubleBack1 = false;
+		else if (lastFiveLocations[i] == DOUBLE_BACK_2) canDoubleBack2 = false;
+		else if (lastFiveLocations[i] == DOUBLE_BACK_3) canDoubleBack3 = false;
+		else if (lastFiveLocations[i] == DOUBLE_BACK_4) canDoubleBack4 = false;
+		else if (lastFiveLocations[i] == DOUBLE_BACK_5) canDoubleBack5 = false;
+	}
+
+	// Get valid locations
+	int numValidLocations = 0;
+	PlaceId *validLocations = DvWhereCanIGo(dv, &numValidLocations);
+
+	PlaceId *validMoves = malloc((numValidLocations+6)*sizeof(PlaceId));
+	assert(validMoves != NULL);
+	for (int i = 0; i < numValidLocations; i++) {
+		validMoves[i] = validLocations[i];
+		(*numReturnedMoves)++;
+	}
+	if (canHide) validMoves[(*numReturnedMoves)++] = HIDE;
+	if (canDoubleBack1) validMoves[(*numReturnedMoves)++] = DOUBLE_BACK_1;
+	if (canDoubleBack2) validMoves[(*numReturnedMoves)++] = DOUBLE_BACK_2;
+	if (canDoubleBack3) validMoves[(*numReturnedMoves)++] = DOUBLE_BACK_3;
+	if (canDoubleBack4) validMoves[(*numReturnedMoves)++] = DOUBLE_BACK_4;
+	if (canDoubleBack5) validMoves[(*numReturnedMoves)++] = DOUBLE_BACK_5;
+	if (*numReturnedMoves == 0) {return NULL;}
+	return validMoves;
 }
 
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	bool road = true, boat = true;
+	return DvWhereCanIGoByType(dv, road, boat, numReturnedLocs);
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 							 int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	bool rail = false;
+	return DvWhereCanTheyGoByType(dv, PLAYER_DRACULA, road, rail, boat, numReturnedLocs);
 }
 
 PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
 						  int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	bool road = true, rail = true, boat = true;
+	return DvWhereCanTheyGoByType(dv, player, road, rail, boat, numReturnedLocs);
 }
 
 PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 								bool road, bool rail, bool boat,
 								int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
-	return NULL;
-}
 
+	// player  hasn't  made  a move yet
+	int numPlayerMoves = 0;
+	bool canFree = false;
+	GvGetMoveHistory((GameView)dv, player, &numPlayerMoves, &canFree);
+	if (numPlayerMoves == 0) return NULL;
+
+	int numReachable = 0;
+	Round round = DvGetRound(dv);
+	PlaceId from = DvGetPlayerLocation(dv, player);
+	PlaceId *reachable = GvGetReachableByType((GameView)dv, player, round, from, 
+												road, rail, boat, &numReachable);
+	
+	if (player != PLAYER_DRACULA) {
+		*numReturnedLocs = numReachable;
+		return reachable;
+	}
+	// Dracula cannot make a LOCATION move if he has already made 
+	// a LOCATION move to that same location in the last 5 rounds
+	PlaceId *validLocations = malloc(numReachable*sizeof(PlaceId));
+	assert(validLocations != NULL);
+	int numLastFive = 0;
+	PlaceId *lastFiveLocations = GvGetLastMoves((GameView)dv, PLAYER_DRACULA, 5, &numLastFive, &canFree);
+	for (int i = 0; i < numReachable; i++) {
+		bool found = false;
+		for (int j = 0; j < numLastFive; j++) {
+			if (reachable[i] == lastFiveLocations[j]) {
+				found = true;
+				break;
+			}
+		}
+		if (found == true) continue;
+		validLocations[(*numReturnedLocs)++] = reachable[i];
+	}
+	return validLocations;
+}
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
