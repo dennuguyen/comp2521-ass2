@@ -208,3 +208,63 @@ ConnList MapGetConnections(Map m, PlaceId p)
 }
 
 ////////////////////////////////////////////////////////////////////////
+
+ConnQueue QueueNew()
+{
+	ConnQueue new = malloc(sizeof(connQueue));
+	if (new == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory for ConnQueue.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	new->head = new->tail = NULL;
+	return new;
+}
+
+void QueueFree(ConnQueue q)
+{
+	if (q == NULL || q->head == NULL)
+		return;
+
+	ConnNode curr = q->head;
+	while (curr != NULL)
+	{
+		ConnNode next = curr->next;
+		free(curr);
+		curr = next;
+	}
+
+	free(q);
+}
+
+void Enqueue(ConnQueue q, PlaceId p, TransportType type)
+{
+	if (q == NULL || q->head == NULL)
+		return;
+
+	ConnNode head = connListInsert(NULL, p, type);
+
+	if (q->head == NULL)
+		q->head = head;
+	if (q->tail != NULL)
+		q->tail->next = head;
+	q->tail = head;
+}
+
+ConnList Dequeue(ConnQueue q, PlaceId p, TransportType type)
+{
+	if (q == NULL || q->head == NULL)
+		return NULL;
+
+	ConnNode temp = q->head;
+	ConnNode node = &(connNode){.p = temp->p, .type = temp->type, .next = NULL};
+	q->head = q->head->next;
+
+	if (q->head == NULL)
+		q->tail = NULL;
+
+	free(temp);
+
+	return node;
+}

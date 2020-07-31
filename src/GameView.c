@@ -86,6 +86,9 @@ static bool isPlayerNotMoving(GameView gv);
 static void hunterDies(GameView gv);
 static void draculaDies(GameView gv);
 
+/* Reachability Helpers */
+// static int findRailConnections(Map m, PlaceId from, int railDistance, int *visited, PlaceId *locations, int *numReturnedLocs);
+
 /******************************************************************************
  * 								GameView ADT							 	  *
  ******************************************************************************/
@@ -217,9 +220,15 @@ PlaceId GvGetVampireLocation(GameView gv)
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
 	PlaceId *traps = malloc(MAX_ENCOUNTERS * sizeof(PlaceId));
+	if (traps == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory for traps.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	*numTraps = 0;
 
 	int i;
-
 	for (i = 0; i < MAX_ENCOUNTERS; i++)
 		traps[i] = NOWHERE;
 
@@ -261,6 +270,7 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player, int *numReturnedMoves,
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 						int *numReturnedMoves, bool *canFree)
 {
+	*numReturnedMoves = 0;
 	*canFree = false;
 
 	// Player hasn't started yet.
@@ -301,6 +311,7 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 							int *numReturnedLocs, bool *canFree)
 {
+	*numReturnedLocs = 0;
 	*canFree = false;
 
 	// Player hasn't started yet.
@@ -328,7 +339,6 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 /******************************************************************************
  * 								Making a Move								  *
  ******************************************************************************/
-static int findRailConnections(Map m, PlaceId from, int railDistance, int *visited, PlaceId *LocationList, int *numReturnedLocs);
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 						PlaceId from, int *numReturnedLocs)
 {
@@ -340,67 +350,51 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 							  PlaceId from, bool road, bool rail,
 							  bool boat, int *numReturnedLocs)
 {
-	PlaceId *LocationList = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
-	
-	int visited[NUM_REAL_PLACES] = {0};
+	PlaceId *locations = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	if (locations == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory for locations.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	// int visited[NUM_REAL_PLACES] = {0};
+	// visited[from] = 1;
 
 	*numReturnedLocs = 0;
-	LocationList[*numReturnedLocs] = from;
-	visited[from] = 1;
-	
+	locations[(*numReturnedLocs)++] = from;
+
+	// ConnQueue queue = ;
+
 	ConnList connections = MapGetConnections(gv->map, from);
-	
+
 	for (ConnList curr = connections; curr != NULL; curr = curr->next)
 	{
-		if ((curr->type == ROAD) && (road == true) && (visited[curr->p] == 0))
-		{
-			if ((player == PLAYER_DRACULA) && (curr->p == HOSPITAL_PLACE)) continue;
-			LocationList[*numReturnedLocs++] = curr->p;
-			visited[curr->p] = 1;
-		}
-		else if ((curr->type == BOAT) && (boat == true) && (visited[curr->p] == 0))
-		{
-			LocationList[*numReturnedLocs++] = curr->p;
-			visited[curr->p] = 1;	
-		}
 	}
 
-	if (rail == true)
-	{
-		int railDistance = (player + round) % 4;
-		if (railDistance > 0) 
-			*numReturnedLocs = findRailConnections(gv->map, from, railDistance, visited, LocationList, numReturnedLocs);
-	}
+	// for (ConnList curr = connections; curr != NULL; curr = curr->next)
+	// {
+	// 	if ((curr->type == ROAD) && (road == true) && (visited[curr->p] == 0))
+	// 	{
+	// 		if ((player == PLAYER_DRACULA) && (curr->p == HOSPITAL_PLACE))
+	// 			continue;
+	// 		locations[*numReturnedLocs++] = curr->p;
+	// 		visited[curr->p] = 1;
+	// 	}
+	// 	else if ((curr->type == BOAT) && (boat == true) && (visited[curr->p] == 0))
+	// 	{
+	// 		locations[*numReturnedLocs++] = curr->p;
+	// 		visited[curr->p] = 1;
+	// 	}
+	// }
 
-	return LocationList;
+	// if (rail == true)
+	// {
+	// 	int railDistance = (player + round) % 4;
+	// 	if (railDistance > 0)
+	// 		*numReturnedLocs = findRailConnections(gv->map, from, railDistance, visited, locations, numReturnedLocs);
+	// }
 
-}
-
-static int findRailConnections(Map m, PlaceId from, int railDistance, int *visited, PlaceId *LocationList, int *numReturnedLocs)
-{
-		/*
-	findRailConnections
-	init queue with from + visited_rail
-	while (sum >= 0)
-       dequeue
-       add to visited
-       look for rail connections, add to q();
-		*/
-	
-	ConnList connections = MapGetConnections(m, from);
-	for (ConnList curr = connections; curr != NULL; curr = curr->next)
-	{
-		if (curr->type == RAIL)
-		{		
-			if (visited[curr->p] == 0)
-			{
-			LocationList[*numReturnedLocs++] = curr->p;
-			visited[curr->p] = 1;
-			}
-			*numReturnedLocs = findRailConnections(m, curr->p, railDistance--, visited, LocationList, numReturnedLocs);
-		}
-	}
-	return *numReturnedLocs;
+	return locations;
 }
 
 /******************************************************************************
@@ -916,3 +910,30 @@ static void draculaDies(GameView gv)
 {
 	gv->healths[PLAYER_DRACULA] = 0;
 }
+
+// static int findRailConnections(Map m, PlaceId from, int railDistance, int *visited, PlaceId *locations, int *numReturnedLocs)
+// {
+// 	/*
+// 	findRailConnections
+// 	init queue with from + visited_rail
+// 	while (sum >= 0)
+//        dequeue
+//        add to visited
+//        look for rail connections, add to q();
+// 		*/
+
+// 	ConnList connections = MapGetConnections(m, from);
+// 	for (ConnList curr = connections; curr != NULL; curr = curr->next)
+// 	{
+// 		if (curr->type == RAIL)
+// 		{
+// 			if (visited[curr->p] == 0)
+// 			{
+// 				locations[*numReturnedLocs++] = curr->p;
+// 				visited[curr->p] = 1;
+// 			}
+// 			*numReturnedLocs = findRailConnections(m, curr->p, railDistance--, visited, locations, numReturnedLocs);
+// 		}
+// 	}
+// 	return *numReturnedLocs;
+// }

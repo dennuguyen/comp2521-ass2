@@ -18,36 +18,75 @@
 #ifndef FOD__MAP_H_
 #define FOD__MAP_H_
 
+typedef struct map *Map;
+typedef struct connNode *ConnNode;
 typedef struct connNode *ConnList;
-struct connNode
+typedef struct connQueue *ConnQueue;
+
+typedef struct connNode
 {
 	PlaceId p;			// ALICANTE, etc.
 	TransportType type; // ROAD, RAIL, BOAT
 	ConnList next;		// link to next node
-};
+} connNode;
 
-// Map representation is hidden
-typedef struct map *Map;
+typedef struct connQueue
+{
+	ConnList head; // Pointer to head of queue
+	ConnList tail; // Pointer to tail of queue
+} connQueue;
 
-/** Creates a new map. */
+/**
+ * Creates a new map.
+ */
 Map MapNew(void);
 
-/** Frees all memory allocated for the given map. */
+/**
+ * Frees all memory allocated for the given map.
+ */
 void MapFree(Map m);
 
-/** Prints a map to `stdout`. */
+/**
+ * Prints a map to `stdout`.
+ */
 void MapShow(Map m);
 
-/** Gets the number of places in the map. */
+/**
+ * Gets the number of places in the map.
+ */
 int MapNumPlaces(Map m);
 
-/** Gets the number of connections of a particular type. */
+/**
+ * Gets the number of connections of a particular type.
+ */
 int MapNumConnections(Map m, TransportType type);
 
 /**
- *  Gets a list of connections from the given place.
- *  The returned list should NOT be modified or freed.
+ * Gets a list of connections from the given place.
+ * The returned list should NOT be modified or freed.
  */
 ConnList MapGetConnections(Map m, PlaceId p);
+
+/**
+ * Create a new queue.
+ */
+ConnQueue QueueNew();
+
+/**
+ * Destroy the queue.
+ */
+void QueueFree(ConnQueue q);
+
+/**
+ * Enqueues an edge which consists of the destination and transport type to
+ * the ConnQueue.
+ */
+void Enqueue(ConnQueue q, PlaceId p, TransportType type);
+
+/**
+ * Enqueues an edge which consists of the destination and transport type to
+ * the ConnQueue.
+ */
+ConnList Dequeue(ConnQueue q, PlaceId p, TransportType type);
 
 #endif // !defined(FOD__MAP_H_)
