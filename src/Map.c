@@ -217,28 +217,45 @@ PlaceId *MapGetRailsByDistance(Map m, int distance, PlaceId from, int *numReturn
 		exit(EXIT_FAILURE);
 	}
 
+	bool *visited = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	if (visited == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory for visited.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	for (int i = 0; i < NUM_REAL_PLACES; i++)
+	{
+		locations[i] = NOWHERE;
+		visited[i] = false;
+	}
+
 	*numReturned = 0;
 	locations[(*numReturned)++] = from;
 
 	ConnQueue q = QueueNew(); // Queue of connections
 	_Queue w = _QueueNew();	  // Queue of distances (weighting)
-
 	Enqueue(q, m->connections[from]);
 	_Enqueue(w, 0);
+
+	printf("!IsQueueEmpty(q) = %d\n", !IsQueueEmpty(q));
+	QueueShow(q);
 
 	while (!IsQueueEmpty(q))
 	{
 		ConnNode conn = Dequeue(q);
 		int weight = _Dequeue(w);
+		printf("%s\n", placeIdToName(locations[*numReturned]));
 
 		if (weight == distance)
 			locations[(*numReturned)++] = conn->p;
 
 		for (ConnNode curr = conn; conn != NULL; conn = conn->next)
-			if (curr->type == RAIL)
+			if (curr->type == RAIL && visited[curr->p] == false)
 			{
 				Enqueue(q, curr);
 				_Enqueue(w, weight + 1);
+				visited[curr->p] = true;
 			}
 	}
 
@@ -303,6 +320,22 @@ ConnList Dequeue(ConnQueue q)
 	free(temp);
 
 	return node;
+}
+
+void QueueShow(ConnQueue q)
+{
+	if (q == NULL || q->head == NULL)
+		return;
+
+	printf("[");
+	for (ConnNode curr = q->head; curr != NULL; curr = curr->next)
+	{
+		if (curr->next == NULL)
+			printf("%s", placeIdToName(curr->p));
+		else
+			printf("%s, ", placeIdToName(curr->p));
+	}
+	printf("]");
 }
 
 bool IsQueueEmpty(ConnQueue q)

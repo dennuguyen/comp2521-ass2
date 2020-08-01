@@ -95,6 +95,11 @@ void Enqueue(ConnQueue q, ConnNode node);
 ConnList Dequeue(ConnQueue q);
 
 /**
+ * Prints the queue.
+ */
+void QueueShow(ConnQueue q);
+
+/**
  * Check if queue is empty.
  */
 bool IsQueueEmpty(ConnQueue q);

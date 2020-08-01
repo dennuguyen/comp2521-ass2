@@ -442,7 +442,6 @@ static void testGv15()
         PlaceId *locs = GvGetReachableByType(gv, PLAYER_LORD_GODALMING,
                                              1, GALATZ, true, false,
                                              false, &numLocs);
-        printf("numLocs = %d\n", numLocs);
         assert(numLocs == 5);
         sortPlaces(locs, numLocs);
         assert(locs[0] == BUCHAREST);
@@ -481,6 +480,15 @@ static void testGv15()
         PlaceId *locs = GvGetReachableByType(gv, PLAYER_LORD_GODALMING,
                                              2, PARIS, false, true,
                                              false, &numLocs);
+
+        printf("numLocs = %d\n", numLocs);
+        printf("%s\n", placeIdToName(locs[0]));
+        printf("%s\n", placeIdToName(locs[1]));
+        printf("%s\n", placeIdToName(locs[2]));
+        printf("%s\n", placeIdToName(locs[3]));
+        printf("%s\n", placeIdToName(locs[4]));
+        printf("%s\n", placeIdToName(locs[5]));
+        printf("%s\n", placeIdToName(locs[6]));
 
         assert(numLocs == 7);
         sortPlaces(locs, numLocs);
