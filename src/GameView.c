@@ -279,7 +279,7 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 	if (player >= gv->currentPlayer)
 		i--;
 
-	for (; i >= gv->round - numMoves && i >= 0; i--)
+	for (; i > gv->round - numMoves && i >= 0; i--)
 		if (gv->moveHistory[player][i] == NOWHERE)
 			break;
 
@@ -320,7 +320,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 	if (player >= gv->currentPlayer)
 		i--;
 
-	for (; i >= gv->round - numLocs && i >= 0; i--)
+	for (; i > gv->round - numLocs && i >= 0; i--)
 		if (gv->locationHistory[player][i] == NOWHERE)
 			break;
 
@@ -431,7 +431,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 
 					Enqueue(q, curr->p, curr->type);
 					Enqueue(d, depth + 1, NONE);
-					Enqueue(r, 0, NONE); // Dracula never travels by rail}
+					Enqueue(r, 0, NONE); // Dracula never travels by rail
 				}
 				else // (player == HUNTERS)
 				{
