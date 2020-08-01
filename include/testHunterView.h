@@ -14,9 +14,7 @@
 
 // Unit Testing
 void testHvNew();
-void testHvFree();
-void testHvGetRound();
-void testHvGetPlayer();
+void testHvGetLastKnownDraculaLocation();
 
 // Integration Testing
 void testHv();

@@ -12,10 +12,12 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
-#include "testGameView.h"
+#include "testHunterView.h"
 
 int main(void)
 {
+	testHvNew();
+	testHvGetLastKnownDraculaLocation();
 	testHv();
 	return EXIT_SUCCESS;
 }

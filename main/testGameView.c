@@ -17,6 +17,23 @@
 int main(void)
 {
 	testGvNew();
+	testGvGetRound();
+	testGvGetPlayer();
+	testGvGetScore();
+	testGvGetHealth();
+	testGvGetPlayerLocation();
+	testGvGetVampireLocation();
+	// testGvGetTrapLocations();
+	testGvGetMoveHistory();
+	// testGvGetLastMoves();
+	testGvGetLocationHistory();
+	// testGvGetLastLocations();
+	// testGvGetReachable();
+	// testGvGetReachableByType();
+
 	testGv();
+
+	printf("All GameView tests passed!\n");
+
 	return EXIT_SUCCESS;
 }

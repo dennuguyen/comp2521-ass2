@@ -17,6 +17,17 @@ void testGvNew();
 void testGvFree();
 void testGvGetRound();
 void testGvGetPlayer();
+void testGvGetScore();
+void testGvGetHealth();
+void testGvGetPlayerLocation();
+void testGvGetVampireLocation();
+void testGvGetTrapLocations();
+void testGvGetMoveHistory();
+void testGvGetLastMoves();
+void testGvGetLocationHistory();
+void testGvGetLastLocations();
+void testGvGetReachable();
+void testGvGetReachableByType();
 
 // Integration Testing
 void testGv();

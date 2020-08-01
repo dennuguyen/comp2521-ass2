@@ -16,6 +16,7 @@
 
 int main(void)
 {
+	testDvNew();
 	testDv();
 	return EXIT_SUCCESS;
 }

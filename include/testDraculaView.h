@@ -14,9 +14,6 @@
 
 // Unit Testing
 void testDvNew();
-void testDvFree();
-void testDvGetRound();
-void testDvGetPlayer();
 
 // Integration Testing
 void testDv();

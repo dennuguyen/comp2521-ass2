@@ -113,6 +113,7 @@ static void testDv4()
 
     int numMoves = -1;
     PlaceId *moves = DvGetValidMoves(dv, &numMoves);
+
     assert(numMoves == 4);
     sortPlaces(moves, numMoves);
     assert(moves[0] == GALATZ);

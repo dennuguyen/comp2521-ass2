@@ -13,9 +13,7 @@ jamie-rahme, Jamie Rahme, z5209611, T15A
 ### Glossary
 GV = game view\
 DV = dracula view\
-HV = hunter view\
-PV = player view\
-TV = trap view
+HV = hunter view
 
 ### Directory Tree
 ```
@@ -67,9 +65,7 @@ Turn on "format on save" if your editor has the feature.
 
 At minimum must complete and submit: GameView.c, DraculaView.c, HunterView.c, testGameView.c, testDraculaView.c, testHunterView.c.
 
-We can modify the existing headerfiles and add new ADTs e.g. Queue.c and Queue.h which will be submitted if added/changed.
-
-The draculaView, hunterView structs inherit the gameView struct. draculaView and hunterView do not directly interact with gameView. They must use their ADT getters which calls the gameView getters.
+The draculaView, hunterView structs inherit the gameView struct i.e. shares the same memory allocation as gameView. Therefore, using GameView's ADT functions requires a typecast from draculaView and hunterView.
 
 ## The Hunt
 

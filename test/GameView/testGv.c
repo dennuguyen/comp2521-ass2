@@ -18,6 +18,8 @@ static void testGv15();
 
 void testGv()
 {
+    printf("Testing GameView...\n");
+
     testGv1();
     testGv2();
     testGv3();
@@ -33,6 +35,8 @@ void testGv()
     testGv13();
     testGv14();
     testGv15();
+
+    printf("GameView tests passed!\n\n");
 }
 
 static void testGv1()
@@ -220,7 +224,7 @@ static void testGv8()
     Message messages[6] = {};
     GameView gv = GvNew(trail, messages);
 
-    assert(GvGetHealth(gv, GAME_START_HUNTER_LIFE_POINTS));
+    assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == GAME_START_HUNTER_LIFE_POINTS);
 
     GvFree(gv);
     printf("Test passed!\n");
@@ -366,7 +370,7 @@ static void testGv14()
     assert(GvGetHealth(gv, PLAYER_DR_SEWARD) ==
            GAME_START_HUNTER_LIFE_POINTS - 2 * LIFE_LOSS_TRAP_ENCOUNTER);
     assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CITY_UNKNOWN);
-    assert(GvGetVampireLocation(gv) == STRASBOURG);
+    assert(GvGetVampireLocation(gv) == NOWHERE);
 
     // Lord Godalming's move/location history
     {
@@ -438,7 +442,6 @@ static void testGv15()
         PlaceId *locs = GvGetReachableByType(gv, PLAYER_LORD_GODALMING,
                                              1, GALATZ, true, false,
                                              false, &numLocs);
-
         assert(numLocs == 5);
         sortPlaces(locs, numLocs);
         assert(locs[0] == BUCHAREST);
@@ -478,10 +481,14 @@ static void testGv15()
                                              2, PARIS, false, true,
                                              false, &numLocs);
 
+        printf("numLocs = %d\n", numLocs);
+        for (int i = 0; i < numLocs; i++)
+            printf("%s\n", placeIdToName(locs[i]));
+
         assert(numLocs == 7);
         sortPlaces(locs, numLocs);
         assert(locs[0] == BORDEAUX);
-        assert(locs[1] == BUCHAREST);
+        assert(locs[1] == BRUSSELS);
         assert(locs[2] == COLOGNE);
         assert(locs[3] == LE_HAVRE);
         assert(locs[4] == MARSEILLES);
