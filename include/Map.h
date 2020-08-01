@@ -68,6 +68,11 @@ int MapNumConnections(Map m, TransportType type);
 ConnList MapGetConnections(Map m, PlaceId p);
 
 /**
+ * Gets the RAIL connections at a specified distance from a location.
+ */
+PlaceId *MapGetRailsByDistance(Map m, int distance, PlaceId from, int *numReturned);
+
+/**
  * Create a new queue.
  */
 ConnQueue QueueNew();
@@ -81,7 +86,7 @@ void QueueFree(ConnQueue q);
  * Enqueues an edge which consists of the destination and transport type to
  * the ConnQueue.
  */
-void Enqueue(ConnQueue q, PlaceId p, TransportType type);
+void Enqueue(ConnQueue q, ConnNode node);
 
 /**
  * Enqueues an edge which consists of the destination and transport type to
