@@ -90,25 +90,23 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 	//assert (MapNumPlaces(hv->super->map) == NUM_REAL_PLACES);
 
-	// declare and initialise array to store if Place has been visited
+	// declare array to store if Place has been visited
 	bool *visited = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
 	if (visited == NULL)
 	{
 		fprintf(stderr, "ERROR: Could not allocate memory.\n");
 		exit(EXIT_FAILURE);
 	}
-	for (int i = 0; i < NUM_REAL_PLACES; i++) visited[i] = false;
 
-	// declare and initialise array to store predecessor node along path
+	// declare array to store predecessor node along path
 	PlaceId *pred = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
 	if (pred == NULL)
 	{
 		fprintf(stderr, "ERROR: Could not allocate memory.\n");
 		exit(EXIT_FAILURE);
 	}
-	for (int i = 0; i < NUM_REAL_PLACES; i++) pred[i] = NOWHERE;
 
-	// declare and initialise array to store round number after move
+	// declare array to store round number after move
 	int *round = malloc(NUM_REAL_PLACES * sizeof(int));
 	if (round == NULL)
 	{
@@ -116,7 +114,12 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		exit(EXIT_FAILURE);
 	}
 	Round roundNum = HvGetRound(hv);
-	for (int i = 0; i < NUM_REAL_PLACES; i++) round[i] = roundNum;
+	
+	for (int i = 0; i < NUM_REAL_PLACES; i++) {
+		visited[i] = false;
+		pred[i] = NOWHERE;
+		round[i] = roundNum;
+	}
 
 	// create a queue to store Places
 	_Queue q = _QueueNew();
