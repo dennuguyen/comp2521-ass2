@@ -383,13 +383,13 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 
 	while (!IsQueueEmpty(q))
 	{
-		ConnNode city = Dequeue(q);
-		Round depth = Dequeue(d);
-		int railDistance = Dequeue(r);
+		PlaceId city = Dequeue(q)->p;
+		Round depth = Dequeue(d)->p;
+		int railDistance = Dequeue(r)->p;
 
 		// Reach required depth.
 		if (round == depth)
-			locations[(*numReturnedLocs)++] = city->p;
+			locations[(*numReturnedLocs)++] = city;
 
 		// Get connections from current city.
 		ConnList connections = MapGetConnections(gv->map, city);
@@ -398,11 +398,12 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 		for (ConnNode curr = connections; curr != NULL; curr = curr->next)
 		{
 			// Check visited array
-			for (int i = 0; i < arrayIndex; i++)
+			for (int i = 0; i < numConnections; i++)
 				if (visited[i] == curr->p)
 					continue;
 
 			if (curr->type == road || curr->type == boat || curr->type == rail)
+			{
 				if (player == PLAYER_DRACULA)
 				{
 					// Travel by RAIL or visiting HOSPITAL
@@ -434,16 +435,16 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 				}
 				else // (player == HUNTERS)
 				{
+					int distance = (gv->currentPlayer + gv->round) % 4;
+
 					Enqueue(q, curr->p, curr->type);
 					Enqueue(d, depth + 1, NONE);
-					if (curr->type == RAIL)
-					{
-						int distance = (gv->currentPlayer + gv->round) % 4;
+					if (curr->type == RAIL && distance == railDistance)
 						Enqueue(r, railDistance + 1, RAIL);
-					}
 					else
 						Enqueue(r, 0, NONE);
 				}
+			}
 		}
 	}
 
