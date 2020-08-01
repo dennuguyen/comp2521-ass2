@@ -86,9 +86,6 @@ static bool isPlayerNotMoving(GameView gv);
 static void hunterDies(GameView gv);
 static void draculaDies(GameView gv);
 
-/* Reachability Helpers */
-// static int findRailConnections(Map m, PlaceId from, int railDistance, int *visited, PlaceId *locations, int *numReturnedLocs);
-
 /******************************************************************************
  * 								GameView ADT							 	  *
  ******************************************************************************/
@@ -350,80 +347,109 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 							  PlaceId from, bool road, bool rail,
 							  bool boat, int *numReturnedLocs)
 {
+	int numConnections = MapNumConnections(gv->map, ANY);
+
 	// Dynamic array of possible locations 'player' can be at, at round 'round'.
-	PlaceId *locations = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	PlaceId *locations = malloc(numConnections * sizeof(PlaceId));
 	if (locations == NULL)
 	{
 		fprintf(stderr, "ERROR: Could not allocate memory for locations.\n");
 		exit(EXIT_FAILURE);
 	}
 
+	// Dynamic array of visited places.
+	PlaceId *visited = malloc(numConnections * sizeof(PlaceId));
+	if (visited == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory for visited.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	// Initialise the arrays.
+	for (int i = 0; i < numConnections; i++)
+		locations[i] = visited[i] = NOWHERE;
+
+	// Include initial location in locations array.
 	*numReturnedLocs = 0;
 	locations[(*numReturnedLocs)++] = from;
 
-	// Create queue to keep track of BFS and depth
-	ConnQueue q = QueueNew();
-	ConnQueue d = QueueNew();
+	// Create queues.
+	ConnQueue q = QueueNew(); // Queue of cities
+	ConnQueue d = QueueNew(); // Queue of round depth
+	ConnQueue r = QueueNew(); // Queue of rail distance
 	Enqueue(q, from, NONE);
 	Enqueue(q, 0, NONE);
+	Enqueue(r, 0, NONE);
 
 	while (!IsQueueEmpty(q))
 	{
 		ConnNode city = Dequeue(q);
 		Round depth = Dequeue(d);
+		int railDistance = Dequeue(r);
 
-		// Reach required depth
+		// Reach required depth.
 		if (round == depth)
 			locations[(*numReturnedLocs)++] = city->p;
 
-		// Get connections from current city
+		// Get connections from current city.
 		ConnList connections = MapGetConnections(gv->map, city);
 
-		// Enqueue children cities from parent city
+		// Enqueue children cities from parent city.
 		for (ConnNode curr = connections; curr != NULL; curr = curr->next)
 		{
-			// Do not queue for Dracula conditions
-			if (player == PLAYER_DRACULA)
-			{
-				// Travel by RAIL or visiting HOSPITAL
-				if (curr->type == RAIL || curr->p == HOSPITAL_PLACE)
+			// Check visited array
+			for (int i = 0; i < arrayIndex; i++)
+				if (visited[i] == curr->p)
 					continue;
 
-				// Already travelled by Dracula
-				int numReturnedLocs = 0;
-				bool canFree = false;
-				bool continueFlag = false;
-				PlaceId *trail = GvGetLastLocations(gv,
-													player,
-													MAX_ENCOUNTERS,
-													&numReturnedLocs,
-													&canFree);
-				for (int i = 0; i < MAX_ENCOUNTERS; i++)
-					if (trail[i] == curr->p)
-					{
-						continueFlag = true;
-						break;
-					}
-
-				if (continueFlag == true)
-					continue;
-
-				Enqueue(q, curr->p, curr->type);
-				Enqueue(q, depth + 1, NONE);
-			}
-			else // (player == HUNTERS)
-			{
-				if (curr->type == RAIL)
+			if (curr->type == road || curr->type == boat || curr->type == rail)
+				if (player == PLAYER_DRACULA)
 				{
-					int railDistance = (gv->currentPlayer + gv->round) % 4;
-					if (curr->type == RAIL)
-						Enqueue(q, curr->p, curr->type);
+					// Travel by RAIL or visiting HOSPITAL
+					if (curr->type == RAIL || curr->p == HOSPITAL_PLACE)
+						continue;
+
+					// Already travelled by Dracula
+					int numReturnedLocs = 0;
+					bool canFree = false;
+					bool continueFlag = false;
+					PlaceId *trail = GvGetLastLocations(gv,
+														player,
+														MAX_ENCOUNTERS,
+														&numReturnedLocs,
+														&canFree);
+					for (int i = 0; i < MAX_ENCOUNTERS; i++)
+						if (trail[i] == curr->p)
+						{
+							continueFlag = true;
+							break;
+						}
+
+					if (continueFlag == true)
+						continue;
+
+					Enqueue(q, curr->p, curr->type);
+					Enqueue(d, depth + 1, NONE);
+					Enqueue(r, 0, NONE); // Dracula never travels by rail}
 				}
-				Enqueue(q, depth + 1, NONE);
-			}
+				else // (player == HUNTERS)
+				{
+					Enqueue(q, curr->p, curr->type);
+					Enqueue(d, depth + 1, NONE);
+					if (curr->type == RAIL)
+					{
+						int distance = (gv->currentPlayer + gv->round) % 4;
+						Enqueue(r, railDistance + 1, RAIL);
+					}
+					else
+						Enqueue(r, 0, NONE);
+				}
 		}
 	}
 
+	QueueFree(q);
+	QueueFree(d);
+	QueueFree(r);
 	return locations;
 }
 
@@ -457,6 +483,68 @@ PlaceId GvGetLastKnownDraculaLocation(GameView gv, Round *round)
 		}
 
 	return NOWHERE;
+}
+
+PlaceId *GvGetShortestPathTo(GameView hv, Player hunter, PlaceId dest,
+							 int *pathLength)
+{
+	/*
+	assert(g != NULL);
+
+    // cities are visited only once therefore leaving only one predecessor
+    int *breadcrumbs = malloc(g->nV * sizeof(int));
+    for (int i = 0; i < g->nV; i++)
+        path[i] = breadcrumbs[i] = -1;
+
+    Queue pq = newQueue(); // previous city queue
+    Queue nq = newQueue(); // next city queue
+    Queue wq = newQueue(); // weighting queue for number of trips
+    QueueJoin(pq, src);
+    QueueJoin(nq, src);
+    QueueJoin(wq, 1);
+
+    while (!QueueIsEmpty(nq))
+    {
+        Item p_city = QueueLeave(pq);
+        Item n_city = QueueLeave(nq);
+        Item n_trip = QueueLeave(wq);
+
+        // if city is not in breadcrumb trail
+        if (breadcrumbs[n_city] == -1)
+        {
+            breadcrumbs[n_city] = p_city;
+
+            // arrived at destination
+            if (n_city == dest)
+            {
+                // follow breadcrumbs back to src
+                path[n_trip - 1] = dest;
+                for (int i = n_trip - 2, b = dest; i >= 0; i--)
+                    path[i] = b = breadcrumbs[b];
+                dropQueue(pq);
+                dropQueue(nq);
+                dropQueue(wq);
+                free(breadcrumbs);
+                return n_trip; // return number of trips
+            }
+
+            // enqueue children cities from parent city if distance < max
+            for (int i = 0; i < g->nV; i++)
+                if (g->edges[n_city][i] < max)
+                {
+                    QueueJoin(pq, n_city);
+                    QueueJoin(nq, i);
+                    QueueJoin(wq, n_trip + 1);
+                }
+        }
+    }
+
+    dropQueue(pq);
+    dropQueue(nq);
+    dropQueue(wq);
+    free(breadcrumbs);
+	*/
+	return NULL;
 }
 
 /******************************************************************************
@@ -940,30 +1028,3 @@ static void draculaDies(GameView gv)
 {
 	gv->healths[PLAYER_DRACULA] = 0;
 }
-
-// static int findRailConnections(Map m, PlaceId from, int railDistance, int *visited, PlaceId *locations, int *numReturnedLocs)
-// {
-// 	/*
-// 	findRailConnections
-// 	init queue with from + visited_rail
-// 	while (sum >= 0)
-//        dequeue
-//        add to visited
-//        look for rail connections, add to q();
-// 		*/
-
-// 	ConnList connections = MapGetConnections(m, from);
-// 	for (ConnList curr = connections; curr != NULL; curr = curr->next)
-// 	{
-// 		if (curr->type == RAIL)
-// 		{
-// 			if (visited[curr->p] == 0)
-// 			{
-// 				locations[*numReturnedLocs++] = curr->p;
-// 				visited[curr->p] = 1;
-// 			}
-// 			*numReturnedLocs = findRailConnections(m, curr->p, railDistance--, visited, locations, numReturnedLocs);
-// 		}
-// 	}
-// 	return *numReturnedLocs;
-// }

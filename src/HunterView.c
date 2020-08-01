@@ -145,7 +145,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
     free(breadcrumbs);
 	*/
 
-	return NULL;
+	return GvGetShortestPathTo((GameView)hv, hunter, dest, pathLength);
 }
 
 ////////////////////////////////////////////////////////////////////////
