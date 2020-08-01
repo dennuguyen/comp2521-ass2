@@ -213,21 +213,21 @@ PlaceId *MapGetRailsByDistance(Map m, int distance, PlaceId from, int *numReturn
 	if (distance == 0 || !placeIsLand(from))
 		return NULL;
 
-	PlaceId *locations = malloc(m->nV * sizeof(PlaceId));
+	PlaceId *locations = malloc(MapNumPlaces(m) * sizeof(PlaceId));
 	if (locations == NULL)
 	{
 		fprintf(stderr, "ERROR: Could not allocate memory for locations.\n");
 		exit(EXIT_FAILURE);
 	}
 
-	bool *visited = malloc(m->nV * sizeof(PlaceId));
+	bool *visited = malloc(MapNumPlaces(m) * sizeof(PlaceId));
 	if (visited == NULL)
 	{
 		fprintf(stderr, "ERROR: Could not allocate memory for visited.\n");
 		exit(EXIT_FAILURE);
 	}
 
-	for (int i = 0; i < m->nV; i++)
+	for (int i = 0; i < MapNumPlaces(m); i++)
 	{
 		locations[i] = NOWHERE;
 		visited[i] = false;
@@ -240,7 +240,7 @@ PlaceId *MapGetRailsByDistance(Map m, int distance, PlaceId from, int *numReturn
 	_Queue w = _QueueNew();	  // Queue of distances (weighting)
 
 	// Get the first round of adjacent cities
-	for (ConnNode curr = m->connections[from]; curr; curr = curr->next)
+	for (ConnNode curr = MapGetConnections(m, from); curr; curr = curr->next)
 		if (curr->type == RAIL && visited[curr->p] == false)
 		{
 			Enqueue(q, curr);
