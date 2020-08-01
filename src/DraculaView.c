@@ -81,12 +81,13 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 {
 	*numReturnedMoves = 0;
 
-	int numReturned = 0;
+	int numDraculaMoves = 0;
 	bool canFree = false;
-	PlaceId *moves = GvGetLastMoves((GameView)dv, PLAYER_DRACULA, 5, &numReturned, &canFree);
+	PlaceId *lastFiveLocations = GvGetLastMoves((GameView)dv, PLAYER_DRACULA, 5,
+												&numDraculaMoves, &canFree);
 
 	// If Dracula  hasn't  made  a move yet
-	if (numReturned == 0)
+	if (numDraculaMoves == 0)
 		return NULL;
 
 	// Check if Dracula made HIDE or DOUBLE_BACK in last 5 rounds
@@ -96,19 +97,19 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	bool canDoubleBack3 = true;
 	bool canDoubleBack4 = true;
 	bool canDoubleBack5 = true;
-	for (int i = 0; i < numReturned; i++)
+	for (int i = 0; i < numDraculaMoves; i++)
 	{
-		if (moves[i] == HIDE)
+		if (lastFiveLocations[i] == HIDE)
 			canHide = false;
-		if (moves[i] == DOUBLE_BACK_1)
+		if (lastFiveLocations[i] == DOUBLE_BACK_1 || numDraculaMoves < 1)
 			canDoubleBack1 = false;
-		if (moves[i] == DOUBLE_BACK_2)
+		if (lastFiveLocations[i] == DOUBLE_BACK_2 || numDraculaMoves < 2)
 			canDoubleBack2 = false;
-		if (moves[i] == DOUBLE_BACK_3)
+		if (lastFiveLocations[i] == DOUBLE_BACK_3 || numDraculaMoves < 3)
 			canDoubleBack3 = false;
-		if (moves[i] == DOUBLE_BACK_4)
+		if (lastFiveLocations[i] == DOUBLE_BACK_4 || numDraculaMoves < 4)
 			canDoubleBack4 = false;
-		if (moves[i] == DOUBLE_BACK_5)
+		if (lastFiveLocations[i] == DOUBLE_BACK_5 || numDraculaMoves < 5)
 			canDoubleBack5 = false;
 	}
 

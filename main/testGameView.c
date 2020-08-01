@@ -16,20 +16,20 @@
 
 int main(void)
 {
-	// testGvNew();
-	// testGvGetRound();
-	// testGvGetPlayer();
-	// testGvGetScore();
-	// testGvGetHealth();
-	// testGvGetPlayerLocation();
-	// testGvGetVampireLocation();
+	testGvNew();
+	testGvGetRound();
+	testGvGetPlayer();
+	testGvGetScore();
+	testGvGetHealth();
+	testGvGetPlayerLocation();
+	testGvGetVampireLocation();
 	// testGvGetTrapLocations();
-	// testGvGetMoveHistory();
+	testGvGetMoveHistory();
 	// testGvGetLastMoves();
-	// testGvGetLocationHistory();
+	testGvGetLocationHistory();
 	// testGvGetLastLocations();
-	testGvGetReachable();
-	testGvGetReachableByType();
+	// testGvGetReachable();
+	// testGvGetReachableByType();
 
 	testGv();
 
