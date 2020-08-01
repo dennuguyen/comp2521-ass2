@@ -92,14 +92,29 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 	// declare and initialise array to store if Place has been visited
 	bool *visited = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	if (visited == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory.\n");
+		exit(EXIT_FAILURE);
+	}
 	for (int i = 0; i < NUM_REAL_PLACES; i++) visited[i] = false;
 
 	// declare and initialise array to store predecessor node along path
 	PlaceId *pred = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	if (pred == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory.\n");
+		exit(EXIT_FAILURE);
+	}
 	for (int i = 0; i < NUM_REAL_PLACES; i++) pred[i] = NOWHERE;
 
 	// declare and initialise array to store round number after move
 	int *round = malloc(NUM_REAL_PLACES * sizeof(int));
+	if (round == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory.\n");
+		exit(EXIT_FAILURE);
+	}
 	Round roundNum = HvGetRound(hv);
 	for (int i = 0; i < NUM_REAL_PLACES; i++) round[i] = roundNum;
 
@@ -131,6 +146,16 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	if (!isFound) return NULL; // no path
 	else {
 		PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+		if (path == NULL)
+		{
+			fprintf(stderr, "ERROR: Could not allocate memory.\n");
+			exit(EXIT_FAILURE);
+		}
+		if (path == NULL)
+		{
+			fprintf(stderr, "ERROR: Could not allocate memory for locations.\n");
+			exit(EXIT_FAILURE);
+		}
 		int count = 0;
 	    // extract dest->from path using pred[v]
 	    for (PlaceId v = dest; v != from; v = pred[v]) {
@@ -221,6 +246,11 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 	// Dracula cannot make a LOCATION move if he has already made
 	// a LOCATION move to that same location in the last 5 rounds
 	PlaceId *validLocations = malloc(numReachable * sizeof(PlaceId));
+	if (validLocations == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory.\n");
+		exit(EXIT_FAILURE);
+	}
 	assert(validLocations != NULL);
 	int numLastFive = 0;
 	PlaceId *lastFiveLocations = GvGetLastMoves((GameView)hv, PLAYER_DRACULA, 5, &numLastFive, &canFree);
