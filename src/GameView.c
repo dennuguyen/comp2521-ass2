@@ -350,15 +350,13 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 							  PlaceId from, bool road, bool rail,
 							  bool boat, int *numReturnedLocs)
 {
+	// Dynamic array of possible locations 'player' can be at, at round 'round'.
 	PlaceId *locations = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
 	if (locations == NULL)
 	{
 		fprintf(stderr, "ERROR: Could not allocate memory for locations.\n");
 		exit(EXIT_FAILURE);
 	}
-
-	// int visited[NUM_REAL_PLACES] = {0};
-	// visited[from] = 1;
 
 	*numReturnedLocs = 0;
 	locations[(*numReturnedLocs)++] = from;
@@ -374,8 +372,9 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 		ConnNode city = Dequeue(q);
 		Round depth = Dequeue(d);
 
+		// Reach required depth
 		if (round == depth)
-			return;
+			locations[(*numReturnedLocs)++] = city->p;
 
 		// Get connections from current city
 		ConnList connections = MapGetConnections(gv->map, city);
@@ -383,35 +382,47 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 		// Enqueue children cities from parent city
 		for (ConnNode curr = connections; curr != NULL; curr = curr->next)
 		{
-			if (player == PLAYER_DRACULA && curr->type == RAIL)
-				continue;
-			Enqueue(q, curr->p, curr->type);
-			Enqueue(q, depth + 1, NONE);
+			// Do not queue for Dracula conditions
+			if (player == PLAYER_DRACULA)
+			{
+				// Travel by RAIL or visiting HOSPITAL
+				if (curr->type == RAIL || curr->p == HOSPITAL_PLACE)
+					continue;
+
+				// Already travelled by Dracula
+				int numReturnedLocs = 0;
+				bool canFree = false;
+				bool continueFlag = false;
+				PlaceId *trail = GvGetLastLocations(gv,
+													player,
+													MAX_ENCOUNTERS,
+													&numReturnedLocs,
+													&canFree);
+				for (int i = 0; i < MAX_ENCOUNTERS; i++)
+					if (trail[i] == curr->p)
+					{
+						continueFlag = true;
+						break;
+					}
+
+				if (continueFlag == true)
+					continue;
+
+				Enqueue(q, curr->p, curr->type);
+				Enqueue(q, depth + 1, NONE);
+			}
+			else // (player == HUNTERS)
+			{
+				if (curr->type == RAIL)
+				{
+					int railDistance = (gv->currentPlayer + gv->round) % 4;
+					if (curr->type == RAIL)
+						Enqueue(q, curr->p, curr->type);
+				}
+				Enqueue(q, depth + 1, NONE);
+			}
 		}
 	}
-
-	// for (ConnList curr = connections; curr != NULL; curr = curr->next)
-	// {
-	// 	if ((curr->type == ROAD) && (road == true) && (visited[curr->p] == 0))
-	// 	{
-	// 		if ((player == PLAYER_DRACULA) && (curr->p == HOSPITAL_PLACE))
-	// 			continue;
-	// 		locations[*numReturnedLocs++] = curr->p;
-	// 		visited[curr->p] = 1;
-	// 	}
-	// 	else if ((curr->type == BOAT) && (boat == true) && (visited[curr->p] == 0))
-	// 	{
-	// 		locations[*numReturnedLocs++] = curr->p;
-	// 		visited[curr->p] = 1;
-	// 	}
-	// }
-
-	// if (rail == true)
-	// {
-	// 	int railDistance = (player + round) % 4;
-	// 	if (railDistance > 0)
-	// 		*numReturnedLocs = findRailConnections(gv->map, from, railDistance, visited, locations, numReturnedLocs);
-	// }
 
 	return locations;
 }
