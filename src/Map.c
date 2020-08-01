@@ -19,6 +19,7 @@
 
 #include "Map.h"
 #include "Places.h"
+#include "Queue.h"
 
 struct map
 {
@@ -207,6 +208,43 @@ ConnList MapGetConnections(Map m, PlaceId p)
 	return m->connections[p];
 }
 
+PlaceId *MapGetRailsByDistance(Map m, int distance, PlaceId from, int *numReturned)
+{
+	PlaceId *locations = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	if (locations == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory for locations.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	*numReturned = 0;
+	locations[(*numReturned)++] = from;
+
+	ConnQueue q = QueueNew(); // Queue of connections
+	_Queue w = _QueueNew();	  // Queue of distances (weighting)
+
+	Enqueue(q, m->connections[from]);
+	_Enqueue(w, 0);
+
+	while (!IsQueueEmpty(q))
+	{
+		ConnNode conn = Dequeue(q);
+		int weight = _Dequeue(w);
+
+		if (weight == distance)
+			locations[(*numReturned)++] = conn->p;
+
+		for (ConnNode curr = conn; conn != NULL; conn = conn->next)
+			if (curr->type == RAIL)
+			{
+				Enqueue(q, curr);
+				_Enqueue(w, weight + 1);
+			}
+	}
+
+	return locations;
+}
+
 ////////////////////////////////////////////////////////////////////////
 
 ConnQueue QueueNew()
@@ -238,18 +276,16 @@ void QueueFree(ConnQueue q)
 	free(q);
 }
 
-void Enqueue(ConnQueue q, PlaceId p, TransportType type)
+void Enqueue(ConnQueue q, ConnNode node)
 {
 	if (q == NULL || q->head == NULL)
 		return;
 
-	ConnNode head = connListInsert(NULL, p, type);
-
 	if (q->head == NULL)
-		q->head = head;
+		q->head = node;
 	if (q->tail != NULL)
-		q->tail->next = head;
-	q->tail = head;
+		q->tail->next = node;
+	q->tail = node;
 }
 
 ConnList Dequeue(ConnQueue q)

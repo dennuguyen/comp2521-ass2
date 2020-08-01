@@ -83,6 +83,7 @@ static void revealDracula(GameView gv, int round);
 static bool isHunterResting(GameView gv);
 // static bool isDraculaHiding(GameView gv);
 static bool isPlayerNotMoving(GameView gv);
+static bool playerHasBeenHere(GameView gv, Player player, Round round, PlaceId location);
 static void hunterDies(GameView gv);
 static void draculaDies(GameView gv);
 
@@ -339,14 +340,66 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 						PlaceId from, int *numReturnedLocs)
 {
-	bool rail = (player == PLAYER_DRACULA) ? false : true;
-	return GvGetReachableByType(gv, player, round, from, true, rail, true, numReturnedLocs);
+	return GvGetReachableByType(gv, player, round, from, true, true, true, numReturnedLocs);
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 							  PlaceId from, bool road, bool rail,
 							  bool boat, int *numReturnedLocs)
 {
+	int numConnections = MapNumConnections(gv->map, ANY);
+
+	// Dynamic array of possible locations 'player' can be at, at round 'round'.
+	PlaceId *locations = malloc(numConnections * sizeof(PlaceId));
+	if (locations == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory for locations.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	// Initialise the arrays.
+	for (int i = 0; i < numConnections; i++)
+		locations[i] = NOWHERE;
+
+	// Include initial location in locations array.
+	*numReturnedLocs = 0;
+	locations[(*numReturnedLocs)++] = from;
+
+	// Get connections from current city.
+	ConnList connections = MapGetConnections(gv->map, from);
+
+	// Search through all neighbouring nodes
+	for (ConnNode curr = connections; curr != NULL; curr = curr->next)
+		if (curr->type == road || curr->type == boat || curr->type == rail)
+		{
+			if (player == PLAYER_DRACULA)
+			{
+				// Travel by RAIL or visiting HOSPITAL
+				if (curr->type == RAIL || curr->p == HOSPITAL_PLACE)
+					continue;
+
+				// Already travelled by Dracula
+				if (playerHasBeenHere(gv, player, MAX_ENCOUNTERS, curr->p))
+					continue;
+
+				// Add city to locations array
+				locations[(*numReturnedLocs)++] = curr->p;
+			}
+			else // (player == HUNTERS)
+			{
+				if (curr->type == RAIL)
+				{
+					int distance = (gv->currentPlayer + gv->round) % 4;
+					int numReturned = 0;
+					PlaceId *rails = MapGetRailsByDistance(gv->map, distance, from, &numReturned);
+					locations[(*numReturnedLocs)++] = rails[0];
+				}
+				else
+					locations[(*numReturnedLocs)++] = curr->p;
+			}
+		}
+
+	return locations;
 }
 
 /******************************************************************************
@@ -440,6 +493,8 @@ PlaceId *GvGetShortestPathTo(GameView gv, Player hunter, PlaceId dest,
     dropQueue(wq);
     free(breadcrumbs);
 	*/
+
+	/*
 	int numConnections = MapNumConnections(gv->map, ANY);
 
 	// Dynamic array of possible locations 'player' can be at, at round 'round'.
@@ -545,6 +600,7 @@ PlaceId *GvGetShortestPathTo(GameView gv, Player hunter, PlaceId dest,
 	QueueFree(d);
 	QueueFree(r);
 	return locations;
+	*/
 	return NULL;
 }
 
@@ -1007,6 +1063,23 @@ static bool isPlayerNotMoving(GameView gv)
 
 	if (locations[0] == locations[1])
 		return true;
+
+	return false;
+}
+
+/**
+ * Returns true if the player has been to the location within the last number
+ * of rounds ago.
+ */
+static bool playerHasBeenHere(GameView gv, Player player, Round round, PlaceId location)
+{
+	int numReturned = 0;
+	bool canFree = false;
+	PlaceId *trail = GvGetLastLocations(gv, player, round, &numReturned, &canFree);
+
+	for (int i = 0; i < numReturned; i++)
+		if (trail[i] == location)
+			return true;
 
 	return false;
 }
