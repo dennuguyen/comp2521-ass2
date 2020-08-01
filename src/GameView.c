@@ -381,20 +381,21 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 			if (playerHasBeenHere(gv, player, MAX_ENCOUNTERS, curr->p))
 				continue;
 		}
-		else if (curr->type == RAIL && rail == true) // Hunter's move
-		{
-			int distance = (player + round) % 4;
-			int numReturned = 0;
-			PlaceId *rails = MapGetRailsByDistance(gv->map, distance, from, &numReturned);
-			for (int i = 0; i < numReturned; i++)
-				locations[(*numReturnedLocs)++] = rails[i];
-			continue;
-		}
 
 		// Add city to locations array
 		if ((curr->type == ROAD && road == true) ||
 			(curr->type == BOAT && boat == true))
 			locations[(*numReturnedLocs)++] = curr->p;
+	}
+
+	// Rail case
+	if (player != PLAYER_DRACULA && connections->type == RAIL && rail == true)
+	{
+		int distance = (player + round) % 4;
+		int numReturned = 0;
+		PlaceId *rails = MapGetRailsByDistance(gv->map, distance, from, &numReturned);
+		for (int i = 0; i < numReturned; i++)
+			locations[(*numReturnedLocs)++] = rails[i];
 	}
 
 	return locations;

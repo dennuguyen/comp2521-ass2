@@ -83,8 +83,7 @@ ConnQueue QueueNew();
 void QueueFree(ConnQueue q);
 
 /**
- * Enqueues an edge which consists of the destination and transport type to
- * the ConnQueue.
+ * Makes a copy of the node and enqueues it to q.
  */
 void Enqueue(ConnQueue q, ConnNode node);
 

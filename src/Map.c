@@ -210,40 +210,43 @@ ConnList MapGetConnections(Map m, PlaceId p)
 
 PlaceId *MapGetRailsByDistance(Map m, int distance, PlaceId from, int *numReturned)
 {
-	PlaceId *locations = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	if (distance == 0 || !placeIsLand(from))
+		return NULL;
+
+	PlaceId *locations = malloc(m->nV * sizeof(PlaceId));
 	if (locations == NULL)
 	{
 		fprintf(stderr, "ERROR: Could not allocate memory for locations.\n");
 		exit(EXIT_FAILURE);
 	}
 
-	bool *visited = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	bool *visited = malloc(m->nV * sizeof(PlaceId));
 	if (visited == NULL)
 	{
 		fprintf(stderr, "ERROR: Could not allocate memory for visited.\n");
 		exit(EXIT_FAILURE);
 	}
 
-	for (int i = 0; i < NUM_REAL_PLACES; i++)
+	for (int i = 0; i < m->nV; i++)
 	{
 		locations[i] = NOWHERE;
 		visited[i] = false;
 	}
 
 	*numReturned = 0;
-	locations[(*numReturned)++] = from;
+	visited[from] = true;
 
 	ConnQueue q = QueueNew(); // Queue of connections
 	_Queue w = _QueueNew();	  // Queue of distances (weighting)
+
+	// Get the first round of adjacent cities
 	for (ConnNode curr = m->connections[from]; curr; curr = curr->next)
-		if (curr->type == RAIL)
+		if (curr->type == RAIL && visited[curr->p] == false)
 		{
 			Enqueue(q, curr);
 			_Enqueue(w, 0);
-			// visited[curr->p] = true;
+			visited[curr->p] = true;
 		}
-
-	QueueShow(q);
 
 	while (!IsQueueEmpty(q))
 	{
@@ -251,22 +254,22 @@ PlaceId *MapGetRailsByDistance(Map m, int distance, PlaceId from, int *numReturn
 		ConnNode conn = Dequeue(q);
 		int weight = _Dequeue(w);
 
-		printf("w = %d, {%s, %s}", weight, placeIdToName(conn->p), transportTypeToString(conn->type));
-		printf("\n");
+		if (!placeIsReal(conn->p))
+			continue;
 
-		if (weight == distance)
+		if (weight < distance)
+		{
 			locations[(*numReturned)++] = conn->p;
 
-		// Enqueue the children node of the parent node
-		for (ConnNode curr = m->connections[conn->p]; curr; curr = curr->next)
-			if (curr->type == RAIL)
-			{
-				Enqueue(q, curr);
-				_Enqueue(w, weight + 1);
-				// visited[curr->p] = true;
-			}
-
-		QueueShow(q);
+			// Enqueue the children node of the parent node
+			for (ConnNode curr = MapGetConnections(m, conn->p); curr; curr = curr->next)
+				if (curr->type == RAIL && visited[curr->p] == false)
+				{
+					Enqueue(q, curr);
+					_Enqueue(w, weight + 1);
+					visited[curr->p] = true;
+				}
+		}
 	}
 
 	return locations;
@@ -301,6 +304,7 @@ void QueueFree(ConnQueue q)
 	}
 
 	free(q);
+	q = NULL;
 }
 
 void Enqueue(ConnQueue q, ConnNode node)
@@ -308,11 +312,16 @@ void Enqueue(ConnQueue q, ConnNode node)
 	if (q == NULL)
 		return;
 
+	ConnNode copy = malloc(sizeof(connNode));
+	copy->p = node->p;
+	copy->type = node->type;
+	copy->next = NULL;
+
 	if (q->head == NULL)
-		q->head = node;
+		q->head = copy;
 	if (q->tail != NULL)
-		q->tail->next = node;
-	q->tail = node;
+		q->tail->next = copy;
+	q->tail = copy;
 }
 
 ConnList Dequeue(ConnQueue q)
@@ -326,6 +335,8 @@ ConnList Dequeue(ConnQueue q)
 
 	if (q->head == NULL)
 		q->tail = NULL;
+
+	free(temp);
 
 	return node;
 }

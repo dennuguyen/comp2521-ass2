@@ -482,13 +482,8 @@ static void testGv15()
                                              false, &numLocs);
 
         printf("numLocs = %d\n", numLocs);
-        printf("%s\n", placeIdToName(locs[0]));
-        printf("%s\n", placeIdToName(locs[1]));
-        printf("%s\n", placeIdToName(locs[2]));
-        printf("%s\n", placeIdToName(locs[3]));
-        printf("%s\n", placeIdToName(locs[4]));
-        printf("%s\n", placeIdToName(locs[5]));
-        printf("%s\n", placeIdToName(locs[6]));
+        for (int i = 0; i < numLocs; i++)
+            printf("%s\n", placeIdToName(locs[i]));
 
         assert(numLocs == 7);
         sortPlaces(locs, numLocs);
