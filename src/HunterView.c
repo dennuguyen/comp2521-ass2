@@ -82,63 +82,7 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 							 int *pathLength)
 {
-	/*
-	assert(g != NULL);
-
-    // cities are visited only once therefore leaving only one predecessor
-    int *breadcrumbs = malloc(g->nV * sizeof(int));
-    for (int i = 0; i < g->nV; i++)
-        path[i] = breadcrumbs[i] = -1;
-
-    Queue pq = newQueue(); // previous city queue
-    Queue nq = newQueue(); // next city queue
-    Queue wq = newQueue(); // weighting queue for number of trips
-    QueueJoin(pq, src);
-    QueueJoin(nq, src);
-    QueueJoin(wq, 1);
-
-    while (!QueueIsEmpty(nq))
-    {
-        Item p_city = QueueLeave(pq);
-        Item n_city = QueueLeave(nq);
-        Item n_trip = QueueLeave(wq);
-
-        // if city is not in breadcrumb trail
-        if (breadcrumbs[n_city] == -1)
-        {
-            breadcrumbs[n_city] = p_city;
-
-            // arrived at destination
-            if (n_city == dest)
-            {
-                // follow breadcrumbs back to src
-                path[n_trip - 1] = dest;
-                for (int i = n_trip - 2, b = dest; i >= 0; i--)
-                    path[i] = b = breadcrumbs[b];
-                dropQueue(pq);
-                dropQueue(nq);
-                dropQueue(wq);
-                free(breadcrumbs);
-                return n_trip; // return number of trips
-            }
-
-            // enqueue children cities from parent city if distance < max
-            for (int i = 0; i < g->nV; i++)
-                if (g->edges[n_city][i] < max)
-                {
-                    QueueJoin(pq, n_city);
-                    QueueJoin(nq, i);
-                    QueueJoin(wq, n_trip + 1);
-                }
-        }
-    }
-
-    dropQueue(pq);
-    dropQueue(nq);
-    dropQueue(wq);
-    free(breadcrumbs);
-	*/
-	return NULL;
+	return GvGetShortestPathTo((GameView)hv, hunter, dest, pathLength);
 }
 
 ////////////////////////////////////////////////////////////////////////
