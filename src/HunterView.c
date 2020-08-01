@@ -87,79 +87,64 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 							 int *pathLength)
-{	/*
-	assert ((GameView)hv != NULL);
-	PlaceId src = HvGetPlayerLocation(hv, hunter);
-	int *visited = calloc(MapNumPlaces(hv->map), sizeof(int));
-	PlaceId *pred = calloc(MapNumPlaces(hv->map), sizeof(PlaceId));
-	ConnQueue q = newQueue();
-	Enqueue(q,src, );
-	bool isFound = false;
-	visited[src] = 1;
-	if (src == dest) isFound = true;
-	else {
-		while (q->head != NULL && !isFound) {
-			PlaceId y, x = Dequeue(q);
-			for (y = 0; y < MapNumPlaces(hv->map); y++) {
-				if (!)
-			}
-		}
-	}
-	
-	
-	
-	
-	if (src == dest) {
-		*pathLength = 1;
-		PlaceId *Location = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
-		assert(Location != NULL);
-		*Location = src;
-		return Location;
-	}
+{
+	/*
+	assert(g != NULL);
 
-	int visited[NUM_REAL_PLACES] = {0};
-	int pred[NUM_REAL_PLACES];
-	for (int i = 0; i < NUM_REAL_PLACES; i++)
-	{
-		pred[i] = -1;
-	}
+    // cities are visited only once therefore leaving only one predecessor
+    int *breadcrumbs = malloc(g->nV * sizeof(int));
+    for (int i = 0; i < g->nV; i++)
+        path[i] = breadcrumbs[i] = -1;
 
-	Queue queue = QueueNew();
-	Enqueue(queue, src, 0); 
-	while (!QueueIsEmpty(queue)) {
-		QueueNode current = Dequeue(queue);
-		if (current->head->location == dest) 
-		{ 
-			break; 
-		} 
-		ConnList *LocationList = MapGetConnections((GameView)hv, src);
+    Queue pq = newQueue(); // previous city queue
+    Queue nq = newQueue(); // next city queue
+    Queue wq = newQueue(); // weighting queue for number of trips
+    QueueJoin(pq, src);
+    QueueJoin(nq, src);
+    QueueJoin(wq, 1);
 
-		for (PlaceId w = 0; w < NUM_REAL_PLACES; w++) 
-		{
-			if (visited[w] == 0) 
-			{
-				pred[w] = current;
-				visited[w] = 1;
-				Enqueue(queue, w, 0);	
-			}
-		}			
-	}
-	if (pred[dest] != -1) {
-		PlaceId *temp = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
-		PlaceId v = dest;
-		while (v != src) {
-			temp[*pathLength++] = v;
-			v = pred[v];
-		}
-		PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
-		for (int i = 0; i < pathLength; i++) {
-			path[i] = temp[*pathLength - 1 - i]; 
-		}
-		free(temp);
-		return path; 
-	}
-	return NULL;*/
-	*pathLength = 0;
+    while (!QueueIsEmpty(nq))
+    {
+        Item p_city = QueueLeave(pq);
+        Item n_city = QueueLeave(nq);
+        Item n_trip = QueueLeave(wq);
+
+        // if city is not in breadcrumb trail
+        if (breadcrumbs[n_city] == -1)
+        {
+            breadcrumbs[n_city] = p_city;
+
+            // arrived at destination
+            if (n_city == dest)
+            {
+                // follow breadcrumbs back to src
+                path[n_trip - 1] = dest;
+                for (int i = n_trip - 2, b = dest; i >= 0; i--)
+                    path[i] = b = breadcrumbs[b];
+                dropQueue(pq);
+                dropQueue(nq);
+                dropQueue(wq);
+                free(breadcrumbs);
+                return n_trip; // return number of trips
+            }
+
+            // enqueue children cities from parent city if distance < max
+            for (int i = 0; i < g->nV; i++)
+                if (g->edges[n_city][i] < max)
+                {
+                    QueueJoin(pq, n_city);
+                    QueueJoin(nq, i);
+                    QueueJoin(wq, n_trip + 1);
+                }
+        }
+    }
+
+    dropQueue(pq);
+    dropQueue(nq);
+    dropQueue(wq);
+    free(breadcrumbs);
+	*/
+
 	return NULL;
 }
 
@@ -196,33 +181,39 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 	int numPlayerMoves = 0;
 	bool canFree = false;
 	GvGetMoveHistory((GameView)hv, player, &numPlayerMoves, &canFree);
-	if (numPlayerMoves == 0) return NULL;
+	if (numPlayerMoves == 0)
+		return NULL;
 
 	int numReachable = 0;
 	Round round = HvGetRound(hv);
 	PlaceId from = HvGetPlayerLocation(hv, player);
-	PlaceId *reachable = GvGetReachableByType((GameView)hv, player, round, from, 
-												road, rail, boat, &numReachable);
-	
-	if (player != PLAYER_DRACULA) {
+	PlaceId *reachable = GvGetReachableByType((GameView)hv, player, round, from,
+											  road, rail, boat, &numReachable);
+
+	if (player != PLAYER_DRACULA)
+	{
 		*numReturnedLocs = numReachable;
 		return reachable;
 	}
-	// Dracula cannot make a LOCATION move if he has already made 
+	// Dracula cannot make a LOCATION move if he has already made
 	// a LOCATION move to that same location in the last 5 rounds
-	PlaceId *validLocations = malloc(numReachable*sizeof(PlaceId));
+	PlaceId *validLocations = malloc(numReachable * sizeof(PlaceId));
 	assert(validLocations != NULL);
 	int numLastFive = 0;
 	PlaceId *lastFiveLocations = GvGetLastMoves((GameView)hv, PLAYER_DRACULA, 5, &numLastFive, &canFree);
-	for (int i = 0; i < numReachable; i++) {
+	for (int i = 0; i < numReachable; i++)
+	{
 		bool found = false;
-		for (int j = 0; j < numLastFive; j++) {
-			if (reachable[i] == lastFiveLocations[j]) {
+		for (int j = 0; j < numLastFive; j++)
+		{
+			if (reachable[i] == lastFiveLocations[j])
+			{
 				found = true;
 				break;
 			}
 		}
-		if (found == true) continue;
+		if (found == true)
+			continue;
 		validLocations[(*numReturnedLocs)++] = reachable[i];
 	}
 	return validLocations;
