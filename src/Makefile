@@ -14,7 +14,7 @@
 CC = gcc
 CFLAGS = -Wall -Werror -g
 BINS = testGameView testHunterView testDraculaView testMap
-DEP = Game.h Map.c Map.h Places.c Places.h testUtils.c testUtils.h
+DEP = Game.h Map.c Map.h Places.c Places.h testUtils.c testUtils.h Queue.c Queue.h
 GAME = GameView.c GameView.h
 HUNTER = HunterView.c HunterView.h
 DRACULA = DraculaView.c DraculaView.h
