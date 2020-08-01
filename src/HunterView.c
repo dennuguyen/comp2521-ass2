@@ -18,6 +18,7 @@
 #include "GameView.h"
 #include "HunterView.h"
 #include "Map.h"
+#include "Queue.h"
 
 struct hunterView
 {
@@ -79,53 +80,55 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 	return GvGetLastKnownDraculaLocation((GameView)hv, round);
 }
 
-static bool isReachable(HunterView hv, Player player, Round round, PlaceId from, PlaceId dest);
+static bool isReachable(HunterView hv, Player player, Round round, PlaceId from, 
+						PlaceId dest);
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 							 int *pathLength)
 {
-	assert (hv->map != NULL);
+	//assert (hv->super->map != NULL);
 
-	assert (MapNumPlaces(hv->map) == NUM_REAL_PLACES);
+	//assert (MapNumPlaces(hv->super->map) == NUM_REAL_PLACES);
 
 	// declare and initialise array to store if Place has been visited
 	bool *visited = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
 	for (int i = 0; i < NUM_REAL_PLACES; i++) visited[i] = false;
 
-	// declare and initialise array to store previous node along path
-	PlaceId *pred = calloc(NUM_REAL_PLACES, sizeof(PlaceId));
-	
-	Round roundNum = HvGetRound(hv);
+	// declare and initialise array to store predecessor node along path
+	PlaceId *pred = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	for (int i = 0; i < NUM_REAL_PLACES; i++) pred[i] = NOWHERE;
+
+	// declare and initialise array to store round number after move
 	int *round = malloc(NUM_REAL_PLACES * sizeof(int));
+	Round roundNum = HvGetRound(hv);
 	for (int i = 0; i < NUM_REAL_PLACES; i++) round[i] = roundNum;
 
 	// create a queue to store Places
 	Queue q = QueueNew();
 	
-	// add source to queue
-	Enqueue(q,src);
+	// add 'from' to queue
+	PlaceId from = HvGetPlayerLocation(hv, hunter);
+	Enqueue(q, from);
 	visited[from] = true;
 	
 	bool isFound = false;
-	// special case: from is same as destination
-	if (from == dest) {isFound = 1;}
+	// special case: 'from' is same as 'dest'
+	if (from == dest) isFound = true;
 	else {
-		while (!QueueIsEmpty(q) && !isFound) {
+		while (!IsQueueEmpty(q) && !isFound) {
 		    PlaceId b, a = Dequeue(q);
 		    for (b = MIN_REAL_PLACE; b < NUM_REAL_PLACES; b++) {
-				bool adjacent = isReachable(hv, player, round[b], a, b);
-		        if (!adjacent || visited[b]) continue;
+				bool reachable = isReachable(hv, hunter, round[a], a, b);
+		        if (!reachable || visited[b]) continue;
 		        visited[b] = true;
 		        pred[b] = a;
 				round[b]++;
-		        if (b == dest) { isFound = 1; break; }
-		        Enqueue(q,b);
+		        if (b == dest) { isFound = true; break; }
+		        Enqueue(q, b);
 		    }
 		}
 	}
-	if (!isFound) {
-		return NULL; // no path
-	}
+	if (!isFound) return NULL; // no path
 	else {
 		PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
 		int count = 0;
@@ -150,23 +153,21 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	    // free memory
 	    free(visited);
 	    free(pred);
+		free(round);
 	    dropQueue(q);
 		*pathLength = count;
 	    return path;
+	}
 	//return GvGetShortestPathTo((GameView)hv, hunter, dest, pathLength);
 }
 
-static bool isReachable(HunterView hv, Player player, Round round, PlaceId from, PlaceId dest)
+static bool isReachable(HunterView hv, Player hunter, Round round, PlaceId from, PlaceId dest)
 {
 	// get reachable places
 	int numReachable = 0;
-	PlaceId *reachable = GvGetReachable((Gameview) hv, player, round, from, &numReachable);
-	for (int i = 0; i < numReachable; i++) {
-		if (reachable[i] = dest) {
-			round
-			return true;
-		}
-	}
+	PlaceId *reachable = GvGetReachable((GameView)hv, hunter, round, from, &numReachable);
+	for (int i = 0; i < numReachable; i++)
+		if (reachable[i] == dest) return true;
    	return false;
 }
 
