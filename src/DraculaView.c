@@ -21,7 +21,11 @@
 
 struct draculaView
 {
+	GameView super;
 } draculaView;
+
+// static bool hasDraculaBeenHere(DraculaView dv, Player player, Round round, PlaceId location);
+static int numberofTrapsAt(DraculaView dv, PlaceId location);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -75,32 +79,36 @@ PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 
 PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 {
-	// Dracula  hasn't  made  a move yet
-	int numDraculaMoves = 0;
+	*numReturnedMoves = 0;
+
+	int numReturned = 0;
 	bool canFree = false;
-	GvGetMoveHistory((GameView)dv, PLAYER_DRACULA, &numDraculaMoves, &canFree);
-	if (numDraculaMoves == 0)
+	PlaceId *moves = GvGetLastMoves((GameView)dv, PLAYER_DRACULA, 5, &numReturned, &canFree);
+
+	// If Dracula  hasn't  made  a move yet
+	if (numReturned == 0)
 		return NULL;
 
-	// Dracula cannot make a HIDE or DOUBLE_BACK move if he has made on in the
-	// last five rounds
-	int numLastFive = 0;
-	PlaceId *lastFiveLocations = GvGetLastMoves((GameView)dv, PLAYER_DRACULA, 5, &numLastFive, &canFree);
-	bool canHide = true, canDoubleBack1 = true, canDoubleBack2 = true,
-		 canDoubleBack3 = true, canDoubleBack4 = true, canDoubleBack5 = true;
-	for (int i = 0; i < numLastFive; i++)
+	// Check if Dracula made HIDE or DOUBLE_BACK in last 5 rounds
+	bool canHide = true;
+	bool canDoubleBack1 = true;
+	bool canDoubleBack2 = true;
+	bool canDoubleBack3 = true;
+	bool canDoubleBack4 = true;
+	bool canDoubleBack5 = true;
+	for (int i = 0; i < numReturned; i++)
 	{
-		if (lastFiveLocations[i] == HIDE)
+		if (moves[i] == HIDE)
 			canHide = false;
-		else if (lastFiveLocations[i] == DOUBLE_BACK_1)
+		if (moves[i] == DOUBLE_BACK_1)
 			canDoubleBack1 = false;
-		else if (lastFiveLocations[i] == DOUBLE_BACK_2)
+		if (moves[i] == DOUBLE_BACK_2)
 			canDoubleBack2 = false;
-		else if (lastFiveLocations[i] == DOUBLE_BACK_3)
+		if (moves[i] == DOUBLE_BACK_3)
 			canDoubleBack3 = false;
-		else if (lastFiveLocations[i] == DOUBLE_BACK_4)
+		if (moves[i] == DOUBLE_BACK_4)
 			canDoubleBack4 = false;
-		else if (lastFiveLocations[i] == DOUBLE_BACK_5)
+		if (moves[i] == DOUBLE_BACK_5)
 			canDoubleBack5 = false;
 	}
 
@@ -108,17 +116,21 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	int numValidLocations = 0;
 	PlaceId *validLocations = DvWhereCanIGo(dv, &numValidLocations);
 
-	PlaceId *validMoves = malloc((numValidLocations + 6) * sizeof(PlaceId));
+	PlaceId *validMoves = malloc((numValidLocations + 7) * sizeof(PlaceId));
 	if (validMoves == NULL)
 	{
 		fprintf(stderr, "ERROR: Could not allocate memory.\n");
 		exit(EXIT_FAILURE);
 	}
+
+	// Add valid locations to valid moves set
 	for (int i = 0; i < numValidLocations; i++)
 	{
 		validMoves[i] = validLocations[i];
 		(*numReturnedMoves)++;
 	}
+
+	// Add Dracula's special moves to valid moves set
 	if (canHide)
 		validMoves[(*numReturnedMoves)++] = HIDE;
 	if (canDoubleBack1)
@@ -131,10 +143,13 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 		validMoves[(*numReturnedMoves)++] = DOUBLE_BACK_4;
 	if (canDoubleBack5)
 		validMoves[(*numReturnedMoves)++] = DOUBLE_BACK_5;
-	if (*numReturnedMoves == 0)
-	{
+
+	// No valid moves, must teleport
+	if (numberofTrapsAt(dv, CASTLE_DRACULA) < 3)
+		validMoves[(*numReturnedMoves)++] = TELEPORT;
+	else if (*numReturnedMoves == 0)
 		return NULL;
-	}
+
 	return validMoves;
 }
 
@@ -148,7 +163,8 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 							 int *numReturnedLocs)
 {
 	bool rail = false;
-	return DvWhereCanTheyGoByType(dv, PLAYER_DRACULA, road, rail, boat, numReturnedLocs);
+	return DvWhereCanTheyGoByType(dv, PLAYER_DRACULA, road, rail, boat,
+								  numReturnedLocs);
 }
 
 PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
@@ -162,6 +178,26 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 								bool road, bool rail, bool boat,
 								int *numReturnedLocs)
 {
+	// bool canFree = false;
+	// PlaceId from = GvGetLastLocations((GameView)dv, player, 1, &numReturnedLocs,
+	// 								  &canFree)[0];
+	// *numReturnedLocs = 0;
+	// PlaceId *reachable = GvGetReachableByType((GameView)dv, player,
+	// 										  DvGetRound(dv), from, road, rail,
+	// 										  boat, &numReturnedLocs);
+
+	// PlaceId *where = malloc((*numReturnedLocs) * sizeof(PlaceId));
+	// if (where == NULL)
+	// {
+	// 	fprintf(stderr, "ERROR: Could not allocate memory.\n");
+	// 	exit(EXIT_FAILURE);
+	// }
+	// for (int i = 0, j = 0; i < numReturnedLocs; i++)
+	// 	if (!hasDraculaBeenHere(dv, player, 5, reachable[i]))
+	// 		where[j++] = reachable[i];
+
+	// return where;
+
 	*numReturnedLocs = 0;
 
 	// player  hasn't  made  a move yet
@@ -191,13 +227,13 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 		exit(EXIT_FAILURE);
 	}
 	int numLastFive = 0;
-	PlaceId *lastFiveLocations = GvGetLastMoves((GameView)dv, PLAYER_DRACULA, 5, &numLastFive, &canFree);
+	PlaceId *lastFiveMoves = GvGetLastMoves((GameView)dv, PLAYER_DRACULA, 5, &numLastFive, &canFree);
 	for (int i = 0; i < numReachable; i++)
 	{
 		bool found = false;
 		for (int j = 0; j < numLastFive; j++)
 		{
-			if (reachable[i] == lastFiveLocations[j])
+			if (reachable[i] == lastFiveMoves[j])
 			{
 				found = true;
 				break;
@@ -210,6 +246,25 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 	return validLocations;
 }
 ////////////////////////////////////////////////////////////////////////
-// Your own interface functions
 
-// TODO
+// static bool hasDraculaBeenHere(DraculaView dv, Round round,
+// 							   PlaceId location)
+// {
+// 	return GvHasPlayerBeenHere((GameView)dv, PLAYER_DRACULA, round, location);
+// }
+
+static int numberofTrapsAt(DraculaView dv, PlaceId location)
+{
+	int numTraps = 0;
+	PlaceId *traps = GvGetTrapLocations((GameView)dv, &numTraps);
+	if (numTraps == 0)
+		return 0;
+
+	int numTrapsAt = 0;
+	for (int i = 0; i < numTraps; i++)
+		if (traps[i] == location)
+			numTrapsAt++;
+
+	free(traps);
+	return numTrapsAt;
+}

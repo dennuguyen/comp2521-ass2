@@ -256,7 +256,6 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 PlaceId GvGetMoveByRound(GameView gv, Player player, Round round);
 PlaceId GvGetLocationByRound(GameView gv, Player player, Round round);
 PlaceId GvGetLastKnownDraculaLocation(GameView hv, Round *round);
-PlaceId *GvGetShortestPathTo(GameView hv, Player hunter, PlaceId dest,
-                             int *pathLength);
+bool GvHasPlayerBeenHere(GameView gv, Player player, Round round, PlaceId location);
 
 #endif // !defined (FOD__GAME_VIEW_H_)

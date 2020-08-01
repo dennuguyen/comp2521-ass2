@@ -28,8 +28,8 @@ int main(void)
 	// testGvGetLastMoves();
 	// testGvGetLocationHistory();
 	// testGvGetLastLocations();
-	// testGvGetReachable();
-	// testGvGetReachableByType();
+	testGvGetReachable();
+	testGvGetReachableByType();
 
 	testGv();
 
