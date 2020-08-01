@@ -122,7 +122,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		        if (!reachable || visited[b]) continue;
 		        visited[b] = true;
 		        pred[b] = a;
-				round[b]++;
+				round[b] = round[a]++;
 		        if (b == dest) { isFound = true; break; }
 		        Enqueue(q, b);
 		    }
