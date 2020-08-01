@@ -104,19 +104,19 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	for (int i = 0; i < NUM_REAL_PLACES; i++) round[i] = roundNum;
 
 	// create a queue to store Places
-	Queue q = QueueNew();
+	_Queue q = _QueueNew();
 	
 	// add 'from' to queue
 	PlaceId from = HvGetPlayerLocation(hv, hunter);
-	Enqueue(q, from);
+	_Enqueue(q, from);
 	visited[from] = true;
 	
 	bool isFound = false;
 	// special case: 'from' is same as 'dest'
 	if (from == dest) isFound = true;
 	else {
-		while (!IsQueueEmpty(q) && !isFound) {
-		    PlaceId b, a = Dequeue(q);
+		while (!_QueueIsEmpty(q) && !isFound) {
+		    PlaceId b, a = _Dequeue(q);
 		    for (b = MIN_REAL_PLACE; b < NUM_REAL_PLACES; b++) {
 				bool reachable = isReachable(hv, hunter, round[a], a, b);
 		        if (!reachable || visited[b]) continue;
@@ -124,7 +124,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		        pred[b] = a;
 				round[b] = round[a]++;
 		        if (b == dest) { isFound = true; break; }
-		        Enqueue(q, b);
+		        _Enqueue(q, b);
 		    }
 		}
 	}
@@ -154,7 +154,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	    free(visited);
 	    free(pred);
 		free(round);
-	    dropQueue(q);
+	    _QueueFree(q);
 		*pathLength = count;
 	    return path;
 	}
