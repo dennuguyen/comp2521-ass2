@@ -79,16 +79,95 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 	return GvGetLastKnownDraculaLocation((GameView)hv, round);
 }
 
-//static int adjacent(Map m, PlaceId x, PlaceId y) {
-   //for (int i = 0; i < )
-   
-   //return (g->edges[x][y] != 0);
-//}
+static bool isReachable(HunterView hv, Player player, Round round, PlaceId from, PlaceId dest);
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 							 int *pathLength)
 {
-	return GvGetShortestPathTo((GameView)hv, hunter, dest, pathLength);
+	assert (hv->map != NULL);
+
+	assert (MapNumPlaces(hv->map) == NUM_REAL_PLACES);
+
+	// declare and initialise array to store if Place has been visited
+	bool *visited = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	for (int i = 0; i < NUM_REAL_PLACES; i++) visited[i] = false;
+
+	// declare and initialise array to store previous node along path
+	PlaceId *pred = calloc(NUM_REAL_PLACES, sizeof(PlaceId));
+	
+	Round roundNum = HvGetRound(hv);
+	int *round = malloc(NUM_REAL_PLACES * sizeof(int));
+	for (int i = 0; i < NUM_REAL_PLACES; i++) round[i] = roundNum;
+
+	// create a queue to store Places
+	Queue q = QueueNew();
+	
+	// add source to queue
+	Enqueue(q,src);
+	visited[from] = true;
+	
+	bool isFound = false;
+	// special case: from is same as destination
+	if (from == dest) {isFound = 1;}
+	else {
+		while (!QueueIsEmpty(q) && !isFound) {
+		    PlaceId b, a = Dequeue(q);
+		    for (b = MIN_REAL_PLACE; b < NUM_REAL_PLACES; b++) {
+				bool adjacent = isReachable(hv, player, round[b], a, b);
+		        if (!adjacent || visited[b]) continue;
+		        visited[b] = true;
+		        pred[b] = a;
+				round[b]++;
+		        if (b == dest) { isFound = 1; break; }
+		        Enqueue(q,b);
+		    }
+		}
+	}
+	if (!isFound) {
+		return NULL; // no path
+	}
+	else {
+		PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+		int count = 0;
+	    // extract dest->from path using pred[v]
+	    for (PlaceId v = dest; v != from; v = pred[v]) {
+	        path[count] = v;
+    	    count++;
+	    }
+	    // reverse path array to go from->dest
+	    int temp; 
+	    int start = 0;
+	    int end = count - 1;
+	    while (start < end) 
+	    { 
+	        temp = path[start];    
+	        path[start] = path[end]; 
+	        path[end] = temp; 
+	        start++; 
+	        end--; 
+	    }
+
+	    // free memory
+	    free(visited);
+	    free(pred);
+	    dropQueue(q);
+		*pathLength = count;
+	    return path;
+	//return GvGetShortestPathTo((GameView)hv, hunter, dest, pathLength);
+}
+
+static bool isReachable(HunterView hv, Player player, Round round, PlaceId from, PlaceId dest)
+{
+	// get reachable places
+	int numReachable = 0;
+	PlaceId *reachable = GvGetReachable((Gameview) hv, player, round, from, &numReachable);
+	for (int i = 0; i < numReachable; i++) {
+		if (reachable[i] = dest) {
+			round
+			return true;
+		}
+	}
+   	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////
