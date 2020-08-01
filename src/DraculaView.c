@@ -109,7 +109,11 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	PlaceId *validLocations = DvWhereCanIGo(dv, &numValidLocations);
 
 	PlaceId *validMoves = malloc((numValidLocations + 6) * sizeof(PlaceId));
-	assert(validMoves != NULL);
+	if (validMoves == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory.\n");
+		exit(EXIT_FAILURE);
+	}
 	for (int i = 0; i < numValidLocations; i++)
 	{
 		validMoves[i] = validLocations[i];
@@ -181,7 +185,11 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 	// Dracula cannot make a LOCATION move if he has already made
 	// a LOCATION move to that same location in the last 5 rounds
 	PlaceId *validLocations = malloc(numReachable * sizeof(PlaceId));
-	assert(validLocations != NULL);
+	if (validLocations == NULL)
+	{
+		fprintf(stderr, "ERROR: Could not allocate memory.\n");
+		exit(EXIT_FAILURE);
+	}
 	int numLastFive = 0;
 	PlaceId *lastFiveLocations = GvGetLastMoves((GameView)dv, PLAYER_DRACULA, 5, &numLastFive, &canFree);
 	for (int i = 0; i < numReachable; i++)
