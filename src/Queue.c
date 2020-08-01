@@ -34,6 +34,9 @@ void _QueueFree(_queue *q)
 
 void _Enqueue(_queue *q, int data)
 {
+    if (q == NULL)
+        return;
+
     _queueNode *n = malloc(sizeof(_queueNode));
     if (n == NULL)
     {
@@ -51,6 +54,9 @@ void _Enqueue(_queue *q, int data)
 
 int _Dequeue(_queue *q)
 {
+    if (q == NULL || q->head == NULL)
+        return -1;
+
     int t = q->head->data;
     _queueNode *tmp = q->head;
     q->head = q->head->next;

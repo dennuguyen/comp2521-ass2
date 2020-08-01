@@ -235,28 +235,38 @@ PlaceId *MapGetRailsByDistance(Map m, int distance, PlaceId from, int *numReturn
 
 	ConnQueue q = QueueNew(); // Queue of connections
 	_Queue w = _QueueNew();	  // Queue of distances (weighting)
-	Enqueue(q, m->connections[from]);
-	_Enqueue(w, 0);
+	for (ConnNode curr = m->connections[from]; curr; curr = curr->next)
+		if (curr->type == RAIL)
+		{
+			Enqueue(q, curr);
+			_Enqueue(w, 0);
+			// visited[curr->p] = true;
+		}
 
-	printf("!IsQueueEmpty(q) = %d\n", !IsQueueEmpty(q));
 	QueueShow(q);
 
 	while (!IsQueueEmpty(q))
 	{
+		// Get the parent node
 		ConnNode conn = Dequeue(q);
 		int weight = _Dequeue(w);
-		printf("%s\n", placeIdToName(locations[*numReturned]));
+
+		printf("w = %d, {%s, %s}", weight, placeIdToName(conn->p), transportTypeToString(conn->type));
+		printf("\n");
 
 		if (weight == distance)
 			locations[(*numReturned)++] = conn->p;
 
-		for (ConnNode curr = conn; conn != NULL; conn = conn->next)
-			if (curr->type == RAIL && visited[curr->p] == false)
+		// Enqueue the children node of the parent node
+		for (ConnNode curr = m->connections[conn->p]; curr; curr = curr->next)
+			if (curr->type == RAIL)
 			{
 				Enqueue(q, curr);
 				_Enqueue(w, weight + 1);
-				visited[curr->p] = true;
+				// visited[curr->p] = true;
 			}
+
+		QueueShow(q);
 	}
 
 	return locations;
@@ -295,7 +305,7 @@ void QueueFree(ConnQueue q)
 
 void Enqueue(ConnQueue q, ConnNode node)
 {
-	if (q == NULL || q->head == NULL)
+	if (q == NULL)
 		return;
 
 	if (q->head == NULL)
@@ -317,8 +327,6 @@ ConnList Dequeue(ConnQueue q)
 	if (q->head == NULL)
 		q->tail = NULL;
 
-	free(temp);
-
 	return node;
 }
 
@@ -331,11 +339,11 @@ void QueueShow(ConnQueue q)
 	for (ConnNode curr = q->head; curr != NULL; curr = curr->next)
 	{
 		if (curr->next == NULL)
-			printf("%s", placeIdToName(curr->p));
+			printf("{%s, %s}", placeIdToName(curr->p), transportTypeToString(curr->type));
 		else
-			printf("%s, ", placeIdToName(curr->p));
+			printf("{%s, %s}, ", placeIdToName(curr->p), transportTypeToString(curr->type));
 	}
-	printf("]");
+	printf("]\n");
 }
 
 bool IsQueueEmpty(ConnQueue q)
