@@ -2,8 +2,6 @@
 
 Assignment Specification: https://webcms3.cse.unsw.edu.au/COMP2521/20T2/resources/49129
 
-Important Notice: You must not modify any of the provided function signatures in the GameView, HunterView and DraculaView ADT interfaces (otherwise you'll fail auto-testing). However, you may augment these ADTs with as many other functions as you like.
-
 ### Contributors
 **dan-jack-vi-jamie**\
 dennuguyen, Dan Nguyen, z5206032, W13B\
@@ -15,40 +13,6 @@ GV = game view\
 DV = dracula view\
 HV = hunter view
 
-### Directory Tree
-```
-./
-|__ Makefile            // make, make lib, make exe, make bin, make show, make clean
-|
-|__ bin/                // contains binaries
-|
-|__ include/            // contains all header files
-|   |__ *.h
-|
-|__ main/               // contains all .c files that have main()
-|   |__ *.c
-|
-|__ obj/                // contains all .o files
-|   |__ exe/            // .o files from main
-|   |   |__ *.o
-|   |
-|   |__ lib/            // .o files from src
-|       |__ *.o
-|
-|__ src/                // contains all other .c files
-|   |__ *.c
-|
-|__ test/               // contains .c files relevant for testing
-    |__ GameView/       // .c files for GV tests
-    |   |__ *.c
-    |
-    |__ DraculaView/    // .c files for DV tests
-    |   |__ *.c
-    |
-    |__ HunterView/     // .c files for HV tests
-        |__ *.c
-```
-
 ### C Style Conventions
 
 To mimic the given style of the assignment:
@@ -59,14 +23,14 @@ To mimic the given style of the assignment:
 5. Variables in ```UPPERCASE``` are constants.
 6. Variables are in lower ```camelCase``` otherwise.
 
-Turn on "format on save" if your editor has the feature.
-
-## The View
-
-At minimum must complete and submit: GameView.c, DraculaView.c, HunterView.c, testGameView.c, testDraculaView.c, testHunterView.c.
-
-The draculaView, hunterView structs inherit the gameView struct i.e. shares the same memory allocation as gameView. Therefore, using GameView's ADT functions requires a typecast from draculaView and hunterView.
-
 ## The Hunt
 
-Coming soon...
+### Framework of what we have to do:
+
+The most optimised solution would be to simulate future possible states then select the move on the path to that state where the objective of the player is considered. The objective for Dracula would be to keep the score as low as possible and the objective for the hunters would be to keep the score as high as possible.
+
+In searching for future possible states, heuristics should be applied to ignore states that would obviously not beneficial to the player's objective. Therefore increasing the amount of time allowed to search for a more optimal game move.
+
+The pathway for the future states need to be stored into some tree. An optimised tree for this assignment would allow fast insertions and traversal.
+
+In summary, the hunters and Dracula's objectives, heuristics and a data structure to store future game states needs to be identified.
