@@ -20,6 +20,7 @@
 
 #include "Game.h"
 #include "Places.h"
+// add your own #includes here
 
 typedef struct gameView *GameView;
 
@@ -43,7 +44,7 @@ typedef struct gameView *GameView;
  * The "Message" type is defined in Game.h.
  * You are free to ignore messages if you wish.
  */
-void *GvNew(char *pastPlays, Message messages[]);
+GameView GvNew(char *pastPlays, Message messages[]);
 
 /**
  * Frees all memory allocated for `gv`.
@@ -253,9 +254,6 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
-PlaceId GvGetMoveByRound(GameView gv, Player player, Round round);
-PlaceId GvGetLocationByRound(GameView gv, Player player, Round round);
-PlaceId GvGetLastKnownDraculaLocation(GameView hv, Round *round);
-bool GvHasPlayerBeenHere(GameView gv, Player player, Round round, PlaceId location);
+// TODO
 
 #endif // !defined (FOD__GAME_VIEW_H_)

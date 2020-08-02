@@ -19,10 +19,8 @@
 
 #include "Map.h"
 #include "Places.h"
-#include "Queue.h"
 
-struct map
-{
+struct map {
 	int nV; // number of vertices
 	int nE; // number of edges
 	ConnList connections[NUM_REAL_PLACES];
@@ -42,16 +40,14 @@ static bool connListContains(ConnList l, PlaceId v, TransportType type);
 Map MapNew(void)
 {
 	Map m = malloc(sizeof(*m));
-	if (m == NULL)
-	{
+	if (m == NULL) {
 		fprintf(stderr, "Couldn't allocate Map!\n");
 		exit(EXIT_FAILURE);
 	}
 
 	m->nV = NUM_REAL_PLACES;
 	m->nE = 0;
-	for (int i = 0; i < NUM_REAL_PLACES; i++)
-	{
+	for (int i = 0; i < NUM_REAL_PLACES; i++) {
 		m->connections[i] = NULL;
 	}
 
@@ -62,13 +58,11 @@ Map MapNew(void)
 /** Frees all memory allocated for the given map. */
 void MapFree(Map m)
 {
-	assert(m != NULL);
+	assert (m != NULL);
 
-	for (int i = 0; i < m->nV; i++)
-	{
+	for (int i = 0; i < m->nV; i++) {
 		ConnList curr = m->connections[i];
-		while (curr != NULL)
-		{
+		while (curr != NULL) {
 			ConnList next = curr->next;
 			free(curr);
 			curr = next;
@@ -85,14 +79,13 @@ void MapShow(Map m)
 	assert(m != NULL);
 
 	printf("V = %d, E = %d\n", m->nV, m->nE);
-	for (int i = 0; i < m->nV; i++)
-	{
-		for (ConnList curr = m->connections[i]; curr != NULL; curr = curr->next)
-		{
+	for (int i = 0; i < m->nV; i++) {
+		for (ConnList curr = m->connections[i]; curr != NULL; curr = curr->next) {
 			printf("%s connects to %s by %s\n",
-				   placeIdToName((PlaceId)i),
-				   placeIdToName(curr->p),
-				   transportTypeToString(curr->type));
+			       placeIdToName((PlaceId) i),
+			       placeIdToName(curr->p),
+			       transportTypeToString(curr->type)
+			);
 		}
 	}
 }
@@ -113,12 +106,9 @@ int MapNumConnections(Map m, TransportType type)
 	assert(transportTypeIsValid(type) || type == ANY);
 
 	int nE = 0;
-	for (int i = 0; i < m->nV; i++)
-	{
-		for (ConnList curr = m->connections[i]; curr != NULL; curr = curr->next)
-		{
-			if (curr->type == type || type == ANY)
-			{
+	for (int i = 0; i < m->nV; i++) {
+		for (ConnList curr = m->connections[i]; curr != NULL; curr = curr->next) {
+			if (curr->type == type || type == ANY) {
 				nE++;
 			}
 		}
@@ -134,8 +124,7 @@ static void addConnections(Map m)
 {
 	assert(m != NULL);
 
-	for (int i = 0; !isSentinelEdge(CONNECTIONS[i]); i++)
-	{
+	for (int i = 0; !isSentinelEdge(CONNECTIONS[i]); i++) {
 		addConnection(m, CONNECTIONS[i].v, CONNECTIONS[i].w, CONNECTIONS[i].t);
 	}
 }
@@ -150,11 +139,10 @@ static void addConnection(Map m, PlaceId start, PlaceId end, TransportType type)
 	assert(transportTypeIsValid(type));
 
 	// don't add edges twice
-	if (connListContains(m->connections[start], end, type))
-		return;
+	if (connListContains(m->connections[start], end, type)) return;
 
 	m->connections[start] = connListInsert(m->connections[start], end, type);
-	m->connections[end] = connListInsert(m->connections[end], start, type);
+	m->connections[end]   = connListInsert(m->connections[end], start, type);
 	m->nE++;
 }
 
@@ -171,12 +159,11 @@ static ConnList connListInsert(ConnList l, PlaceId p, TransportType type)
 	assert(transportTypeIsValid(type));
 
 	ConnList new = malloc(sizeof(*new));
-	if (new == NULL)
-	{
+	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate ConnNode");
 		exit(EXIT_FAILURE);
 	}
-
+	
 	new->p = p;
 	new->type = type;
 	new->next = l;
@@ -189,14 +176,12 @@ static bool connListContains(ConnList l, PlaceId p, TransportType type)
 	assert(placeIsReal(p));
 	assert(transportTypeIsValid(type));
 
-	for (ConnList curr = l; curr != NULL; curr = curr->next)
-	{
-		if (curr->p == p && curr->type == type)
-		{
+	for (ConnList curr = l; curr != NULL; curr = curr->next) {
+		if (curr->p == p && curr->type == type) {
 			return true;
 		}
 	}
-
+	
 	return false;
 }
 
@@ -208,156 +193,4 @@ ConnList MapGetConnections(Map m, PlaceId p)
 	return m->connections[p];
 }
 
-PlaceId *MapGetRailsByDistance(Map m, int distance, PlaceId from, int *numReturned)
-{
-	if (distance == 0 || !placeIsLand(from))
-		return NULL;
-
-	PlaceId *locations = malloc(MapNumPlaces(m) * sizeof(PlaceId));
-	if (locations == NULL)
-	{
-		fprintf(stderr, "ERROR: Could not allocate memory for locations.\n");
-		exit(EXIT_FAILURE);
-	}
-
-	bool *visited = malloc(MapNumPlaces(m) * sizeof(PlaceId));
-	if (visited == NULL)
-	{
-		fprintf(stderr, "ERROR: Could not allocate memory for visited.\n");
-		exit(EXIT_FAILURE);
-	}
-
-	for (int i = 0; i < MapNumPlaces(m); i++)
-	{
-		locations[i] = NOWHERE;
-		visited[i] = false;
-	}
-
-	*numReturned = 0;
-	visited[from] = true;
-
-	ConnQueue q = QueueNew(); // Queue of connections
-	_Queue w = _QueueNew();	  // Queue of distances (weighting)
-
-	// Get the first round of adjacent cities
-	for (ConnNode curr = MapGetConnections(m, from); curr; curr = curr->next)
-		if (curr->type == RAIL && visited[curr->p] == false)
-		{
-			Enqueue(q, curr);
-			_Enqueue(w, 0);
-			visited[curr->p] = true;
-		}
-
-	while (!IsQueueEmpty(q))
-	{
-		// Get the parent node
-		ConnNode conn = Dequeue(q);
-		int weight = _Dequeue(w);
-
-		if (!placeIsReal(conn->p))
-			continue;
-
-		if (weight < distance)
-		{
-			locations[(*numReturned)++] = conn->p;
-
-			// Enqueue the children node of the parent node
-			for (ConnNode curr = MapGetConnections(m, conn->p); curr; curr = curr->next)
-				if (curr->type == RAIL && visited[curr->p] == false)
-				{
-					Enqueue(q, curr);
-					_Enqueue(w, weight + 1);
-					visited[curr->p] = true;
-				}
-		}
-	}
-
-	return locations;
-}
-
 ////////////////////////////////////////////////////////////////////////
-
-ConnQueue QueueNew()
-{
-	ConnQueue new = malloc(sizeof(connQueue));
-	if (new == NULL)
-	{
-		fprintf(stderr, "ERROR: Could not allocate memory for ConnQueue.\n");
-		exit(EXIT_FAILURE);
-	}
-
-	new->head = new->tail = NULL;
-	return new;
-}
-
-void QueueFree(ConnQueue q)
-{
-	if (q == NULL || q->head == NULL)
-		return;
-
-	ConnNode curr = q->head;
-	while (curr != NULL)
-	{
-		ConnNode next = curr->next;
-		free(curr);
-		curr = next;
-	}
-
-	free(q);
-	q = NULL;
-}
-
-void Enqueue(ConnQueue q, ConnNode node)
-{
-	if (q == NULL)
-		return;
-
-	ConnNode copy = malloc(sizeof(connNode));
-	copy->p = node->p;
-	copy->type = node->type;
-	copy->next = NULL;
-
-	if (q->head == NULL)
-		q->head = copy;
-	if (q->tail != NULL)
-		q->tail->next = copy;
-	q->tail = copy;
-}
-
-ConnList Dequeue(ConnQueue q)
-{
-	if (q == NULL || q->head == NULL)
-		return NULL;
-
-	ConnNode temp = q->head;
-	ConnNode node = &(connNode){.p = temp->p, .type = temp->type, .next = NULL};
-	q->head = q->head->next;
-
-	if (q->head == NULL)
-		q->tail = NULL;
-
-	free(temp);
-
-	return node;
-}
-
-void QueueShow(ConnQueue q)
-{
-	if (q == NULL || q->head == NULL)
-		return;
-
-	printf("[");
-	for (ConnNode curr = q->head; curr != NULL; curr = curr->next)
-	{
-		if (curr->next == NULL)
-			printf("{%s, %s}", placeIdToName(curr->p), transportTypeToString(curr->type));
-		else
-			printf("{%s, %s}, ", placeIdToName(curr->p), transportTypeToString(curr->type));
-	}
-	printf("]\n");
-}
-
-bool IsQueueEmpty(ConnQueue q)
-{
-	return q->head == NULL;
-}
