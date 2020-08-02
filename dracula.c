@@ -9,12 +9,57 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ * Objectives:
+ * - Keep score low
+ * 
+ * Heuristics:
+ * - 
+ * 
+ * Strategies:
+ * - starting location
+ * - strategy in avoiding players (keep out of their where-abouts)
+ * - strategy in placing traps (offensive)
+ * - strategy in placing vampires
+ * 
+ * 
+ */
+
+#include <string.h>
+#include <time.h>
+
 #include "dracula.h"
 #include "DraculaView.h"
 #include "Game.h"
 
+/**
+ * Random strategy.
+ */
+static PlaceId strategy1(DraculaView dv)
+{
+	srand(time(NULL));
+	int numReturnedMoves = 0;
+	PlaceId *validMoves = DvGetValidMoves(dv, &numReturnedMoves);
+	int index = rand() % 10;
+
+	for (int i = 0; i < numReturnedMoves; i++)
+		if (validMoves[i] == index)
+			return validMoves[i];
+
+	return GRANADA;
+}
+
+/**
+ * Simulate possible future game states and pick best move.
+ */
+// static PlaceId strategy2(DraculaView dv)
+// {
+// }
+
 void decideDraculaMove(DraculaView dv)
 {
-	// TODO: Replace this with something better!
-	registerBestPlay("CD", "Mwahahahaha");
+	char *move = malloc(3 * sizeof(char));
+	strncpy(move, placeIdToAbbrev(strategy1(dv)), 3);
+	registerBestPlay(move, "GW");
+	free(move);
 }
