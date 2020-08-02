@@ -29,7 +29,7 @@ To mimic the given style of the assignment:
 
 The most optimised solution would be to simulate future possible states then select the move on the path to that state where the objective of the player is considered. The objective for Dracula would be to keep the score as low as possible and the objective for the hunters would be to keep the score as high as possible.
 
-In searching for future possible states, heuristics should be applied to ignore states that would obviously not beneficial to the player's objective. Therefore increasing the amount of time allowed to search for a more optimal game move.
+In searching for future possible states, heuristics should be applied to ignore states that would obviously not be beneficial to the player's objective. Therefore increasing the amount of time allowed to search for a more optimal game move.
 
 The pathway for the future states need to be stored into some tree. An optimised tree for this assignment would allow fast insertions and traversal.
 
