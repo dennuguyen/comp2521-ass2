@@ -39,7 +39,7 @@ static PlaceId strategy1(HunterView hv)
 	srand(time(NULL));
 	int numReturnedMoves = 0;
 	PlaceId *validMoves = HvWhereCanIGo(hv, &numReturnedMoves);
-	int index = rand() % 10;
+	int index = rand() % numReturnedMoves;
 
 	for (int i = 0; i < numReturnedMoves; i++)
 		if (validMoves[i] == index)
