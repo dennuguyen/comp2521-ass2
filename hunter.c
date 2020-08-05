@@ -83,10 +83,10 @@ void decideHunterMove(HunterView hv)
 
 #define CRITICAL_HEALTH 				3
 
-#define START_LORD_GODALMING			
-#define START_DR_SEWARD
-#define START_VAN_HELSING
-#define START_MINA_HARKER
+#define START_LORD_GODALMING			GENEVA			
+#define START_DR_SEWARD					MUNICH
+#define START_VAN_HELSING				MADRID
+#define START_MINA_HARKER				LONDON
 
 
 // 
@@ -112,7 +112,7 @@ PlaceId RetreatMove(HunterView hv);
 // 
 // 
 // 
-PlaceId ResearchMove(HunterView hv);
+PlaceId ResearchMove(HunterView hv, Player player);
 // 
 // 
 // 
@@ -126,8 +126,8 @@ void decideHunterMove(HunterView hv)
 
 	Round round = HvGetRound(hv);
 	Player player = HvGetPlayer(hv);
-	int score = HvGetScore(hv, player);
-	int health = HvGetHealth(hv, player);
+	// int score = HvGetScore(hv);
+	// int health = HvGetHealth(hv, player);
 	PlaceId LastDracLoc = HvGetLastKnownDraculaLocation(hv, &round); 
 
 	if (round == 0) 
@@ -137,24 +137,21 @@ void decideHunterMove(HunterView hv)
 	}
 
 	int *numReturnedLocs = malloc(sizeof(int));
-	PlaceId nextpossibledest = HvWhereCanIGo(hv, &numReturnedLocs);
-	PlaceId MyLocation = hVGetPlayerLocation(hv, player);
+	PlaceId *nextpossibledest = HvWhereCanIGo(hv, numReturnedLocs);
+	// PlaceId MyLocation = HvGetPlayerLocation(hv, player);
 
-	if (player == PLAYER_VAN_HELSING)
+	for (int i = 0; i < *numReturnedLocs; i++)
 	{
-
+		if (LastDracLoc == nextpossibledest[i])
+		{
+			AmbushMove(hv, nextpossibledest, numReturnedLocs);
+		}
 	}
-	if ()
+	ShortestMove(hv, nextpossibledest, numReturnedLocs);	
+	if (TRAIL_SIZE % 7 == 3)
 	{
-		AmbushMove(hv, nextpossibledest, &numReturnedLocs);
+		ResearchMove(hv, player);
 	}
-
-	if () 
-	{
-		ResearchMove(hv);
-	}
-
-	ShortestMove(hv, nextpossibledest, &numReturnedLocs);	
 }
 
 PlaceId FirstMove(HunterView hv)
@@ -162,26 +159,21 @@ PlaceId FirstMove(HunterView hv)
 	Player player = HvGetPlayer(hv);
 	switch (player)
 	{
-		case PLAYER_LORD_GODALMING:	
-			char *play = placeIdToAbbrev(START_LORD_GODALMING);
-			Message message = "First Move....";	
-			registerBestPlay(play, message);
+		case PLAYER_LORD_GODALMING:		
+			registerBestPlay(placeIdToAbbrev(START_LORD_GODALMING), "First Move....");
 			return START_LORD_GODALMING;
-		case PLAYER_DR_SEWARD:
-			char *play = placeIdToAbbrev(START_DR_SEWARD);
-			Message message = "First Move....";	
-			registerBestPlay(play, message);
+		case PLAYER_DR_SEWARD:	
+			registerBestPlay(placeIdToAbbrev(START_DR_SEWARD), "First Move....");
 			return START_DR_SEWARD;
-		case PLAYER_VAN_HELSING:
-			char *play = placeIdToAbbrev(START_VAN_HELSING);
-			Message message = "First Move....";	
-			registerBestPlay(play, message);
+		case PLAYER_VAN_HELSING:	
+			registerBestPlay(placeIdToAbbrev(START_VAN_HELSING), "First Move....");
 			return START_VAN_HELSING;
-		case PLAYER_MINA_HARKER:
-			char *play = placeIdToAbbrev(START_MINA_HARKER);
-			Message message = "First Move....";	
-			registerBestPlay(play, message);
-			return START_MINA_HARKER;		
+		case PLAYER_MINA_HARKER:	
+			registerBestPlay(placeIdToAbbrev(START_MINA_HARKER), "First Move....");
+			return START_MINA_HARKER;	
+		case PLAYER_DRACULA:
+			registerBestPlay(placeIdToAbbrev(UNKNOWN_PLACE), "First Move....");
+			return UNKNOWN_PLACE;
 	}
 	return UNKNOWN_PLACE;
 }
@@ -189,9 +181,9 @@ PlaceId FirstMove(HunterView hv)
 PlaceId AmbushMove(HunterView hv, PlaceId nextpossibledest[], int *numReturnedLocs)
 {
 	Round round = HvGetRound(hv);
-	PlaceId LastDracLoc = HvGetLastKnownDraculaLocation(hv, round);
+	PlaceId LastDracLoc = HvGetLastKnownDraculaLocation(hv, &round);
 
-	for (int i = 0; i < numReturnedLocs; i++)
+	for (int i = 0; i < *numReturnedLocs; i++)
 	{
 		if (LastDracLoc == nextpossibledest[i])
 		{
@@ -206,22 +198,22 @@ PlaceId AmbushMove(HunterView hv, PlaceId nextpossibledest[], int *numReturnedLo
 
 PlaceId ShortestMove(HunterView hv, PlaceId nextpossibledest[], int *numReturnedLocs)
 {
-	Player player = HvGtePlayer(hv);
+	Player player = HvGetPlayer(hv);
 	PlaceId MyLocation = HvGetPlayerLocation(hv, player);
 	Round round = HvGetRound(hv);
-	PlaceId LastDracLoc = HvGetLastKnownDraculaLocation(hv, round);
+	PlaceId LastDracLoc = HvGetLastKnownDraculaLocation(hv, &round);
 
 
 	if (MyLocation >= MIN_REAL_PLACE && MyLocation <= MAX_REAL_PLACE && LastDracLoc >= MIN_REAL_PLACE && LastDracLoc <= MAX_REAL_PLACE)
 	{
 		int *pathLength = malloc(sizeof(int));
-		PlaceId *PathToDrac = HvGetShortestPathTo(hv, player, LastDracLoc, &pathLength);
+		PlaceId *PathToDrac = HvGetShortestPathTo(hv, player, LastDracLoc, pathLength);
 
 
-		char *play = placeIdToAbbrev(path[1]);
+		char *play = placeIdToAbbrev(PathToDrac[1]);
 		Message message = "Coming For You....";
 		registerBestPlay(play, message);
-		return path[1];
+		return PathToDrac[1];
 	} else
 	{
 		return UNKNOWN_PLACE;
@@ -247,12 +239,17 @@ PlaceId RetreatMove(HunterView hv)
 	}
 }
 
-PlaceId ResearchMove(HunterView hv)
+PlaceId ResearchMove(HunterView hv, Player player)
 {
 	Round round = HvGetRound(hv);
+	if (round <= TRAIL_SIZE)
+	{
+		return UNKNOWN_PLACE;
+	}
+
+	PlaceId MyLocation = HvGetPlayerLocation(hv, player);
 	
-
-
+	return MyLocation;
 }
 
 #endif
