@@ -154,10 +154,7 @@ void decideHunterMove(HunterView hv)
 		ResearchMove(hv);
 	}
 
-	ShortestMove(hv, nextpossibledest, &numReturnedLocs);
-
-
-	
+	ShortestMove(hv, nextpossibledest, &numReturnedLocs);	
 }
 
 PlaceId FirstMove(HunterView hv)
@@ -252,7 +249,8 @@ PlaceId RetreatMove(HunterView hv)
 
 PlaceId ResearchMove(HunterView hv)
 {
-
+	Round round = HvGetRound(hv);
+	
 
 
 }
