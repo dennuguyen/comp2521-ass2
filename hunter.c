@@ -233,10 +233,28 @@ PlaceId ShortestMove(HunterView hv, PlaceId nextpossibledest[], int *numReturned
 
 PlaceId RetreatMove(HunterView hv)
 {
-	
+	Player player = HvGetPlayer(hv);
+	PlaceId MyLocation = HvGetPlayerLocation(hv, player);
+
+	int health = HvGetHealth(hv, player);
+
+	if (health <= CRITICAL_HEALTH)
+	{
+		char *play = placeIdToAbbrev(MyLocation);
+		Message message = "Critical Health!!!....";
+		registerBestPlay(play, message);
+		return MyLocation;
+	} else 
+	{
+		return UNKNOWN_PLACE;
+	}
+}
+
+PlaceId ResearchMove(HunterView hv)
+{
+
 
 
 }
-
 
 #endif
