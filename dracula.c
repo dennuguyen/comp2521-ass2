@@ -32,6 +32,7 @@
 #include "DraculaView.h"
 #include "Game.h"
 
+#if 0
 /**
  * Random strategy.
  */
@@ -63,3 +64,19 @@ void decideDraculaMove(DraculaView dv)
 	registerBestPlay(move, "GW");
 	free(move);
 }
+#else
+
+
+
+void decideDraculaMove(DraculaView dv)
+{
+	char *move = malloc(3 * sizeof(char));
+	strncpy(move, placeIdToAbbrev(strategy1(dv)), 3);
+	registerBestPlay(move, "GW");
+	free(move);
+}
+
+
+
+
+#endif
