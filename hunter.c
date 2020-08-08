@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////
+l////////////////////////////////////////////////////////////////////////
 // COMP2521 20T2 ... the Fury of Dracula
 // hunter.c: your "Fury of Dracula" hunter AI.
 //
@@ -127,7 +127,7 @@ void decideHunterMove(HunterView hv)
 	Round round = HvGetRound(hv);
 	Player player = HvGetPlayer(hv);
 	// int score = HvGetScore(hv);
-	// int health = HvGetHealth(hv, player);
+	int health = HvGetHealth(hv, player);
 	PlaceId LastDracLoc = HvGetLastKnownDraculaLocation(hv, &round); 
 
 	if (round == 0) 
@@ -147,8 +147,12 @@ void decideHunterMove(HunterView hv)
 			AmbushMove(hv, nextpossibledest, numReturnedLocs);
 		}
 	}
+	if (health <= CRITICAL_HEALTH)
+	{
+		RetreatMove(hv);
+	}
 	ShortestMove(hv, nextpossibledest, numReturnedLocs);	
-	if (TRAIL_SIZE % 7 == 3)
+	if (TRAIL_SIZE % 10 == 3)
 	{
 		ResearchMove(hv, player);
 	}
@@ -253,3 +257,27 @@ PlaceId ResearchMove(HunterView hv, Player player)
 }
 
 #endif
+
+/**
+ *  BackTracking!!!
+ * 	function()
+ *  {
+ * 		if (there are no more moves to make i.e. either game is over or lost) {
+ * 			return score;
+ * 		} else {
+ * 			for (all possible moves) 
+ * 			{
+ * 				if (function() > minscore) 
+ * 				{
+ * 					new_plays_array saves the new function's best score
+ * 					minscore = function()
+ * 				}
+ * 			}	
+ * 	}	
+ * 
+ * 
+ * 
+ * 
+ * }
+ * 
+ * /
