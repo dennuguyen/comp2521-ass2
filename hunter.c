@@ -276,8 +276,4 @@ PlaceId ResearchMove(HunterView hv, Player player)
  * 	}	
  * 
  * 
- * 
- * 
- * }
- * 
  * /
