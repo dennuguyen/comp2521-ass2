@@ -35,31 +35,33 @@
  * Random strategy.
  */
 static PlaceId strategy1(HunterView hv)
-{
+{	
+	if(HvGetRound(hv) == 0) {
+		switch (HvGetPlayer(hv))
+		{
+		case PLAYER_LORD_GODALMING:
+			return TOULOUSE;
+		case PLAYER_DR_SEWARD:
+			return FRANKFURT;
+		case PLAYER_VAN_HELSING:
+			return VENICE;
+		case PLAYER_MINA_HARKER:
+			return BELGRADE;
+		case PLAYER_DRACULA:
+			break;
+		}
+	};
+
 	srand(time(NULL));
 	int numReturnedMoves = 0;
 	PlaceId *validMoves = HvWhereCanIGo(hv, &numReturnedMoves);
-	int index = rand() % NUM_REAL_PLACES;
+	int index = rand() % numReturnedMoves;
 
 	for (int i = 0; i < numReturnedMoves; i++)
-		if (validMoves[i] == index)
+		if (i == index)
 			return validMoves[i];
-
-	switch (HvGetPlayer(hv))
-	{
-	case PLAYER_LORD_GODALMING:
-		return TOULOUSE;
-	case PLAYER_DR_SEWARD:
-		return FRANKFURT;
-	case PLAYER_VAN_HELSING:
-		return VENICE;
-	case PLAYER_MINA_HARKER:
-		return BELGRADE;
-	case PLAYER_DRACULA:
-		break;
-	}
-
-	return GENOA;
+	
+	return HvGetPlayerLocation(hv, HvGetPlayer(hv));
 }
 
 /**
