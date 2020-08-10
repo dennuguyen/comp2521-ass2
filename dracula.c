@@ -38,16 +38,48 @@
  */
 static PlaceId strategy1(DraculaView dv)
 {
+	if(DvGetRound(dv) == 0) return GRANADA;
 	srand(time(NULL));
 	int numReturnedMoves = 0;
 	PlaceId *validMoves = DvGetValidMoves(dv, &numReturnedMoves);
-	int index = rand() % 10;
+	int index = rand() % numReturnedMoves;
 
 	for (int i = 0; i < numReturnedMoves; i++)
-		if (validMoves[i] == index)
+		if (i == index)
 			return validMoves[i];
 
-	return GRANADA;
+	return TELEPORT;
+}
+
+/**
+ * Checks if given dracula location is within range of hunters
+ */
+static bool isAdjacent(DraculaView dv, Player player, PlaceId dracula)
+{
+	int numPlaces = 0;
+	PlaceId *places = DvWhereCanTheyGo(dv, player, &numPlaces);
+	for (int i = 0; i < numPlaces; i++) {
+		if (dracula == places[i]) return true;
+	}
+	return false;
+}
+
+/**
+ * Avoid moving to locations adjacent to hunters
+ */
+static PlaceId strategy2(DraculaView dv)
+{
+	int numMoves = 0;
+	PlaceId *validMoves = DvGetValidMoves(dv, &numMoves);
+	
+	for (int i = 0; i < numMoves; i++) {
+		if (!isAdjacent(dv, PLAYER_LORD_GODALMING, validMoves[i]) &&
+			!isAdjacent(dv, PLAYER_DR_SEWARD, validMoves[i]) &&
+			!isAdjacent(dv, PLAYER_VAN_HELSING, validMoves[i]) &&
+			!isAdjacent(dv, PLAYER_MINA_HARKER, validMoves[i]))
+			{ return validMoves[i]; }
+	}
+	return strategy1(dv);
 }
 
 /**
@@ -60,7 +92,7 @@ static PlaceId strategy1(DraculaView dv)
 void decideDraculaMove(DraculaView dv)
 {
 	char *move = malloc(3 * sizeof(char));
-	strncpy(move, placeIdToAbbrev(strategy1(dv)), 3);
+	strncpy(move, placeIdToAbbrev(strategy2(dv)), 3);
 	registerBestPlay(move, "GW");
 	free(move);
 }
